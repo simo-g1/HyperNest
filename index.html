@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>try { if (JSON.parse(localStorage.getItem("hypernest-demo-state-v1") || "{}").theme === "dark") document.documentElement.classList.add("dark") } catch (e) { }</script>
+  <title>HyperNest | تسوّق بذكاء</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            slate: { 50: '#fafaf9', 100: '#f5f5f4', 200: '#e7e5e4', 300: '#d6d3d1', 400: '#a8a29e', 500: '#78716c', 600: '#57534e', 700: '#44403c', 800: '#292524', 900: '#1c1917', 950: '#0c0a09' },
+            skyBrand: {
+              50: '#fdf6ec',
+              100: '#f8e7cd',
+              200: '#f0cd9c',
+              300: '#e5ae6a',
+              400: '#d58d3f',
+              500: '#b5651d',
+              600: '#9a5217',
+              700: '#7c4214',
+              800: '#5f3411',
+              900: '#44250c',
+            },
+            cream: {
+              50: '#fbf7ef',
+              100: '#f3eee4',
+              200: '#e7dcc8',
+            }
+          },
+          animation: {
+            'gradient-wave': 'gradientWave 8s ease infinite',
+            'float': 'float 3s ease-in-out infinite',
+            'pulse-glow': 'pulseGlow 2s infinite',
+          },
+          keyframes: {
+            gradientWave: {
+              '0%, 100%': { 'background-position': '0% 50%' },
+              '50%': { 'background-position': '100% 50%' },
+            },
+            float: {
+              '0%, 100%': { transform: 'translateY(0)' },
+              '50%': { transform: 'translateY(-8px)' },
+            },
+            pulseGlow: {
+              '0%, 100%': { opacity: '0.6', transform: 'scale(1)' },
+              '50%': { opacity: '1', transform: 'scale(1.05)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Normalize + FontAwesome (local files) -->
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/all.min.css">
+  <!-- Google Font Cairo -->
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap"
+    rel="stylesheet">
+  <!-- Custom styles -->
+  <link rel="stylesheet" href="css/my.css">
+  <link rel="stylesheet" href="css/hypernest-upgrade.css">
+</head>
+
+<body
+  class="hn-bottom-nav bg-cream-100 text-slate-800 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300 relative min-h-screen selection:bg-skyBrand-300 selection:text-skyBrand-900">
+
+  <a href="#main" class="skip-link">تخطي إلى المحتوى</a>
+
+  <!-- Scroll Progress Top Bar -->
+  <div id="scroll-progress"></div>
+
+  <!-- Theme Circular Expansion Overlay Layer -->
+  <div id="theme-ripple"></div>
+
+  <!-- Glowing Custom Cursor Follower -->
+  <div id="cursor-glow" class="hidden md:block"></div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="fixed bottom-5 left-3 lg:left-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- TOP LOCATION BAR -->
+  <div
+    class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs py-1.5 border-b border-slate-200 dark:border-slate-700 hidden md:block">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+      <div class="flex items-center gap-6">
+        <div class="flex items-center gap-1.5 cursor-pointer hover:text-skyBrand-600 transition"
+          onclick="showToast('📍 تم اختيار موقعك الحالي: المنصورة، حي الجامعة')">
+          <i class="fa-solid fa-location-dot text-rose-500"></i>
+          <span>التوصيل إلى: <strong class="text-slate-800 dark:text-white">المنصورة، حي الجامعة</strong></span>
+          <i class="fa-solid fa-chevron-down text-[10px] mr-1"></i>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <i class="fa-solid fa-store text-skyBrand-500"></i>
+          <span>الفرع المختار: <strong class="text-slate-800 dark:text-white">فرع هايبر نست الرئيسي</strong></span>
+        </div>
+      </div>
+      <div class="flex items-center gap-6">
+        <span class="text-emerald-600 dark:text-emerald-400 font-bold"><i class="fa-solid fa-truck-fast"></i> التوصيل
+          مجاني للطلبات فوق 200 ج.م</span>
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-headset text-skyBrand-600"></i>
+          <span class="font-extrabold">19988</span>
+        </div>
+        <button onclick="showToast('اللغة الحالية هي العربية')"
+          class="hover:text-skyBrand-600 font-bold">English</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HEADER & NAVIGATION -->
+  <header
+    class="sticky top-0 z-40 bg-[#fffdf8]/92 dark:bg-slate-950/90 backdrop-blur-md shadow-sm border-b border-cream-200 dark:border-slate-800 transition-colors duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col gap-3">
+      <div class="hn-header-row h-auto flex items-center justify-between gap-4">
+
+        <!-- Logo -->
+        <a href="#" class="hn-logo flex items-center gap-3 group">
+          <div
+            class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-skyBrand-600 to-skyBrand-400 text-white flex items-center justify-center text-2xl font-black shadow-lg shadow-skyBrand-500/30 group-hover:scale-105 transition-transform duration-300">
+            <i class="fa-solid me-0.5 fa-basket-shopping"></i>
+          </div>
+          <div>
+            <span
+              class="text-2xl font-extrabold tracking-tight bg-gradient-to-r from-skyBrand-700 via-skyBrand-500 to-skyBrand-400 bg-clip-text text-transparent dark:from-skyBrand-300 dark:to-skyBrand-500">
+              HyperNest
+            </span>
+            <span class="hidden sm:block text-xs font-semibold text-slate-400 dark:text-slate-400 -mt-1">هايبر نست -
+              جودة
+              وتوفير</span>
+          </div>
+        </a>
+
+        <!-- Mega Categories Menu Toggle -->
+        <div class="relative hidden lg:block">
+          <button onclick="toggleMegaMenu()"
+            class="px-4 py-2.5 bg-skyBrand-600 hover:bg-skyBrand-700 text-white rounded-2xl font-bold text-xs flex items-center gap-2 shadow-md transition">
+            <i class="fa-solid fa-bars-staggered"></i>
+            <span>تصفح كل الأقسام</span>
+            <i class="fa-solid fa-chevron-down text-[10px]"></i>
+          </button>
+
+          <!-- Mega Menu Dropdown -->
+          <div id="mega-menu"
+            class="absolute top-14 right-0 w-80 bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 p-4 hidden z-50 animate-float">
+            <h4 class="text-xs font-black text-slate-400 mb-3 px-2">جميع الفئات والعروض</h4>
+            <div class="space-y-1">
+              <a href="#categories" onclick="filterCategory('produce'); toggleMegaMenu();"
+                class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-skyBrand-50 dark:hover:bg-slate-800 text-xs font-bold transition">
+                <span
+                  class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center text-sm"><i
+                    class="fa-solid fa-apple-whole"></i></span>
+                <span>خضار وفواكه طازجة</span>
+              </a>
+              <a href="#categories" onclick="filterCategory('dairy'); toggleMegaMenu();"
+                class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-skyBrand-50 dark:hover:bg-slate-800 text-xs font-bold transition">
+                <span class="w-8 h-8 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center text-sm"><i
+                    class="fa-solid fa-cheese"></i></span>
+                <span>ألبان، أجبان وبيض</span>
+              </a>
+              <a href="#categories" onclick="filterCategory('bakery'); toggleMegaMenu();"
+                class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-skyBrand-50 dark:hover:bg-slate-800 text-xs font-bold transition">
+                <span
+                  class="w-8 h-8 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center text-sm"><i
+                    class="fa-solid fa-bread-slice"></i></span>
+                <span>مخبوزات وحلويات الفرن</span>
+              </a>
+              <a href="#categories" onclick="filterCategory('meat'); toggleMegaMenu();"
+                class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-skyBrand-50 dark:hover:bg-slate-800 text-xs font-bold transition">
+                <span class="w-8 h-8 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center text-sm"><i
+                    class="fa-solid fa-drumstick-bite"></i></span>
+                <span>لحوم، دواجن ومجمدات</span>
+              </a>
+              <a href="#categories" onclick="filterCategory('beverages'); toggleMegaMenu();"
+                class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-skyBrand-50 dark:hover:bg-slate-800 text-xs font-bold transition">
+                <span
+                  class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center text-sm"><i
+                    class="fa-solid fa-wine-bottle"></i></span>
+                <span>مشروبات وعصائر</span>
+              </a>
+              <a href="#categories" onclick="filterCategory('household'); toggleMegaMenu();"
+                class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-skyBrand-50 dark:hover:bg-slate-800 text-xs font-bold transition">
+                <span class="w-8 h-8 rounded-lg bg-sky-100 text-sky-600 flex items-center justify-center text-sm"><i
+                    class="fa-solid fa-pump-soap"></i></span>
+                <span>منظفات ومستلزمات المنزل</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="relative flex-1 max-w-xs sm:max-w-md hidden md:block">
+          <label for="search-input" class="sr-only">ابحث عن منتج</label>
+          <input type="search" id="search-input" placeholder="ابحث عن منتج، خضار، حليب..." autocomplete="off"
+            class="w-full min-h-11 pl-10 pr-4 py-2 rounded-full border border-skyBrand-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-skyBrand-400 text-sm transition-all duration-200"
+            oninput="handleSearch(this.value)" aria-controls="search-suggest" aria-expanded="false">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"
+            aria-hidden="true"></i>
+          <div id="search-suggest"
+            class="hidden absolute top-full mt-2 inset-x-0 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 p-2 z-50"
+            role="listbox"></div>
+        </div>
+
+        <!-- Controls: Wishlist, Theme & Drop Zone Cart -->
+        <div class="hn-header-controls flex items-center gap-2 sm:gap-3">
+
+          <!-- Wishlist -->
+          <button type="button" onclick="openWishlistDrawer()"
+            class="relative min-h-11 min-w-11 p-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-rose-500 hover:bg-rose-50 dark:hover:bg-slate-700 transition"
+            title="المفضلة" aria-label="فتح قائمة المفضلة">
+            <i class="fa-solid fa-heart text-base sm:text-lg" aria-hidden="true"></i>
+            <span id="wishlist-count"
+              class="absolute -top-1.5 -right-1.5 bg-rose-500 text-white text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center">0</span>
+          </button>
+
+          <!-- Theme Toggle -->
+          <button type="button" id="theme-toggle" onclick="toggleThemeWithRipple(event)" aria-label="تبديل المظهر"
+            class="min-h-11 min-w-11 p-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-skyBrand-300 hover:bg-skyBrand-100 dark:hover:bg-slate-700 transition relative overflow-hidden shrink-0">
+            <i id="theme-icon" class="fa-solid fa-moon text-base sm:text-lg relative z-10"></i>
+          </button>
+
+          <!-- Dynamic Cart Icon & Drop Zone -->
+          <div id="cart-dropzone"
+            class="relative min-h-11 border-2 border-dashed border-skyBrand-300 dark:border-skyBrand-600 bg-skyBrand-50 dark:bg-slate-800/80 px-2.5 sm:px-3.5 py-2 rounded-2xl flex items-center gap-2 cursor-pointer transition shadow-sm"
+            onclick="openCartDrawer()" title="اسحب أي منتج من الرف وأسقطه هنا للإضافة للسلة!" role="button"
+            aria-label="سلة التسوق، اسحب المنتجات هنا">
+            <div class="relative">
+              <i class="fa-solid fa-cart-shopping text-lg sm:text-xl text-skyBrand-600 dark:text-skyBrand-400"></i>
+              <span id="cart-count"
+                class="absolute -top-2 -right-2 bg-rose-500 text-white text-xs font-extrabold w-5 h-5 rounded-full flex items-center justify-center">0</span>
+            </div>
+            <div class="hidden md:block text-right leading-none">
+              <span
+                class="block text-[10px] font-bold text-skyBrand-600 dark:text-skyBrand-400 uppercase tracking-wider">سلة
+                التسوق</span>
+              <span id="cart-total-price" class="text-xs font-black text-slate-800 dark:text-slate-100">0.00 ج.م</span>
+            </div>
+          </div>
+
+          <!-- Mobile Navigation Toggle -->
+          <button type="button" onclick="toggleMobileMenu()" aria-label="فتح قائمة التنقل" aria-controls="mobile-menu"
+            aria-expanded="false" id="mobile-menu-btn"
+            class="lg:hidden min-h-11 min-w-11 p-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-200">
+            <i class="fa-solid fa-bars text-base sm:text-lg"></i>
+          </button>
+
+        </div>
+      </div>
+
+      <!-- Navigation Links (كلمة واحدة فقط لكل عنصر) -->
+      <nav class="hidden lg:flex items-center justify-center gap-6 font-semibold text-sm pb-1"
+        aria-label="التنقل الرئيسي">
+        <a href="#categories"
+          class="flex items-center gap-1.5 hover:text-skyBrand-600 dark:hover:text-skyBrand-400 transition-colors"><i
+            class="fa-solid fa-table-cells-large text-skyBrand-500" aria-hidden="true"></i> الأقسام</a>
+        <a href="#products-catalog"
+          class="flex items-center gap-1.5 hover:text-skyBrand-600 dark:hover:text-skyBrand-400 transition-colors"><i
+            class="fa-solid fa-star text-skyBrand-500" aria-hidden="true"></i> المختارة</a>
+        <a href="#store-map"
+          class="flex items-center gap-1.5 hover:text-skyBrand-600 dark:hover:text-skyBrand-400 transition-colors"><i
+            class="fa-solid fa-map-marked-alt text-skyBrand-500" aria-hidden="true"></i> الخريطة</a>
+        <a href="#testimonials"
+          class="flex items-center gap-1.5 hover:text-skyBrand-600 dark:hover:text-skyBrand-400 transition-colors"><i
+            class="fa-solid fa-comment-dots text-skyBrand-500" aria-hidden="true"></i> الآراء</a>
+        <a href="#smart-baskets"
+          class="flex items-center gap-1.5 hover:text-skyBrand-600 dark:hover:text-skyBrand-400 transition-colors"><i
+            class="fa-solid fa-basket-shopping text-skyBrand-500" aria-hidden="true"></i> السلال</a>
+        <a href="#careers"
+          class="flex items-center gap-1.5 hover:text-skyBrand-600 dark:hover:text-skyBrand-400 transition-colors"><i
+            class="fa-solid fa-briefcase text-skyBrand-500" aria-hidden="true"></i> الوظائف</a>
+        <a href="#faq"
+          class="flex items-center gap-1.5 hover:text-skyBrand-600 dark:hover:text-skyBrand-400 transition-colors"><i
+            class="fa-solid fa-circle-question text-skyBrand-500" aria-hidden="true"></i> الأسئلة</a>
+        <a href="#support"
+          class="flex items-center gap-1.5 hover:text-skyBrand-600 dark:hover:text-skyBrand-400 transition-colors"><i
+            class="fa-solid fa-headset text-skyBrand-500" aria-hidden="true"></i> التواصل</a>
+      </nav>
+    </div>
+
+    <!-- Mobile Search Bar -->
+    <div class="md:hidden px-4 pb-3">
+      <div class="relative">
+        <label for="search-input-mobile" class="sr-only">ابحث عن منتجاتك</label>
+        <input type="search" id="search-input-mobile" placeholder="ابحث عن منتجاتك..."
+          oninput="handleSearch(this.value)"
+          class="w-full min-h-11 pl-10 pr-4 py-2 rounded-xl border border-skyBrand-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-skyBrand-400">
+        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+      </div>
+    </div>
+
+    <!-- Mobile Nav Menu Drawer -->
+    <div id="mobile-menu"
+      class="hidden lg:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 py-4 flex flex-col gap-3 font-semibold text-sm">
+      <a href="#categories" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-grip" aria-hidden="true"></i><span>الأقسام</span><i class="fa-solid fa-arrow-left hn-mobile-arrow" aria-hidden="true"></i></a>
+      <a href="#products-catalog" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-basket-shopping" aria-hidden="true"></i><span>المنتجات</span><i class="fa-solid fa-arrow-left hn-mobile-arrow" aria-hidden="true"></i></a>
+      <a href="#smart-baskets" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-boxes-stacked" aria-hidden="true"></i><span>السلال الذكية</span><i class="fa-solid fa-arrow-left hn-mobile-arrow" aria-hidden="true"></i></a>
+      <a href="#store-map" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i><span>الخريطة</span><i class="fa-solid fa-arrow-left hn-mobile-arrow" aria-hidden="true"></i></a>
+      <a href="#order-track" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-truck-fast" aria-hidden="true"></i><span>تتبع الطلب</span><i class="fa-solid fa-arrow-left hn-mobile-arrow" aria-hidden="true"></i></a>
+      <a href="#testimonials" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-star" aria-hidden="true"></i><span>آراء العملاء</span><i class="fa-solid fa-arrow-left hn-mobile-arrow" aria-hidden="true"></i></a>
+      <a href="#faq" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-circle-question" aria-hidden="true"></i><span>الأسئلة الشائعة</span><i class="fa-solid fa-arrow-left hn-mobile-arrow" aria-hidden="true"></i></a>
+      <a href="#careers" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-briefcase" aria-hidden="true"></i><span>الوظائف</span><i class="fa-solid fa-arrow-left hn-mobile-arrow" aria-hidden="true"></i></a>
+      <a href="#support" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-headset" aria-hidden="true"></i><span>التواصل</span><i class="fa-solid fa-arrow-left hn-mobile-arrow" aria-hidden="true"></i></a>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <main id="main" class="space-y-16 pb-16">
+
+    <!-- HERO: 3D SUPERMARKET AISLE -->
+    <section id="vf-hero" class="hero-aisle vf-hero" tabindex="0"
+      aria-label="عرض المنتجات ثلاثي الأبعاد، استخدم أسهم الكيبورد للتنقل">
+
+      <div class="vf-head">
+        <h1>تسوق كأنك جوه السوبر ماركت بالظبط!</h1>
+        <p>اسحب الكروت أو مرّر • اضغط على كارت لتقريبه • اسحب المنتج لأيقونة السلة</p>
+      </div>
+
+      <div class="vf-ghost" id="vf-ghost" aria-hidden="true">
+        <span>F</span><span>R</span><span>E</span><span>S</span><span>H</span>
+      </div>
+
+      <div class="vf-stage" id="vf-stage">
+        <div class="vf-arc" id="vf-arc"></div>
+      </div>
+
+      <div class="vf-model" id="vf-model" draggable="true" role="button" tabindex="0"
+        aria-label="المنتج المحدد، اضغط للتفاصيل أو اسحبه للسلة">
+        <div class="vf-img" id="vf-cur"></div>
+        <div class="vf-img vf-next" id="vf-next"></div>
+        <div class="vf-grid" id="vf-grid"></div>
+        <div class="vf-scan" id="vf-scan"></div>
+      </div>
+
+      <button type="button" class="vf-arrow vf-arrow-l vf-glass" onclick="navigateShelves('left')"
+        aria-label="المنتج السابق">
+        <i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
+      <button type="button" class="vf-arrow vf-arrow-r vf-glass" onclick="navigateShelves('right')"
+        aria-label="المنتج التالي">
+        <i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+
+      <div class="vf-buy vf-glass">
+        <div class="vf-thumb"><img id="vf-thumb-img" alt=""></div>
+        <div class="vf-info">
+          <div class="vf-ln vf-bname" id="vf-bname" aria-live="polite"></div>
+          <div class="vf-ln vf-bprice" id="vf-bprice"></div>
+        </div>
+        <div>
+          <span class="vf-lbl">الكمية</span>
+          <div class="vf-chips" id="vf-chips" role="group" aria-label="الكمية"></div>
+        </div>
+        <button type="button" class="vf-add" onclick="vfAddToCart(this)" data-added-label="تمت الإضافة">
+          <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> أضف للسلة</button>
+      </div>
+    </section>
+
+    <!-- How it works (explains existing shelf + drag ideas) -->
+    <section id="how-it-works" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 reveal-on-scroll">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="p-5 rounded-3xl bg-white dark:bg-slate-800 border border-skyBrand-100 dark:border-slate-700">
+          <div class="w-11 h-11 rounded-2xl bg-skyBrand-100 text-skyBrand-700 flex items-center justify-center mb-3"
+            aria-hidden="true"><i class="fa-solid fa-lightbulb"></i></div>
+          <h3 class="font-black text-slate-900 dark:text-white">1. سلّط الضوء على الرف</h3>
+          <p class="text-sm text-slate-500 mt-1">نفس أرفف هايبر نست ثلاثية الأبعاد: مرّر للتسليط واضغط للتفاصيل.</p>
+        </div>
+        <div class="p-5 rounded-3xl bg-white dark:bg-slate-800 border border-skyBrand-100 dark:border-slate-700">
+          <div class="w-11 h-11 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center mb-3"
+            aria-hidden="true"><i class="fa-solid fa-hand-pointer"></i></div>
+          <h3 class="font-black text-slate-900 dark:text-white">2. اسحب للمنتج على السلة</h3>
+          <p class="text-sm text-slate-500 mt-1">خاصية السحب والإفلات كما هي، مع إضافة سريعة من الأزرار أيضاً.</p>
+        </div>
+        <div class="p-5 rounded-3xl bg-white dark:bg-slate-800 border border-skyBrand-100 dark:border-slate-700">
+          <div class="w-11 h-11 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center mb-3"
+            aria-hidden="true"><i class="fa-solid fa-truck-fast"></i></div>
+          <h3 class="font-black text-slate-900 dark:text-white">3. اختر موعد التوصيل</h3>
+          <p class="text-sm text-slate-500 mt-1">جديد: حدّد فترة وصول الطلب من السلة قبل إتمام الشراء.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CATEGORIES SECTION -->
+    <section id="categories" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 reveal-on-scroll">
+      <div class="text-center max-w-2xl mx-auto mb-10">
+        <span class="text-skyBrand-600 dark:text-skyBrand-400 font-extrabold text-sm uppercase tracking-wider">تصفح حسب
+          الفئة</span>
+        <h2 class="text-3xl font-black text-slate-900 dark:text-white mt-1">أقسام HyperNest الرئيسية</h2>
+        <p class="scrub-text text-slate-500 dark:text-slate-400 text-sm mt-2">اختار القسم المناسب، وكل مجموعة منتجات
+          هتظهر في مكان منفصل
+        </p>
+      </div>
+
+      <div id="category-pills" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 sm:gap-4">
+        <!-- Injected via JS -->
+      </div>
+    </section>
+
+    <!-- PROMO BANNERS / FESTIVAL MALL STRIP -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 reveal-on-scroll">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div
+          class="bg-gradient-to-r from-skyBrand-400 to-skyBrand-600 rounded-3xl p-6 text-white shadow-lg relative overflow-hidden group cursor-pointer hover:scale-[1.02] transition">
+          <div class="relative z-10 space-y-2">
+            <span class="bg-white/20 text-xs font-bold px-3 py-1 rounded-full uppercase">مهرجان الألبان</span>
+            <h3 class="text-2xl font-black">وفر حتى 35%</h3>
+            <p class="text-xs opacity-90">على أفضل أنواع الأجبان والمستوردات</p>
+            <button onclick="filterCategory('dairy')"
+              class="mt-2 bg-white text-skyBrand-700 font-bold px-4 py-2 rounded-xl text-xs shadow">تسوق الآن</button>
+          </div>
+          <i class="fa-solid fa-cheese absolute -bottom-4 -left-4 text-8xl opacity-20"></i>
+        </div>
+
+        <div
+          class="bg-gradient-to-r from-[#6b5844] to-[#3d4a56] rounded-3xl p-6 text-white shadow-lg relative overflow-hidden group cursor-pointer hover:scale-[1.02] transition">
+          <div class="relative z-10 space-y-2">
+            <span class="bg-white/20 text-xs font-bold px-3 py-1 rounded-full uppercase">الخضار المزرعي</span>
+            <h3 class="text-2xl font-black">طازجة من المزرعة</h3>
+            <p class="text-xs opacity-90">حصاد اليوم بأسعار سوق الجملة</p>
+            <button onclick="filterCategory('produce')"
+              class="mt-2 bg-white text-[#4a3a2a] font-bold px-4 py-2 rounded-xl text-xs shadow">تسوق الآن</button>
+          </div>
+          <i class="fa-solid fa-leaf absolute -bottom-4 -left-4 text-8xl opacity-20"></i>
+        </div>
+
+        <div
+          class="bg-gradient-to-r from-skyBrand-700 to-skyBrand-900 rounded-3xl p-6 text-white shadow-lg relative overflow-hidden group cursor-pointer hover:scale-[1.02] transition">
+          <div class="relative z-10 space-y-2">
+            <span class="bg-white/20 text-xs font-bold px-3 py-1 rounded-full uppercase">عروض الجملة</span>
+            <h3 class="text-2xl font-black">عروض المنظفات</h3>
+            <p class="text-xs opacity-90">اشتري أكثر ووفر أكتر لبيتك</p>
+            <button onclick="filterCategory('household')"
+              class="mt-2 bg-white text-skyBrand-700 font-bold px-4 py-2 rounded-xl text-xs shadow">تسوق الآن</button>
+          </div>
+          <i class="fa-solid fa-box-open absolute -bottom-4 -left-4 text-8xl opacity-20"></i>
+        </div>
+      </div>
+    </section>
+
+    <!-- Smart weekly baskets (new idea, uses existing products) -->
+    <section id="smart-baskets" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 reveal-on-scroll">
+      <div class="flex items-end justify-between gap-4 mb-6">
+        <div>
+          <span class="text-emerald-600 dark:text-emerald-400 font-extrabold text-sm">سلال جاهزة للعائلة</span>
+          <h2 class="text-3xl font-black text-slate-900 dark:text-white mt-1">أفكار تسوق ذكية فوق المنتجات الحالية</h2>
+          <p class="text-slate-500 text-sm mt-1">لا تستبدل الأقسام: تضيف تجميعات سريعة من نفس الكتالوج.</p>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <article
+          class="bg-white dark:bg-slate-800 rounded-3xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm">
+          <h3 class="font-black text-lg">سلة فطار الأسبوع</h3>
+          <p class="text-sm text-slate-500 my-2">حليب + توست + كرواسون + عصير برتقال</p>
+          <p class="font-black text-skyBrand-600 mb-3">143.00 ج.م</p>
+          <button type="button" onclick="addSmartBasket([3,5,6,8])"
+            class="min-h-11 w-full rounded-xl bg-skyBrand-600 text-white font-bold text-sm">أضف السلة كاملة</button>
+        </article>
+        <article
+          class="bg-white dark:bg-slate-800 rounded-3xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm">
+          <h3 class="font-black text-lg">سلة المطبخ اليومي</h3>
+          <p class="text-sm text-slate-500 my-2">تفاح + موز + طماطم + صدور دجاج</p>
+          <p class="font-black text-skyBrand-600 mb-3">298.00 ج.م</p>
+          <button type="button" onclick="addSmartBasket([1,2,10,7])"
+            class="min-h-11 w-full rounded-xl bg-skyBrand-600 text-white font-bold text-sm">أضف السلة كاملة</button>
+        </article>
+        <article
+          class="bg-white dark:bg-slate-800 rounded-3xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm">
+          <h3 class="font-black text-lg">سلة النظافة المنزلية</h3>
+          <p class="text-sm text-slate-500 my-2">مسحوق غسيل + منتجات المنظفات من الكتالوج</p>
+          <p class="font-black text-skyBrand-600 mb-3">175.00 ج.م+</p>
+          <button type="button" onclick="addSmartBasket([9])"
+            class="min-h-11 w-full rounded-xl bg-skyBrand-600 text-white font-bold text-sm">أضف السلة كاملة</button>
+        </article>
+      </div>
+    </section>
+
+    <!-- PRODUCTS CATALOG -->
+    <section id="products-catalog" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 reveal-on-scroll">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div>
+          <h2 id="catalog-title" tabindex="-1" class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">جميع المنتجات
+          </h2>
+          <p class="text-slate-500 dark:text-slate-400 text-sm mt-0.5">يمكنك سحب أي منتج وحطه في أيقونة السلة أعلى
+            الصفحة!</p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3">
+          <div
+            class="bg-white dark:bg-slate-800 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center gap-3 text-xs">
+            <span class="font-extrabold text-slate-600 dark:text-slate-300">أقصى ميزانية:</span>
+            <input type="range" id="budget-range" min="10" max="400" step="10" value="400"
+              oninput="handleBudgetFilter(this.value)" class="w-24 accent-skyBrand-500">
+            <span id="budget-value" class="font-black text-skyBrand-600 dark:text-skyBrand-400 min-w-[50px]">400
+              ج.م</span>
+          </div>
+
+          <select id="sort-select" onchange="handleSort(this.value)"
+            class="px-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-skyBrand-400">
+            <option value="default">الترتيب الافتراضي</option>
+            <option value="price-low">السعر: من الأقل للأعلى</option>
+            <option value="price-high">السعر: من الأعلى للأقل</option>
+            <option value="rating">الأعلى تقييماً</option>
+          </select>
+
+          <button onclick="resetFilters()"
+            class="px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm font-bold hover:bg-slate-300 dark:hover:bg-slate-700 transition">إعادة
+            الضبط</button>
+        </div>
+      </div>
+
+      <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <!-- Rendered via JavaScript -->
+      </div>
+
+      <div class="mt-10 text-center">
+        <button id="load-more-btn" onclick="toggleShowAllProducts()"
+          class="px-8 py-3 rounded-2xl border-2 border-skyBrand-500 text-skyBrand-600 dark:text-skyBrand-400 font-extrabold hover:bg-skyBrand-500 hover:text-white transition-all shadow-sm">
+          عرض كل المنتجات الـ 50
+        </button>
+      </div>
+    </section>
+
+    <!-- RECENTLY VIEWED PRODUCTS STRIP -->
+    <section id="recently-viewed-section" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 hidden reveal-on-scroll">
+      <div
+        class="p-6 bg-slate-100/70 dark:bg-slate-800/60 rounded-3xl border border-slate-200/60 dark:border-slate-700/60">
+        <div class="flex items-center gap-2 mb-4 text-skyBrand-600 dark:text-skyBrand-400 font-black text-sm">
+          <i class="fa-solid fa-clock-rotate-left"></i>
+          <h3>منتجات شاهدتها مؤخراً</h3>
+        </div>
+        <div id="recently-viewed-grid" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3">
+          <!-- Dynamic -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Flash hour deals (additive countdown) -->
+    <section id="flash-deals" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 reveal-on-scroll">
+      <div
+        class="rounded-3xl bg-slate-900 text-white p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div>
+          <p class="text-amber-300 font-extrabold text-sm">عرض الساعة — يضاف للعروض الحالية</p>
+          <h2 class="text-2xl font-black mt-1">خصم إضافي على التفاح والحليب والدجاج</h2>
+          <p class="text-slate-300 text-sm mt-1">المنتجات الأصلية كما هي، مع مؤقت ينتهي ثم يعاد.</p>
+        </div>
+        <div class="flex items-center gap-3" aria-live="polite">
+          <div class="bg-white/10 rounded-2xl px-4 py-3 text-center min-w-[4.5rem]"><span id="flash-h"
+              class="block text-2xl font-black">00</span><span class="text-[11px]">ساعة</span></div>
+          <div class="bg-white/10 rounded-2xl px-4 py-3 text-center min-w-[4.5rem]"><span id="flash-m"
+              class="block text-2xl font-black">20</span><span class="text-[11px]">دقيقة</span></div>
+          <div class="bg-white/10 rounded-2xl px-4 py-3 text-center min-w-[4.5rem]"><span id="flash-s"
+              class="block text-2xl font-black">00</span><span class="text-[11px]">ثانية</span></div>
+        </div>
+        <button type="button" onclick="filterCategory('produce')"
+          class="min-h-11 px-6 rounded-2xl bg-amber-400 text-slate-900 font-black">تسوق العرض</button>
+      </div>
+    </section>
+
+    <!-- ISOMETRIC 3D INTERACTIVE STORE MAP WITH DYNAMIC SVG FLOOR SWITCHING -->
+    <section id="store-map" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 reveal-on-scroll">
+      <div class="text-center max-w-2xl mx-auto mb-10">
+        <span class="text-skyBrand-600 dark:text-skyBrand-400 font-extrabold text-sm uppercase">الملاحة داخل
+          الفرع</span>
+        <h2 class="text-3xl font-black text-slate-900 dark:text-white">خريطة المتجر ثلاثية الأبعاد</h2>
+        <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">اضغط على أي قسم داخل الخريطة لمعرفة أماكن المنتجات
+          وأبرز العروض المتوفرة فيه</p>
+
+        <div class="inline-flex p-1 bg-slate-200 dark:bg-slate-800 rounded-xl mt-4">
+          <button id="floor-1-btn" onclick="switchFloor(1)"
+            class="px-5 py-1.5 rounded-lg text-xs font-black bg-white dark:bg-slate-900 shadow text-skyBrand-600 dark:text-skyBrand-400 transition">الطابق
+            الأرضي</button>
+          <button id="floor-2-btn" onclick="switchFloor(2)"
+            class="px-5 py-1.5 rounded-lg text-xs font-black text-slate-600 dark:text-slate-400 transition">الطابق الأول
+            العلوي</button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div
+          class="hn-map-stage lg:col-span-8 bg-slate-100 dark:bg-slate-800/80 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-inner relative overflow-hidden">
+          <div class="text-xs font-extrabold text-slate-400 mb-2 flex items-center justify-between">
+            <span id="entrance-label">🚪 مدخل السوبر ماركت الرئيسي</span>
+            <span id="current-floor-label">المخطط: الطابق الأرضي (الأغذية والطازج)</span>
+          </div>
+
+          <!-- DYNAMIC ISOMETRIC FLOOR SVG CONTAINER -->
+          <svg id="store-svg-container" viewBox="0 0 800 500"
+            class="w-full h-auto rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm transition-all duration-300">
+            <!-- Rendered dynamically via JavaScript switchFloor() -->
+          </svg>
+        </div>
+
+        <div id="map-zone-info"
+          class="lg:col-span-4 bg-white dark:bg-slate-800 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-md">
+          <div class="flex items-center gap-3 text-skyBrand-600 dark:text-skyBrand-400 mb-3">
+            <i class="fa-solid fa-location-dot text-2xl"></i>
+            <h3 id="map-title" class="text-xl font-black text-slate-800 dark:text-white">انقر على أي ممر بالخريطة</h3>
+          </div>
+          <p id="map-desc" class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-4">اختر قسمك المفضل من
+            الرسم التفاعلي لمعاينة الأصناف المتوفرة داخل الرفوف وتحديد أسهل مسار للتسوق.</p>
+          <div id="map-featured-products" class="space-y-3">
+            <span class="text-xs font-extrabold text-slate-400">المنتجات في هذا القسم:</span>
+            <div class="p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl text-xs text-slate-500 text-center">
+              لم يتم تحديد ممر بعد. اضغط على المربع المطلوب بالخريطة.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Order tracking stepper (new) -->
+    <section id="order-track" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 reveal-on-scroll">
+      <div class="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 p-6 sm:p-8">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+          <div>
+            <h2 class="text-2xl font-black text-slate-900 dark:text-white">تتبع الطلب الحي</h2>
+            <p class="text-sm text-slate-500">فكرة جديدة فوق خدمة الدعم: حالة وهمية للطلب #ORD-9821</p>
+          </div>
+          <span class="text-xs font-bold bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-full">السائق في
+            الطريق</span>
+        </div>
+        <ol class="grid grid-cols-2 lg:grid-cols-4 gap-3 text-sm font-bold">
+          <li class="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-200">1. تم
+            استلام الطلب</li>
+          <li class="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-200">2.
+            تجهيز من الفرع</li>
+          <li
+            class="p-4 rounded-2xl bg-skyBrand-50 dark:bg-skyBrand-950/40 text-skyBrand-800 dark:text-skyBrand-200 ring-2 ring-skyBrand-400">
+            3. خرج للتوصيل</li>
+          <li class="p-4 rounded-2xl bg-slate-100 dark:bg-slate-900 text-slate-500">4. تم التسليم</li>
+        </ol>
+        <p class="text-sm text-slate-500 mt-4">الوصول المتوقع خلال 28 دقيقة إلى المنصورة، حي الجامعة.</p>
+      </div>
+    </section>
+
+    <!-- CUSTOMER TESTIMONIALS -->
+    <section id="testimonials" class="bg-skyBrand-500/10 dark:bg-slate-800/60 py-16 reveal-on-scroll">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-2xl mx-auto mb-12">
+          <span class="text-skyBrand-600 dark:text-skyBrand-400 font-extrabold text-sm uppercase">ماذا يقول
+            عملاؤنا</span>
+          <h2 class="text-3xl font-black text-slate-900 dark:text-white mt-1">ثقة أكثر من 50,000 عائلة مصرية</h2>
+          <p class="scrub-text text-slate-500 dark:text-slate-400 text-sm mt-1">نعتز بتوفير أفضل جودة طازجة وأسرع توصيل
+            يومياً</p>
+        </div>
+
+        <div id="testimonials-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          aria-label="آراء العملاء"></div>
+      </div>
+    </section>
+
+    <!-- CAREERS SECTION -->
+    <section id="careers" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 reveal-on-scroll">
+      <div
+        class="bg-gradient-to-br from-skyBrand-600 to-skyBrand-800 rounded-3xl p-8 sm:p-12 text-white shadow-xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div class="lg:col-span-7 space-y-4">
+          <span class="px-3 py-1 bg-white/20 rounded-full text-xs font-bold uppercase tracking-wide">فرص عمل
+            متوفرة</span>
+          <h2 class="text-3xl sm:text-4xl font-black">انضم إلى فريق عمل HyperNest!</h2>
+          <p class="text-skyBrand-100 text-sm sm:text-base leading-relaxed">نبحث دائماً عن الكفاءات والطاقات الشابة
+            للانضمام لعائلتنا في كافة الفروع (كاشير، منسقي أرفف، موظفي توصيل، ومشرفي أقسام).</p>
+          <div class="flex flex-wrap gap-3 pt-2">
+            <div class="bg-white/10 px-4 py-2 rounded-xl text-xs font-bold">✓ رواتب مجزية وحوافز</div>
+            <div class="bg-white/10 px-4 py-2 rounded-xl text-xs font-bold">✓ تأمين صحي واجتماعي</div>
+            <div class="bg-white/10 px-4 py-2 rounded-xl text-xs font-bold">✓ فرص للترقي السريع</div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-5 bg-white text-slate-800 dark:bg-slate-900 dark:text-white p-6 rounded-2xl shadow-lg">
+          <h3 class="text-lg font-black mb-4 text-center">قدم طلبك الآن بضغطة زر</h3>
+          <form onsubmit="handleCareerSubmit(event)" class="space-y-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-500 mb-1">الاسم بالكامل</label>
+              <input type="text" required placeholder="أدخل اسمك الكامل"
+                class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-skyBrand-400">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-500 mb-1">رقم الهاتف</label>
+              <input type="tel" required placeholder="010xxxxxxxx"
+                class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-skyBrand-400">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-500 mb-1">الوظيفة المطلوبة</label>
+              <select required
+                class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-skyBrand-400">
+                <option value="">اختر الوظيفة...</option>
+                <option value="cashier">كاشير (محاسب مبيعات)</option>
+                <option value="shelf">منسق أرفف ومخزون</option>
+                <option value="delivery">طيار توصيل طلبات</option>
+                <option value="manager">مشرف فرع</option>
+              </select>
+            </div>
+            <button type="submit"
+              class="w-full py-3 rounded-xl bg-skyBrand-600 hover:bg-skyBrand-700 text-white font-extrabold text-sm transition-all shadow-md">إرسال
+              طلب التوظيف</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT & TECHNICAL SUPPORT -->
+    <section id="support" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 reveal-on-scroll">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div class="lg:col-span-5 space-y-6">
+          <div>
+            <span class="text-skyBrand-600 dark:text-skyBrand-400 font-extrabold text-sm uppercase">نحن هنا
+              لمساعدتك</span>
+            <h2 class="text-3xl font-black text-slate-900 dark:text-white mt-1">الدعم الفني وخدمة العملاء</h2>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2">إذا واجهتك أي مشكلة أثناء الطلب أو كان لديك
+              استفسار عن حالة شحنتك، فريقنا متواجد 24/7.</p>
+          </div>
+
+          <div class="space-y-4">
+            <div class="flex items-center gap-4 p-4 rounded-2xl bg-slate-100 dark:bg-slate-800">
+              <div class="w-12 h-12 rounded-xl bg-skyBrand-500 text-white flex items-center justify-center text-xl"><i
+                  class="fa-solid fa-headset"></i></div>
+              <div>
+                <h4 class="font-bold text-sm">الخط الساخن (24 ساعة)</h4>
+                <p class="text-xs text-slate-500">19988 - مجاني من أي محمول</p>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 p-4 rounded-2xl bg-slate-100 dark:bg-slate-800">
+              <div class="w-12 h-12 rounded-xl bg-emerald-500 text-white flex items-center justify-center text-xl"><i
+                  class="fa-brands fa-whatsapp"></i></div>
+              <div>
+                <h4 class="font-bold text-sm">تواصل عبر واتساب</h4>
+                <p class="text-xs text-slate-500">+20 100 123 4567</p>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 p-4 rounded-2xl bg-slate-100 dark:bg-slate-800">
+              <div class="w-12 h-12 rounded-xl bg-indigo-500 text-white flex items-center justify-center text-xl"><i
+                  class="fa-solid fa-envelope"></i></div>
+              <div>
+                <h4 class="font-bold text-sm">البريد الإلكتروني</h4>
+                <p class="text-xs text-slate-500">support@hypernest-egypt.com</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="lg:col-span-7 bg-white dark:bg-slate-800 p-8 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-md">
+          <h3 class="text-xl font-black text-slate-900 dark:text-white mb-2">إرسال تذكرة دعم أو بلاغ عن مشكلة</h3>
+          <p class="text-xs text-slate-500 mb-6">سيتم الرد عليك في خلال 15 دقيقة بواسطة مسؤول الدعم الفني.</p>
+
+          <form onsubmit="handleSupportSubmit(event)" class="space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-500 mb-1">الاسم الكامل</label>
+                <input type="text" required placeholder="أدخل اسمك"
+                  class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-skyBrand-400">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-500 mb-1">رقم الطلب (إن وجد)</label>
+                <input type="text" placeholder="#ORD-9821"
+                  class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-skyBrand-400">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-500 mb-1">نوع المشكلة</label>
+              <select required
+                class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-skyBrand-400">
+                <option value="delivery">تأخير في استلام الطلب</option>
+                <option value="quality">مشكلة في جودة أحد المنتجات</option>
+                <option value="payment">مشكلة في عملية الدفع</option>
+                <option value="other">استفسار آخر</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-500 mb-1">تفاصيل المشكلة</label>
+              <textarea required rows="4" placeholder="اكتب تفاصيل استفسارك هنا..."
+                class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-skyBrand-400"></textarea>
+            </div>
+
+            <button type="submit"
+              class="px-8 py-3 rounded-xl bg-skyBrand-600 hover:bg-skyBrand-700 text-white font-extrabold text-sm transition-all shadow-md">إرسال
+              التذكرة للدعم <i class="fa-solid fa-paper-plane me-1"></i></button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ (footer already linked this idea) -->
+    <section id="faq" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 reveal-on-scroll">
+      <h2 class="text-3xl font-black text-slate-900 dark:text-white mb-6">أسئلة شائعة</h2>
+      <div class="space-y-3">
+        <details class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-4">
+          <summary class="font-black cursor-pointer min-h-11 flex items-center">هل التوصيل مجاني؟</summary>
+          <p class="text-sm text-slate-500 mt-2">نعم للطلبات فوق 200 ج.م كما هو معلن في شريط الموقع العلوي.</p>
+        </details>
+        <details class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-4">
+          <summary class="font-black cursor-pointer min-h-11 flex items-center">إزاي أستخدم كود الخصم؟</summary>
+          <p class="text-sm text-slate-500 mt-2">انسخ HYPERNEST20 من الشريط أو اكتب SAVE10 داخل السلة. عجلة التوفير ما
+            زالت تضيف 15%.</p>
+        </details>
+        <details class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-4">
+          <summary class="font-black cursor-pointer min-h-11 flex items-center">السحب والإفلات مش شغال على الموبايل؟
+          </summary>
+          <p class="text-sm text-slate-500 mt-2">على الشاشات الصغيرة استخدم زر السلة في بطاقة المنتج. السحب يبقى متاح
+            على سطح المكتب.</p>
+        </details>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-slate-900 text-slate-300 pt-16 pb-8 border-t border-slate-800">
+    <div
+      class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 pb-12 border-b border-slate-800">
+      <div class="lg:col-span-2 space-y-4">
+        <div class="flex items-center gap-3">
+          <div
+            class="w-10 h-10 rounded-xl bg-skyBrand-500 text-white flex items-center justify-center text-xl font-black">
+            <i class="fa-solid fa-basket-shopping"></i>
+          </div>
+          <span class="text-2xl font-black text-white">HyperNest</span>
+        </div>
+        <p class="text-xs text-slate-400 leading-relaxed max-w-sm">السوبر ماركت الإلكتروني الأول في مصر لتقديم المنتجات
+          الغذائية الطازجة، الخضروات، والمستلزمات المنزلية بأسعار الجملة والتوصيل السريع.</p>
+        <div class="flex items-center gap-3 text-lg text-slate-400">
+          <a href="#" class="hover:text-skyBrand-400 transition"><i class="fa-brands fa-facebook"></i></a>
+          <a href="#" class="hover:text-skyBrand-400 transition"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" class="hover:text-skyBrand-400 transition"><i class="fa-brands fa-twitter"></i></a>
+          <a href="#" class="hover:text-skyBrand-400 transition"><i class="fa-brands fa-youtube"></i></a>
+        </div>
+      </div>
+
+      <div>
+        <h4 class="text-white text-sm font-extrabold mb-4">روابط سريعة</h4>
+        <ul class="space-y-2 text-xs">
+          <li><a href="#categories" class="hover:text-skyBrand-400 transition">جميع الأقسام</a></li>
+          <li><a href="#products-catalog" class="hover:text-skyBrand-400 transition">المنتجات المميزة</a></li>
+          <li><a href="#store-map" class="hover:text-skyBrand-400 transition">خريطة المتجر التفاعلية</a></li>
+          <li><a href="#careers" class="hover:text-skyBrand-400 transition">الوظائف المتاحة</a></li>
+          <li><a href="#smart-baskets" class="hover:text-skyBrand-400 transition">السلال الذكية</a></li>
+          <li><a href="#faq" class="hover:text-skyBrand-400 transition">الأسئلة الشائعة</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="text-white text-sm font-extrabold mb-4">خدمة العملاء</h4>
+        <ul class="space-y-2 text-xs">
+          <li><a href="#support" class="hover:text-skyBrand-400 transition">مركز المساعدة والشكاوى</a></li>
+          <li><a href="#" class="hover:text-skyBrand-400 transition">سياسة التوصيل والإرجاع</a></li>
+          <li><a href="#" class="hover:text-skyBrand-400 transition">الشروط والأحكام</a></li>
+          <li><a href="#" class="hover:text-skyBrand-400 transition">أسئلة شائعة</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="text-white text-sm font-extrabold mb-4">طرق الدفع المقبولة</h4>
+        <div class="flex flex-wrap gap-2 text-2xl text-slate-400">
+          <i class="fa-brands fa-cc-visa hover:text-white transition"></i>
+          <i class="fa-brands fa-cc-mastercard hover:text-white transition"></i>
+          <i class="fa-solid fa-money-bill-wave hover:text-emerald-400 transition" title="الدفع عند الاستلام"></i>
+          <i class="fa-solid fa-mobile-screen hover:text-skyBrand-400 transition" title="محافظ إلكترونية"></i>
+        </div>
+        <span class="block text-[11px] text-slate-500 mt-2">نوفر خدمة الدفع الكاش أو بالفيزا عند الاستلام.</span>
+      </div>
+    </div>
+
+    <div
+      class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <form onsubmit="handleNewsletter(event)" class="flex flex-col sm:flex-row gap-2 w-full md:max-w-md">
+        <label for="newsletter-email" class="sr-only">البريد للنشرة</label>
+        <input id="newsletter-email" type="email" required placeholder="بريدك للعروض الأسبوعية"
+          class="flex-1 min-h-11 px-4 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white">
+        <button type="submit"
+          class="min-h-11 px-4 rounded-xl bg-skyBrand-500 text-white font-bold text-sm">اشترك</button>
+      </form>
+      <p class="text-center text-xs text-slate-500">© 2026 HyperNest - جميع الحقوق محفوظة | واجهة تسوق ذكية تفاعلية</p>
+    </div>
+  </footer>
+
+
+  <!-- PRODUCT DETAIL MODAL -->
+  <div id="product-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop hidden"
+    role="dialog" aria-modal="true" aria-labelledby="modal-heading">
+    <div
+      class="bg-white dark:bg-slate-900 w-full max-w-xl rounded-3xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800 relative animate-float">
+      <button type="button" onclick="closeProductModal()" aria-label="إغلاق تفاصيل المنتج"
+        class="absolute top-4 left-4 z-10 w-11 h-11 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center hover:bg-rose-500 hover:text-white transition">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <div id="modal-content" class="grid grid-cols-1 sm:grid-cols-2"></div>
+    </div>
+  </div>
+
+  <!-- CART SIDEBAR DRAWER -->
+  <div id="cart-drawer" class="fixed inset-0 z-50 flex justify-end modal-backdrop hidden" role="dialog"
+    aria-modal="true" aria-label="سلة التسوق">
+    <div
+      class="bg-white dark:bg-slate-900 w-full max-w-md h-full shadow-2xl flex flex-col p-6 border-r border-slate-200 dark:border-slate-800">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-basket-shopping text-skyBrand-600 text-xl"></i>
+          <h3 class="font-black text-lg text-slate-900 dark:text-white">سلة التسوق</h3>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="confirmClearCart()"
+            class="text-xs font-bold text-rose-500 hover:bg-rose-50 px-2.5 py-1.5 rounded-xl border border-rose-200 transition flex items-center gap-1">
+            <i class="fa-solid fa-trash-can"></i> إفراغ
+          </button>
+          <button onclick="closeCartDrawer()"
+            class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+      </div>
+      <div id="cart-drawer-items" class="flex-1 overflow-y-auto py-4 space-y-3"></div>
+      <div class="py-3 border-t border-slate-100 dark:border-slate-800">
+        <div class="flex gap-2">
+          <input type="text" id="promo-code-input" placeholder="كوبون الخصم (جرب SAVE10)"
+            class="flex-1 px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-xs focus:outline-none uppercase font-bold">
+          <button onclick="applyPromoCode()"
+            class="px-3 py-2 bg-slate-800 dark:bg-slate-700 text-white rounded-xl text-xs font-bold hover:bg-slate-700 transition">تطبيق</button>
+        </div>
+        <span id="promo-message" class="block text-[11px] font-bold mt-1 text-emerald-500 hidden"></span>
+      </div>
+      <div class="pt-2 border-t border-slate-200 dark:border-slate-800 space-y-3">
+        <div class="space-y-1 text-xs">
+          <div class="flex justify-between text-slate-500">
+            <span>المجموع الفرعي:</span>
+            <span id="drawer-subtotal">0.00 ج.م</span>
+          </div>
+          <div id="discount-row" class="flex justify-between text-emerald-600 dark:text-emerald-400 hidden">
+            <span>الخصم المطبق:</span>
+            <span id="drawer-discount">-0.00 ج.م</span>
+          </div>
+          <div class="flex justify-between font-extrabold text-base pt-1 border-t text-slate-800 dark:text-white">
+            <span>الإجمالي النهائي:</span>
+            <span id="drawer-total-price" class="text-skyBrand-600">0.00 ج.م</span>
+          </div>
+        </div>
+        <fieldset class="border border-slate-200 dark:border-slate-700 rounded-2xl p-3">
+          <legend class="text-xs font-black px-1">موعد التوصيل</legend>
+          <div class="grid grid-cols-3 gap-2 text-[11px] font-bold">
+            <label
+              class="min-h-11 flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 cursor-pointer has-[:checked]:bg-skyBrand-600 has-[:checked]:text-white">
+              <input type="radio" name="delivery-slot" value="الآن (45 د)" class="sr-only" checked
+                onchange="selectDeliverySlot(this.value)"> الآن
+            </label>
+            <label
+              class="min-h-11 flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 cursor-pointer has-[:checked]:bg-skyBrand-600 has-[:checked]:text-white">
+              <input type="radio" name="delivery-slot" value="من 6 إلى 8 م" class="sr-only"
+                onchange="selectDeliverySlot(this.value)"> 6–8 م
+            </label>
+            <label
+              class="min-h-11 flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 cursor-pointer has-[:checked]:bg-skyBrand-600 has-[:checked]:text-white">
+              <input type="radio" name="delivery-slot" value="غدًا صباحًا" class="sr-only"
+                onchange="selectDeliverySlot(this.value)"> غدًا
+            </label>
+          </div>
+          <p id="delivery-slot-label" class="text-[11px] text-slate-500 mt-2">الموعد المختار: الآن (45 د)</p>
+        </fieldset>
+        <button type="button" onclick="checkoutCart()"
+          class="w-full min-h-11 py-3.5 rounded-2xl bg-skyBrand-600 hover:bg-skyBrand-700 text-white font-extrabold text-sm shadow-lg transition">إتمام
+          الطلب الآن</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- WISHLIST DRAWER -->
+  <div id="wishlist-drawer" class="fixed inset-0 z-50 flex justify-end modal-backdrop hidden" role="dialog"
+    aria-modal="true" aria-label="قائمة المفضلة">
+    <div
+      class="bg-white dark:bg-slate-900 w-full max-w-md h-full shadow-2xl flex flex-col p-6 border-r border-slate-200 dark:border-slate-800">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800">
+        <div class="flex items-center gap-2 text-rose-500">
+          <i class="fa-solid fa-heart text-xl"></i>
+          <h3 class="font-black text-lg text-slate-900 dark:text-white">قائمة المفضلة</h3>
+        </div>
+        <button onclick="closeWishlistDrawer()"
+          class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div id="wishlist-drawer-items" class="flex-1 overflow-y-auto py-4 space-y-3"></div>
+    </div>
+  </div>
+
+  <!-- SPIN WHEEL MODAL -->
+  <div id="spin-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop hidden">
+    <div
+      class="bg-white dark:bg-slate-900 w-full max-w-sm rounded-3xl p-6 shadow-2xl text-center border border-slate-200 dark:border-slate-800 relative">
+      <button onclick="toggleSpinWheelModal()"
+        class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 flex items-center justify-center">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <i class="fa-solid fa-gift text-4xl text-amber-500 mb-2"></i>
+      <h3 class="text-xl font-black text-slate-900 dark:text-white">عجلة هدايا هايبر نست</h3>
+      <p class="text-xs text-slate-500 my-2">دور العجلة واكسب خصم فوري على سلتك الآن!</p>
+      <div id="wheel-graphic"
+        class="w-48 h-48 mx-auto my-4 rounded-full border-8 border-amber-400 bg-gradient-to-tr from-skyBrand-500 via-amber-400 to-rose-500 text-white font-black flex items-center justify-center text-2xl shadow-inner transition-transform duration-[3000ms]">
+        🎯 15%
+      </div>
+      <button onclick="spinTheWheel()" id="spin-btn"
+        class="w-full py-3 bg-amber-500 hover:bg-amber-600 text-white font-extrabold rounded-2xl text-xs shadow-md">
+        لف العجلة الآن! 🎡
+      </button>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT APPLICATION LOGIC -->
+  <script src="js/my.js"></script>
+  <script src="js/hypernest-upgrade.js"></script>
+</body>
+
+</html>
