@@ -70,7 +70,7 @@ let loyaltyPoints = 0; // نقاط نادي الولاء
     const deliveryRadio = document.querySelector(`input[name="delivery-slot"][value="${CSS.escape(selectedDeliverySlot)}"]`);
     if (deliveryRadio) deliveryRadio.checked = true;
     if (typeof renderRecentlyViewed === 'function') renderRecentlyViewed();
-    updateLoyaltyUI();
+    if (typeof window.updateLoyaltyUI === 'function') window.updateLoyaltyUI();
   }
 
 

@@ -121,7 +121,7 @@
       <div class="hn-header-row h-auto flex items-center justify-between gap-4">
 
         <!-- Logo -->
-        <a href="#" class="hn-logo flex items-center gap-3 group">
+        <a href="index.html" class="hn-logo flex items-center gap-3 group">
           <div
             class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-skyBrand-600 to-skyBrand-400 text-white flex items-center justify-center text-2xl font-black shadow-lg shadow-skyBrand-500/30 group-hover:scale-105 transition-transform duration-300">
             <i class="fa-solid me-0.5 fa-basket-shopping"></i>
@@ -151,40 +151,40 @@
             class="absolute top-14 right-0 w-80 bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 p-4 hidden z-50 animate-float">
             <h4 class="text-xs font-black text-slate-400 mb-3 px-2">جميع الفئات والعروض</h4>
             <div class="space-y-1">
-              <a href="#categories" onclick="filterCategory('produce'); toggleMegaMenu();"
+              <a href="index.html#categories"
                 class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-skyBrand-50 dark:hover:bg-slate-800 text-xs font-bold transition">
                 <span
                   class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center text-sm"><i
                     class="fa-solid fa-apple-whole"></i></span>
                 <span>خضار وفواكه طازجة</span>
               </a>
-              <a href="#categories" onclick="filterCategory('dairy'); toggleMegaMenu();"
+              <a href="index.html#categories"
                 class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-skyBrand-50 dark:hover:bg-slate-800 text-xs font-bold transition">
                 <span class="w-8 h-8 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center text-sm"><i
                     class="fa-solid fa-cheese"></i></span>
                 <span>ألبان، أجبان وبيض</span>
               </a>
-              <a href="#categories" onclick="filterCategory('bakery'); toggleMegaMenu();"
+              <a href="index.html#categories"
                 class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-skyBrand-50 dark:hover:bg-slate-800 text-xs font-bold transition">
                 <span
                   class="w-8 h-8 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center text-sm"><i
                     class="fa-solid fa-bread-slice"></i></span>
                 <span>مخبوزات وحلويات الفرن</span>
               </a>
-              <a href="#categories" onclick="filterCategory('meat'); toggleMegaMenu();"
+              <a href="index.html#categories"
                 class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-skyBrand-50 dark:hover:bg-slate-800 text-xs font-bold transition">
                 <span class="w-8 h-8 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center text-sm"><i
                     class="fa-solid fa-drumstick-bite"></i></span>
                 <span>لحوم، دواجن ومجمدات</span>
               </a>
-              <a href="#categories" onclick="filterCategory('beverages'); toggleMegaMenu();"
+              <a href="index.html#categories"
                 class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-skyBrand-50 dark:hover:bg-slate-800 text-xs font-bold transition">
                 <span
                   class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center text-sm"><i
                     class="fa-solid fa-wine-bottle"></i></span>
                 <span>مشروبات وعصائر</span>
               </a>
-              <a href="#categories" onclick="filterCategory('household'); toggleMegaMenu();"
+              <a href="index.html#categories"
                 class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-skyBrand-50 dark:hover:bg-slate-800 text-xs font-bold transition">
                 <span class="w-8 h-8 rounded-lg bg-sky-100 text-sky-600 flex items-center justify-center text-sm"><i
                     class="fa-solid fa-pump-soap"></i></span>
@@ -210,9 +210,7 @@
         <!-- Controls: Wishlist, Theme & Drop Zone Cart -->
         <div class="hn-header-controls flex items-center gap-2 sm:gap-3">
 
-          <a href="dashboard.html"
-            class="min-h-11 min-w-11 p-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-skyBrand-700 dark:text-amber-300 flex items-center justify-center"
-            title="حسابي" aria-label="لوحة حسابي"><i class="fa-solid fa-user"></i></a>
+          <a href="dashboard.html" class="min-h-11 min-w-11 p-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-skyBrand-700 dark:text-amber-300 flex items-center justify-center" title="حسابي" aria-label="لوحة حسابي"><i class="fa-solid fa-user"></i></a>
           <!-- Wishlist -->
           <button type="button" onclick="openWishlistDrawer()"
             class="relative min-h-11 min-w-11 p-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-rose-500 hover:bg-rose-50 dark:hover:bg-slate-700 transition"
@@ -259,28 +257,29 @@
       <!-- Navigation Links (كلمة واحدة فقط لكل عنصر) -->
       <nav class="hidden lg:flex items-center justify-center gap-6 font-semibold text-sm pb-1"
         aria-label="التنقل الرئيسي">
-        <a href="#categories"
+        <a href="index.html" class="flex items-center gap-1.5 hover:text-skyBrand-600 dark:hover:text-skyBrand-400 transition-colors"><i class="fa-solid fa-house text-skyBrand-500" aria-hidden="true"></i> الرئيسية</a>
+        <a href="index.html#categories"
           class="flex items-center gap-1.5 hover:text-skyBrand-600 dark:hover:text-skyBrand-400 transition-colors"><i
             class="fa-solid fa-table-cells-large text-skyBrand-500" aria-hidden="true"></i> الأقسام</a>
         <a href="products.html"
           class="flex items-center gap-1.5 hover:text-skyBrand-600 dark:hover:text-skyBrand-400 transition-colors"><i
             class="fa-solid fa-star text-skyBrand-500" aria-hidden="true"></i> المختارة</a>
-        <a href="#store-map"
+        <a href="index.html#store-map"
           class="flex items-center gap-1.5 hover:text-skyBrand-600 dark:hover:text-skyBrand-400 transition-colors"><i
             class="fa-solid fa-map-marked-alt text-skyBrand-500" aria-hidden="true"></i> الخريطة</a>
-        <a href="#testimonials"
+        <a href="index.html#testimonials"
           class="flex items-center gap-1.5 hover:text-skyBrand-600 dark:hover:text-skyBrand-400 transition-colors"><i
             class="fa-solid fa-comment-dots text-skyBrand-500" aria-hidden="true"></i> الآراء</a>
-        <a href="#smart-baskets"
+        <a href="index.html#smart-baskets"
           class="flex items-center gap-1.5 hover:text-skyBrand-600 dark:hover:text-skyBrand-400 transition-colors"><i
             class="fa-solid fa-basket-shopping text-skyBrand-500" aria-hidden="true"></i> السلال</a>
-        <a href="#careers"
+        <a href="index.html#careers"
           class="flex items-center gap-1.5 hover:text-skyBrand-600 dark:hover:text-skyBrand-400 transition-colors"><i
             class="fa-solid fa-briefcase text-skyBrand-500" aria-hidden="true"></i> الوظائف</a>
-        <a href="#faq"
+        <a href="index.html#faq"
           class="flex items-center gap-1.5 hover:text-skyBrand-600 dark:hover:text-skyBrand-400 transition-colors"><i
             class="fa-solid fa-circle-question text-skyBrand-500" aria-hidden="true"></i> الأسئلة</a>
-        <a href="#support"
+        <a href="index.html#support"
           class="flex items-center gap-1.5 hover:text-skyBrand-600 dark:hover:text-skyBrand-400 transition-colors"><i
             class="fa-solid fa-headset text-skyBrand-500" aria-hidden="true"></i> التواصل</a>
       </nav>
@@ -300,31 +299,32 @@
     <!-- Mobile Nav Menu Drawer -->
     <div id="mobile-menu"
       class="hidden lg:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 py-4 flex flex-col gap-3 font-semibold text-sm">
-      <a href="#categories" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-grip"
+      <a href="index.html" class="hn-mobile-link"><i class="fa-solid fa-house" aria-hidden="true"></i><span>الرئيسية</span><i class="fa-solid fa-arrow-left hn-mobile-arrow" aria-hidden="true"></i></a>
+      <a href="index.html#categories" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-grip"
           aria-hidden="true"></i><span>الأقسام</span><i class="fa-solid fa-arrow-left hn-mobile-arrow"
           aria-hidden="true"></i></a>
-      <a href="products.html" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-basket-shopping"
-          aria-hidden="true"></i><span>المنتجات</span><i class="fa-solid fa-arrow-left hn-mobile-arrow"
-          aria-hidden="true"></i></a>
-      <a href="#smart-baskets" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-boxes-stacked"
+      <a href="products.html" onclick="toggleMobileMenu()" class="hn-mobile-link"><i
+          class="fa-solid fa-basket-shopping" aria-hidden="true"></i><span>المنتجات</span><i
+          class="fa-solid fa-arrow-left hn-mobile-arrow" aria-hidden="true"></i></a>
+      <a href="index.html#smart-baskets" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-boxes-stacked"
           aria-hidden="true"></i><span>السلال الذكية</span><i class="fa-solid fa-arrow-left hn-mobile-arrow"
           aria-hidden="true"></i></a>
-      <a href="#store-map" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-map-location-dot"
+      <a href="index.html#store-map" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-map-location-dot"
           aria-hidden="true"></i><span>الخريطة</span><i class="fa-solid fa-arrow-left hn-mobile-arrow"
           aria-hidden="true"></i></a>
-      <a href="#order-track" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-truck-fast"
+      <a href="index.html#order-track" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-truck-fast"
           aria-hidden="true"></i><span>تتبع الطلب</span><i class="fa-solid fa-arrow-left hn-mobile-arrow"
           aria-hidden="true"></i></a>
-      <a href="#testimonials" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-star"
+      <a href="index.html#testimonials" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-star"
           aria-hidden="true"></i><span>آراء العملاء</span><i class="fa-solid fa-arrow-left hn-mobile-arrow"
           aria-hidden="true"></i></a>
-      <a href="#faq" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-circle-question"
+      <a href="index.html#faq" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-circle-question"
           aria-hidden="true"></i><span>الأسئلة الشائعة</span><i class="fa-solid fa-arrow-left hn-mobile-arrow"
           aria-hidden="true"></i></a>
-      <a href="#careers" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-briefcase"
+      <a href="index.html#careers" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-briefcase"
           aria-hidden="true"></i><span>الوظائف</span><i class="fa-solid fa-arrow-left hn-mobile-arrow"
           aria-hidden="true"></i></a>
-      <a href="#support" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-headset"
+      <a href="index.html#support" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-headset"
           aria-hidden="true"></i><span>التواصل</span><i class="fa-solid fa-arrow-left hn-mobile-arrow"
           aria-hidden="true"></i></a>
     </div>
@@ -332,41 +332,15 @@
 
   <!-- MAIN CONTENT CONTAINER -->
   <main id="main" class="hn-page-wrap" data-page="products">
-    <section class="hn-page-heading">
-      <div>
-        <h1>كل منتجات HyperNest</h1>
-        <p>اختار احتياجاتك من كل الأقسام في مكان واحد.</p>
-      </div><span id="hn-products-count" class="hn-product-count">150 منتج</span>
-    </section>
+    <section class="hn-page-heading"><div><h1>كل منتجات HyperNest</h1><p>اختار احتياجاتك من كل الأقسام في مكان واحد.</p></div><span id="hn-products-count" class="hn-product-count">150 منتج</span></section>
     <section class="hn-page-filters" aria-label="فلاتر المنتجات">
       <input id="hn-product-search" type="search" placeholder="ابحث عن منتج..." aria-label="ابحث عن منتج">
-      <select id="hn-product-category" aria-label="التصنيف">
-        <option value="all">كل التصنيفات</option>
-        <option value="produce">خضار وفاكهة</option>
-        <option value="dairy">ألبان وأجبان</option>
-        <option value="bakery">مخبوزات</option>
-        <option value="meat">لحوم ومجمدات</option>
-        <option value="beverages">مشروبات</option>
-        <option value="home-tools">أدوات منزلية</option>
-        <option value="electronics">أجهزة كهربائية</option>
-        <option value="cleaning">منظفات ومطهرات</option>
-        <option value="household">مستلزمات منزلية</option>
-      </select>
-      <select id="hn-product-sort" aria-label="ترتيب المنتجات">
-        <option value="featured">الترتيب الافتراضي</option>
-        <option value="price-low">السعر: الأقل أولًا</option>
-        <option value="price-high">السعر: الأعلى أولًا</option>
-        <option value="rating">الأعلى تقييمًا</option>
-        <option value="name">الاسم</option>
-      </select>
-      <label class="hn-page-range">الحد الأقصى للسعر <input id="hn-product-budget" type="range" min="50" max="1500"
-          step="25" value="1500"><b id="hn-product-budget-value">1500 ج.م</b></label>
+      <select id="hn-product-category" aria-label="التصنيف"><option value="all">كل التصنيفات</option><option value="produce">خضار وفاكهة</option><option value="dairy">ألبان وأجبان</option><option value="bakery">مخبوزات</option><option value="meat">لحوم ومجمدات</option><option value="beverages">مشروبات</option><option value="home-tools">أدوات منزلية</option><option value="electronics">أجهزة كهربائية</option><option value="cleaning">منظفات ومطهرات</option><option value="household">مستلزمات منزلية</option></select>
+      <select id="hn-product-sort" aria-label="ترتيب المنتجات"><option value="featured">الترتيب الافتراضي</option><option value="price-low">السعر: الأقل أولًا</option><option value="price-high">السعر: الأعلى أولًا</option><option value="rating">الأعلى تقييمًا</option><option value="name">الاسم</option></select>
+      <label class="hn-page-range">الحد الأقصى للسعر <input id="hn-product-budget" type="range" min="100" max="10000" step="100" value="10000"><b id="hn-product-budget-value">10000 ج.م</b></label>
     </section>
     <section id="hn-all-products" class="hn-page-products-grid" aria-live="polite"></section>
-    <section class="hn-orders-card mt-10">
-      <h2 class="text-lg font-black mb-3">اقتراحات تكمل سلتك</h2>
-      <div id="hn-page-smart-baskets" class="hn-page-products-grid"></div>
-    </section>
+    <section class="hn-orders-card mt-10"><h2 class="text-lg font-black mb-3">اقتراحات تكمل سلتك</h2><div id="hn-page-smart-baskets" class="hn-page-products-grid"></div></section>
     <button id="hn-products-more" class="hn-page-more" type="button">تحميل المزيد</button>
   </main>
   <!-- FOOTER -->
@@ -394,20 +368,20 @@
       <div>
         <h4 class="text-white text-sm font-extrabold mb-4">روابط سريعة</h4>
         <ul class="space-y-2 text-xs">
-          <li><a href="#categories" class="hover:text-skyBrand-400 transition">جميع الأقسام</a></li>
+          <li><a href="index.html#categories" class="hover:text-skyBrand-400 transition">جميع الأقسام</a></li>
           <li><a href="products.html" class="hover:text-skyBrand-400 transition">كل المنتجات</a></li>
           <li><a href="dashboard.html" class="hover:text-skyBrand-400 transition">حسابي وطلباتي</a></li>
-          <li><a href="#store-map" class="hover:text-skyBrand-400 transition">خريطة المتجر التفاعلية</a></li>
-          <li><a href="#careers" class="hover:text-skyBrand-400 transition">الوظائف المتاحة</a></li>
-          <li><a href="#smart-baskets" class="hover:text-skyBrand-400 transition">السلال الذكية</a></li>
-          <li><a href="#faq" class="hover:text-skyBrand-400 transition">الأسئلة الشائعة</a></li>
+          <li><a href="index.html#store-map" class="hover:text-skyBrand-400 transition">خريطة المتجر التفاعلية</a></li>
+          <li><a href="index.html#careers" class="hover:text-skyBrand-400 transition">الوظائف المتاحة</a></li>
+          <li><a href="index.html#smart-baskets" class="hover:text-skyBrand-400 transition">السلال الذكية</a></li>
+          <li><a href="index.html#faq" class="hover:text-skyBrand-400 transition">الأسئلة الشائعة</a></li>
         </ul>
       </div>
 
       <div>
         <h4 class="text-white text-sm font-extrabold mb-4">خدمة العملاء</h4>
         <ul class="space-y-2 text-xs">
-          <li><a href="#support" class="hover:text-skyBrand-400 transition">مركز المساعدة والشكاوى</a></li>
+          <li><a href="index.html#support" class="hover:text-skyBrand-400 transition">مركز المساعدة والشكاوى</a></li>
           <li><a href="#" class="hover:text-skyBrand-400 transition">سياسة التوصيل والإرجاع</a></li>
           <li><a href="#" class="hover:text-skyBrand-400 transition">الشروط والأحكام</a></li>
           <li><a href="#" class="hover:text-skyBrand-400 transition">أسئلة شائعة</a></li>

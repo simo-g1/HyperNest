@@ -760,13 +760,14 @@
     const target = document.getElementById('hn-loyalty-points');
     if (points && target) target.textContent = points.textContent.replace(/[^0-9]/g, '') || '240';
   }
-  const BUDGET_MAX = 1500;
+  const BUDGET_MIN = 100;
+  const BUDGET_MAX = 10000;
 
   function resetBudgetUI() {
     maxBudget = BUDGET_MAX;
     const range = document.getElementById('budget-range');
     const label = document.getElementById('budget-value');
-    if (range) { range.max = BUDGET_MAX; range.value = BUDGET_MAX; }
+    if (range) { range.min = BUDGET_MIN; range.max = BUDGET_MAX; range.value = BUDGET_MAX; }
     if (label) label.textContent = `${BUDGET_MAX} ج.م`;
   }
   /* ===== HyperNest round 3 extras ===== */
@@ -868,6 +869,8 @@
     const el = document.getElementById('hn-loyalty-points');
     if (el) el.textContent = String(loyaltyPoints);
   }
+
+  window.updateLoyaltyUI = updateLoyaltyUI;
 
   function initBasketReveal() {
     const section = document.getElementById('smart-baskets');
