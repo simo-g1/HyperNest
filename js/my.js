@@ -1,71 +1,3 @@
-// الملف الاساسي (شغال)
-/* 1. EXTENDED DATABASE (50 PRODUCTS) */
-const PRODUCTS_DATABASE = [
-  { id: 1, name: "تفاح أحمر سكري فاخر (1 كجم)", category: "produce", price: 45.00, rating: 4.9, icon: "🍎", stock: "متوفر", image: "imgs/food/product-01.webp", desc: "تفاح أحمر طازج ومقرمش غني بالفيتامينات وطبيعي 100%." },
-  { id: 2, name: "موز بلدي فاخر طازج (1 كجم)", category: "produce", price: 25.00, rating: 4.8, icon: "🍌", stock: "متوفر", image: "imgs/food/product-02.webp", desc: "موز بلدي طبيعي حلاوة فائقة ومثالي للطاقة اليومية." },
-  { id: 3, name: "حليب طازج كامل الدسم (1 لتر)", category: "dairy", price: 38.00, rating: 4.7, icon: "🥛", stock: "متوفر", image: "imgs/food/product-03.webp", desc: "حليب بقر طازج نقي غني بالكالسيوم بدون أي مواد حافظة." },
-  { id: 4, name: "جبنة شيدر مستوردة أصلية (250 جم)", category: "dairy", price: 65.00, rating: 4.9, icon: "🧀", stock: "متوفر", image: "imgs/food/product-04.webp", desc: "جبنة شيدر حمراء طعم غني ومثالي مع السندوتشات والبيتزا." },
-  { id: 5, name: "خبز التوست الأبيض الطازج", category: "bakery", price: 28.00, rating: 4.6, icon: "🍞", stock: "متوفر", image: "imgs/food/product-05.webp", desc: "خبز توست طري ومخبوز طازجاً يومياً من أفضل أنواع الدقيق." },
-  { id: 6, name: "كرواسون فرنسي بالزبدة (4 قطع)", category: "bakery", price: 42.00, rating: 4.8, icon: "🥐", stock: "محدود", image: "imgs/food/product-06.webp", desc: "كرواسون فرنسي هش غني بزبده نيوزيلاندية فاخرة." },
-  { id: 7, name: "صدور دجاج طازجة بدون عظم (1 كجم)", category: "meat", price: 210.00, rating: 4.9, icon: "🍗", stock: "متوفر", image: "imgs/food/product-07.webp", desc: "صدور دجاج مغسولة ومنظفة وجاهزة للطهي الفوري." },
-  { id: 8, name: "عصير برتقال طبيعي 100% (1 لتر)", category: "beverages", price: 32.00, rating: 4.7, icon: "🍊", stock: "متوفر", image: "imgs/food/product-08.webp", desc: "عصير برتقال معصور طازج بدون أي إضافات سكر أو ماء." },
-  { id: 9, name: "مسحوق غسيل أتوماتيك (3 كجم)", category: "household", price: 175.00, rating: 4.8, icon: "🧼", stock: "متوفر", image: "imgs/food/product-09.webp", desc: "مسحوق غسيل عالي التفاعل للنظافة والرائحة الانتعاشية للملابس." },
-  { id: 10, name: "طماطم مزرعية طازجة (1 كجم)", category: "produce", price: 18.00, rating: 4.5, icon: "🍅", stock: "متوفر", image: "imgs/food/product-10.webp", desc: "طماطم حمراء طازجة مثالية للسلطات والطهي اليومي." }
-];
-
-// Products 11–50: named demo inventory instead of anonymous numbered items.
-const EXTRA_GROCERY_PRODUCTS = [
-  ['خيار بلدي طازج (1 كجم)', 'produce', 'fa-carrot', 'خيار أخضر طازج مناسب للسلطات والتقديم اليومي.'],
-  ['بطاطس طازجة (1 كجم)', 'produce', 'fa-carrot', 'بطاطس مناسبة للقلي والفرن والطهي المنزلي.'],
-  ['بصل أحمر (1 كجم)', 'produce', 'fa-carrot', 'بصل أحمر طازج للاستخدام في مختلف وصفات البيت.'],
-  ['جزر طازج (1 كجم)', 'produce', 'fa-carrot', 'جزر طازج ومقرمش غني بالألياف.'],
-  ['خس أخضر طازج', 'produce', 'fa-leaf', 'خس طازج للسلطات والسندوتشات.'],
-  ['فلفل ألوان مشكل (500 جم)', 'produce', 'fa-pepper-hot', 'تشكيلة فلفل ألوان لإضافة نكهة للوجبات.'],
-  ['فراولة طازجة (500 جم)', 'produce', 'fa-apple-whole', 'فراولة طازجة مناسبة للتحلية والعصائر.'],
-  ['ليمون بلدي (1 كجم)', 'produce', 'fa-lemon', 'ليمون طازج للمشروبات والتتبيل.'],
-  ['زبادي كامل الدسم (4 عبوات)', 'dairy', 'fa-bottle-water', 'زبادي طازج مناسب للفطور والوجبات الخفيفة.'],
-  ['جبنة بيضاء فيتا (500 جم)', 'dairy', 'fa-cheese', 'جبنة فيتا بطعم متوازن للفطور والسندوتشات.'],
-  ['زبدة طبيعية (200 جم)', 'dairy', 'fa-cheese', 'زبدة مناسبة للمخبوزات والطهي.'],
-  ['قشطة طازجة (250 جم)', 'dairy', 'fa-bowl-food', 'قشطة طازجة للحلويات والفطور.'],
-  ['بيض أبيض طازج (30 بيضة)', 'dairy', 'fa-egg', 'بيض طازج للاستخدام اليومي.'],
-  ['جبنة موتزاريلا مبشورة (200 جم)', 'dairy', 'fa-cheese', 'موتزاريلا مبشورة للبيتزا والمكرونة.'],
-  ['عيش بلدي طازج (10 أرغفة)', 'bakery', 'fa-bread-slice', 'خبز بلدي طازج مناسب للوجبات اليومية.'],
-  ['باتيه بالجبنة (4 قطع)', 'bakery', 'fa-cookie-bite', 'باتيه مخبوز بحشوة الجبنة.'],
-  ['بسكويت سادة بالشاي (عبوة)', 'bakery', 'fa-cookie', 'بسكويت خفيف مناسب مع الشاي والمشروبات.'],
-  ['كيك فانيليا مغلف', 'bakery', 'fa-cake-candles', 'كيك فانيليا خفيف للتحلية.'],
-  ['لحم مفروم بقري (500 جم)', 'meat', 'fa-drumstick-bite', 'لحم بقري مفروم مجهز للاستخدام في وصفات متعددة.'],
-  ['أوراك دجاج طازجة (1 كجم)', 'meat', 'fa-drumstick-bite', 'أوراك دجاج طازجة مناسبة للشوي والفرن.'],
-  ['سمك فيليه مجمد (500 جم)', 'meat', 'fa-fish', 'فيليه سمك مجمد سهل التحضير.'],
-  ['برجر بقري مجمد (8 قطع)', 'meat', 'fa-burger', 'أقراص برجر بقري جاهزة للطهي.'],
-  ['سجق شرقي (500 جم)', 'meat', 'fa-drumstick-bite', 'سجق شرقي مناسب للطهي السريع.'],
-  ['كفتة متبلة (500 جم)', 'meat', 'fa-drumstick-bite', 'كفتة متبلة جاهزة للتسوية.'],
-  ['مياه معدنية (6 زجاجات)', 'beverages', 'fa-bottle-water', 'عبوات مياه معدنية للشرب اليومي.'],
-  ['مشروب تفاح (1 لتر)', 'beverages', 'fa-glass-water', 'مشروب بنكهة التفاح مناسب للتقديم بارداً.'],
-  ['شاي أسود ناعم (250 جم)', 'beverages', 'fa-mug-hot', 'شاي أسود للاستخدام اليومي.'],
-  ['قهوة تركي (200 جم)', 'beverages', 'fa-mug-hot', 'قهوة تركي مطحونة لتحضير القهوة في المنزل.'],
-  ['مشروب مانجو (1 لتر)', 'beverages', 'fa-glass-water', 'مشروب مانجو بطعم الفاكهة.'],
-  ['مناديل ورقية (عبوة 6)', 'household', 'fa-toilet-paper', 'مناديل ناعمة للاستخدام المنزلي.'],
-  ['سائل غسيل أطباق (650 مل)', 'household', 'fa-soap', 'سائل لتنظيف الأطباق وإزالة الدهون.'],
-  ['منظف أرضيات برائحة الليمون (1 لتر)', 'household', 'fa-spray-can-sparkles', 'منظف أرضيات للاستخدام المنزلي.'],
-  ['مطهر متعدد الاستخدامات (500 مل)', 'household', 'fa-spray-can', 'مطهر للأسطح المنزلية وفق تعليمات العبوة.'],
-  ['أكياس قمامة كبيرة (30 كيس)', 'household', 'fa-trash-can', 'أكياس قمامة للاستخدام اليومي.'],
-  ['إسفنجة تنظيف أطباق (5 قطع)', 'household', 'fa-soap', 'إسفنج عملي لتنظيف أدوات المطبخ.'],
-  ['منعم أقمشة (1 لتر)', 'household', 'fa-shirt', 'منعم أقمشة للغسيل المنزلي.'],
-  ['شامبو للشعر (400 مل)', 'household', 'fa-pump-soap', 'شامبو للاستخدام اليومي.'],
-  ['معجون أسنان بالنعناع (100 مل)', 'household', 'fa-tooth', 'معجون أسنان بنكهة النعناع.'],
-  ['صابون يدين سائل (500 مل)', 'household', 'fa-pump-soap', 'صابون سائل لغسل اليدين.'],
-  ['مناديل مطبخ رول (2 لفة)', 'household', 'fa-scroll', 'مناديل مطبخ عملية للاستخدام اليومي.']
-];
-EXTRA_GROCERY_PRODUCTS.forEach(([name, category, faIcon, desc], index) => {
-  const id = index + 11;
-  PRODUCTS_DATABASE.push({
-    id, name, category, price: parseFloat((15 + (id * 4.5) % 180).toFixed(2)),
-    rating: parseFloat((4.0 + (id % 10) * 0.1).toFixed(1)), icon: '', faIcon,
-    stock: id % 4 === 0 ? 'كمية محدودة' : 'متوفر',
-    image: `imgs/food/product-${id}.webp`, desc
-  });
-});
-
 let currentFloor = 1;
 let cart = [];
 let wishlist = [];
@@ -85,7 +17,8 @@ const CATEGORY_LABELS = {
   bakery: 'مخبوزات وحلويات الفرن',
   meat: 'لحوم، دواجن ومجمدات',
   beverages: 'مشروبات وعصائر',
-  household: 'منظفات ومستلزمات المنزل'
+  household: 'منظفات ومستلزمات المنزل',
+  cleaning: 'منظفات ومطهرات'
 };
 
 /* 2. INITIALIZATION */

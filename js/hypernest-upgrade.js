@@ -5,10 +5,8 @@
 (() => {
   'use strict';
 
-  const STORAGE_KEY = 'hypernest-demo-state-v1';
   const INSTAGRAM_URL = 'https://www.instagram.com/simo.g3/';
   const GITHUB_URL = 'https://github.com/simo-g1';
-  let loyaltyPoints = 0; // نقاط نادي الولاء (تتحفظ في localStorage)
 
   const CATEGORY_META = [
     { id: 'all', label: 'كل المنتجات', icon: 'fa-layer-group' },
@@ -19,66 +17,18 @@
     { id: 'beverages', label: 'مشروبات', icon: 'fa-bottle-water' },
     { id: 'household', label: 'منظفات', icon: 'fa-soap' },
     { id: 'home-tools', label: 'أدوات منزلية', icon: 'fa-house' },
-    { id: 'electronics', label: 'أجهزة كهربائية', icon: 'fa-plug' }
+    { id: 'electronics', label: 'أجهزة كهربائية', icon: 'fa-plug' },
+    { id: 'cleaning', label: 'منظفات ومطهرات', icon: 'fa-spray-can-sparkles' }
   ];
 
-  const NEW_PRODUCTS = [
-    [51, 'طقم أطباق سيراميك', 'home-tools', 240, 'fa-plate-wheat', 1],
-    [52, 'طقم حلل استانلس ستيل', 'home-tools', 520, 'fa-kitchen-set', 2],
-    [53, 'طاسة طهي غير لاصقة', 'home-tools', 220, 'fa-utensils', 3],
-    [54, 'لوح تقطيع خشبي', 'home-tools', 95, 'fa-utensils', 4],
-    [55, 'طقم أدوات مطبخ خشبي', 'home-tools', 145, 'fa-utensils', 5],
-    [56, 'علب حفظ طعام زجاجية', 'home-tools', 185, 'fa-box-open', 6],
-    [57, 'غلاية مياه كهربائية', 'electronics', 330, 'fa-plug', 7],
-    [58, 'خلاط كهربائي متعدد السرعات', 'electronics', 390, 'fa-blender', 8],
-    [59, 'محمصة خبز كهربائية', 'electronics', 360, 'fa-fire-burner', 9],
-    [60, 'قلاية هوائية', 'electronics', 690, 'fa-fire', 10],
-    [61, 'حامل أطباق للمطبخ', 'home-tools', 125, 'fa-sink', 11],
-    [62, 'حامل سكاكين خشبي', 'home-tools', 175, 'fa-utensils', 12],
-    [63, 'طقم أطباق وأوعية', 'home-tools', 210, 'fa-bowl-food', 13],
-    [64, 'ممسحة أرضيات دوارة', 'home-tools', 135, 'fa-broom', 14],
-    [65, 'مكنسة كهربائية', 'electronics', 950, 'fa-plug', 15],
-    [66, 'مكواة بخار للملابس', 'electronics', 350, 'fa-shirt', 16],
-    [67, 'منشر ملابس قابل للطي', 'home-tools', 275, 'fa-shirt', 17],
-    [68, 'سلة غسيل قماشية', 'home-tools', 155, 'fa-basket-shopping', 18],
-    [69, 'طقم فوط قطنية', 'home-tools', 120, 'fa-hands-bubbles', 19],
-    [70, 'منظم حمام بموزعات صابون', 'home-tools', 165, 'fa-bath', 20],
-    [71, 'ميزان رقمي', 'electronics', 260, 'fa-scale-balanced', 21],
-    [72, 'طقم برطمانات تخزين', 'home-tools', 190, 'fa-jar', 22],
-    [73, 'صندوق خبز للمطبخ', 'home-tools', 230, 'fa-box', 23],
-    [74, 'منظم أحذية متعدد الأرفف', 'home-tools', 260, 'fa-shoe-prints', 24],
-    [75, 'سلة تخزين وغسيل', 'home-tools', 145, 'fa-basket-shopping', 25],
-    [76, 'منظم توابل دوّار', 'home-tools', 165, 'fa-jar', 26],
-    [77, 'منظم أدوات المطبخ', 'home-tools', 115, 'fa-boxes-stacked', 27],
-    [78, 'سلة مهملات استانلس', 'home-tools', 180, 'fa-trash-can', 28],
-    [79, 'نبات زينة داخلي', 'home-tools', 130, 'fa-seedling', 29],
-    [80, 'طقم شماعات ملابس', 'home-tools', 75, 'fa-shirt', 30],
-    [81, 'كرسي مكتب مريح', 'home-tools', 1250, 'fa-chair', 31],
-    [82, 'مصباح مكتب LED', 'electronics', 155, 'fa-lightbulb', 32],
-    [83, 'منظم حمام متعدد الاستخدام', 'home-tools', 105, 'fa-bath', 33],
-    [84, 'طقم ملايات سرير', 'home-tools', 320, 'fa-bed', 34],
-    [85, 'سلم منزلي قابل للطي', 'home-tools', 390, 'fa-stairs', 35],
-    [86, 'منشر ملابس أرضي', 'home-tools', 275, 'fa-shirt', 36],
-    [87, 'طقم مكنسة وفرشاة', 'home-tools', 135, 'fa-broom', 37],
-    [88, 'صندوق تخزين قماشي', 'home-tools', 120, 'fa-box', 38],
-    [89, 'سلسلة إضاءة LED للديكور', 'electronics', 95, 'fa-lightbulb', 39],
-    [90, 'ساعة حائط عصرية', 'home-tools', 180, 'fa-clock', 40],
-    [91, 'حقيبة عدة منزلية', 'home-tools', 420, 'fa-toolbox', 41],
-    [92, 'شنيور كهربائي', 'electronics', 780, 'fa-screwdriver-wrench', 42],
-    [93, 'صندوق عدة متين', 'home-tools', 210, 'fa-toolbox', 43],
-    [94, 'مسدس شمع كهربائي', 'electronics', 185, 'fa-plug', 44],
-    [95, 'طقم مفكات متعدد الاستخدام', 'home-tools', 160, 'fa-screwdriver', 45],
-    [96, 'متر قياس 5 أمتار', 'home-tools', 85, 'fa-ruler', 46],
-    [97, 'طقم مفاتيح ربط', 'home-tools', 240, 'fa-wrench', 47],
-    [98, 'طقم عدة ميكانيكية', 'home-tools', 390, 'fa-toolbox', 48],
-    [99, 'كشاف يدوي LED', 'electronics', 145, 'fa-lightbulb', 49],
-    [100, 'خرطوم مياه للحديقة', 'home-tools', 220, 'fa-faucet-drip', 50]
-  ];
+
+
+
 
   const ICON_BY_CATEGORY = {
     produce: 'fa-apple-whole', dairy: 'fa-cheese', bakery: 'fa-bread-slice',
     meat: 'fa-drumstick-bite', beverages: 'fa-bottle-water', household: 'fa-soap',
-    'home-tools': 'fa-house', electronics: 'fa-plug'
+    'home-tools': 'fa-house', electronics: 'fa-plug', cleaning: 'fa-spray-can-sparkles'
   };
 
   const EMOJI_ICON_MAP = new Map([
@@ -92,73 +42,6 @@
     ['📩', 'fa-envelope'], ['🗑️', 'fa-trash-can'], ['🌗', 'fa-circle-half-stroke'], ['📋', 'fa-copy']
   ]);
 
-  function safeReadState() {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? JSON.parse(raw) : null;
-    } catch (error) {
-      console.warn('[HyperNest] Could not read saved state:', error);
-      return null;
-    }
-  }
-
-  function saveState() {
-    try {
-      const snapshot = {
-        cart: cart.map(item => ({ id: Number(item.id), quantity: Number(item.quantity) })),
-        wishlist: wishlist.map(Number),
-        discount: Number(appliedDiscountPercent) || 0,
-        promoCode: document.getElementById('promo-code-input')?.value.trim().toUpperCase() || '',
-        theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light',
-        deliverySlot: selectedDeliverySlot || 'الآن (45 د)',
-        recentlyViewed: Array.isArray(recentlyViewed) ? recentlyViewed.slice(0, 6) : [],
-        loyaltyPoints
-      };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot));
-    } catch (error) {
-      console.warn('[HyperNest] Could not save state:', error);
-    }
-  }
-
-  function restoreState() {
-    const saved = safeReadState();
-    if (!saved) return;
-
-    const validIds = new Set(PRODUCTS_DATABASE.map(product => Number(product.id)));
-    if (Array.isArray(saved.cart)) {
-      cart = saved.cart.map(entry => {
-        const product = PRODUCTS_DATABASE.find(item => Number(item.id) === Number(entry.id));
-        const quantity = Math.max(1, Math.min(99, Math.floor(Number(entry.quantity) || 1)));
-        return product && validIds.has(Number(entry.id)) ? { ...product, quantity } : null;
-      }).filter(Boolean);
-    }
-    if (Array.isArray(saved.wishlist)) {
-      wishlist = [...new Set(saved.wishlist.map(Number).filter(id => validIds.has(id)))];
-    }
-    const discount = Number(saved.discount);
-    appliedDiscountPercent = [0, .1, .15, .2].includes(discount) ? discount : 0;
-    const promoInput = document.getElementById('promo-code-input');
-    if (promoInput && typeof saved.promoCode === 'string') promoInput.value = saved.promoCode;
-    if (saved.theme === 'dark' || saved.theme === 'light') {
-      document.documentElement.classList.toggle('dark', saved.theme === 'dark');
-    }
-    if (typeof saved.deliverySlot === 'string') selectedDeliverySlot = saved.deliverySlot;
-    if (Array.isArray(saved.recentlyViewed)) recentlyViewed = saved.recentlyViewed.map(Number).filter(id => validIds.has(id)).slice(0, 6);
-
-    loyaltyPoints = Math.max(0, Math.floor(Number(saved.loyaltyPoints) || 0));
-    if (typeof updateCartUI === 'function') updateCartUI();
-    if (typeof updateWishlistUI === 'function') updateWishlistUI();
-    const wishCount = document.getElementById('wishlist-count');
-    if (wishCount) wishCount.textContent = String(wishlist.length);
-    const themeIcon = document.getElementById('theme-icon');
-    if (themeIcon) themeIcon.className = document.documentElement.classList.contains('dark') ? 'fa-solid fa-sun text-base sm:text-lg relative z-10' : 'fa-solid fa-moon text-base sm:text-lg relative z-10';
-    const deliveryLabel = document.getElementById('delivery-slot-label');
-    if (deliveryLabel) deliveryLabel.textContent = 'الموعد المختار: ' + selectedDeliverySlot;
-    const deliveryRadio = document.querySelector(`input[name="delivery-slot"][value="${CSS.escape(selectedDeliverySlot)}"]`);
-    if (deliveryRadio) deliveryRadio.checked = true;
-    if (typeof renderRecentlyViewed === 'function') renderRecentlyViewed();
-    updateLoyaltyUI();
-  }
 
   function addExtraProducts() {
     if (typeof PRODUCTS_DATABASE === 'undefined' || !Array.isArray(PRODUCTS_DATABASE)) return;
@@ -172,10 +55,54 @@
       });
     });
 
+    CLEANING_PRODUCTS.forEach(([name, price, faIcon], index) => {
+      const id = 101 + index;
+      if (existingIds.has(id)) return;
+      PRODUCTS_DATABASE.push({
+        id, name, category: 'cleaning', price: Number(price),
+        rating: Number((4.5 + ((index % 5) * .1)).toFixed(1)), icon: '', faIcon,
+        stock: index % 9 === 0 ? 'كمية محدودة' : 'متوفر',
+        image: `imgs/cleaning/product-${String(index + 1).padStart(2, '0')}.webp`,
+        desc: `${name} للاستخدام المنزلي، يُرجى اتباع تعليمات الاستخدام الموضحة على العبوة.`
+      });
+    });
+
     if (typeof CATEGORY_LABELS !== 'undefined') {
       CATEGORY_LABELS['home-tools'] = 'الأدوات المنزلية';
       CATEGORY_LABELS.electronics = 'أجهزة كهربائية';
+      CATEGORY_LABELS.cleaning = 'منظفات ومطهرات';
     }
+  }
+
+  function assignMerchantData() {
+    const merchants = [
+      { id: 'merchant-1', name: 'بيت العيلة', rating: 4.8, delivery: '30–45 دقيقة', logo: 'fa-house' },
+      { id: 'merchant-2', name: 'سوق النخبة', rating: 4.7, delivery: '35–50 دقيقة', logo: 'fa-store' },
+      { id: 'merchant-3', name: 'ركن الطازج', rating: 4.9, delivery: '25–40 دقيقة', logo: 'fa-leaf' },
+      { id: 'merchant-4', name: 'لمسة بيت', rating: 4.6, delivery: '40–55 دقيقة', logo: 'fa-box' }
+    ];
+    PRODUCTS_DATABASE.forEach((product, index) => {
+      product.merchant = index % 4 === 0 ? merchants[(index / 4 | 0) % merchants.length] : null;
+    });
+    window.HN_MERCHANTS = merchants;
+    window.HN_DELIVERY_COMPANIES = [
+      { name: 'وصلة', rating: '4.9', time: '25–40 دقيقة', icon: 'fa-truck-fast' },
+      { name: 'درب', rating: '4.8', time: '30–45 دقيقة', icon: 'fa-motorcycle' },
+      { name: 'خطوة', rating: '4.7', time: '35–50 دقيقة', icon: 'fa-route' }
+    ];
+  }
+
+  function injectMarketplaceSections() {
+    const footer = document.querySelector('footer');
+    if (!footer || document.getElementById('hn-marketplace-partners')) return;
+    const section = document.createElement('section');
+    section.id = 'hn-marketplace-partners';
+    section.className = 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8';
+    section.innerHTML = `
+      <div><div class="hn-product-group-head"><div class="hn-product-group-icon"><i class="fa-solid fa-store"></i></div><div><h3>تجّار HyperNest</h3><p>شركاء افتراضيون يقدمون مجموعة مختارة من المنتجات</p></div></div><div class="hn-partner-grid">${window.HN_MERCHANTS.map(m=>`<article class="hn-partner-card"><span class="hn-partner-icon"><i class="fa-solid ${m.logo}"></i></span><h4>${m.name}</h4><p><i class="fa-solid fa-star"></i> ${m.rating} · توصيل ${m.delivery}</p></article>`).join('')}</div></div>
+      <div><div class="hn-product-group-head"><div class="hn-product-group-icon"><i class="fa-solid fa-truck-fast"></i></div><div><h3>شركات التوصيل</h3><p>خيارات توصيل تجريبية داخل نموذج المتجر</p></div></div><div class="hn-partner-grid">${window.HN_DELIVERY_COMPANIES.map(c=>`<article class="hn-partner-card"><span class="hn-partner-icon"><i class="fa-solid ${c.icon}"></i></span><h4>${c.name}</h4><p><i class="fa-solid fa-star"></i> ${c.rating} · ${c.time}</p></article>`).join('')}</div></div>`;
+    const catalog = document.getElementById('products-catalog');
+    if (catalog) catalog.insertAdjacentElement('afterend', section);
   }
 
   function escapeHTML(value) {
@@ -217,7 +144,7 @@
           <div class="hn-product-icon" aria-hidden="true"><i class="fa-solid ${icon}"></i></div>
           ${imageMarkup}
           <span class="hn-product-stock">${escapeHTML(product.stock || 'متوفر')}</span>
-          ${(product.id >= 51 && product.id <= 100) ? '<span class="hn-product-badge">قسم جديد</span>' : ''}
+          ${(product.id >= 51 && product.id <= 150) ? '<span class="hn-product-badge">قسم جديد</span>' : ''}
         </div>
         <div class="flex items-center justify-between gap-2 mb-1 hn-product-meta">
           <span class="text-amber-500 font-extrabold"><i class="fa-solid fa-star" aria-hidden="true"></i> ${Number(product.rating || 4.5).toFixed(1)}</span>
@@ -255,16 +182,19 @@
     const baseProducts = PRODUCTS_DATABASE.filter(product => Number(product.id) <= 50);
     const homeProducts = PRODUCTS_DATABASE.filter(product => product.category === 'home-tools');
     const electronicProducts = PRODUCTS_DATABASE.filter(product => product.category === 'electronics');
+    const cleaningProducts = PRODUCTS_DATABASE.filter(product => product.category === 'cleaning');
     const categoryGroups = [
       { id: 'base', title: 'منتجات السوبر ماركت', subtitle: 'الأغذية والمشروبات والمنتجات اليومية', icon: 'fa-basket-shopping', products: baseProducts },
       { id: 'home-tools', title: 'الأدوات المنزلية', subtitle: 'كل ما تحتاجه لتنظيم وتجهيز منزلك', icon: 'fa-house', products: homeProducts },
-      { id: 'electronics', title: 'الأجهزة الكهربائية', subtitle: 'أجهزة عملية وأدوات تساعدك في البيت', icon: 'fa-plug', products: electronicProducts }
+      { id: 'electronics', title: 'الأجهزة الكهربائية', subtitle: 'أجهزة عملية وأدوات تساعدك في البيت', icon: 'fa-plug', products: electronicProducts },
+      { id: 'cleaning', title: 'المنظفات والمطهرات', subtitle: 'منتجات العناية بنظافة البيت والأسطح والملابس', icon: 'fa-spray-can-sparkles', products: cleaningProducts }
     ];
 
     const visibleGroups = activeCategory === 'all'
       ? categoryGroups
       : categoryGroups.filter(group => activeCategory === 'home-tools' ? group.id === 'home-tools'
-        : activeCategory === 'electronics' ? group.id === 'electronics' : group.id === 'base');
+        : activeCategory === 'electronics' ? group.id === 'electronics'
+          : activeCategory === 'cleaning' ? group.id === 'cleaning' : group.id === 'base');
 
     let hasMore = false;
     groupsRoot.innerHTML = visibleGroups.map(group => {
@@ -272,9 +202,9 @@
       const selected = activeCategory === 'all' && group.id === 'base'
         ? filtered
         : filtered.filter(product => activeCategory === 'all' || group.id !== 'base' || product.category === activeCategory);
-      const limit = showAllProducts ? selected.length : 8;
+      const limit = 4;
       const visible = selected.slice(0, limit);
-      if (selected.length > 8) hasMore = true;
+      if (selected.length > 4) hasMore = true;
       const cards = visible.length
         ? visible.map(renderProductCard).join('')
         : '<div class="hn-empty-state"><i class="fa-solid fa-magnifying-glass mb-2 text-xl"></i><p class="font-bold">مفيش منتجات مطابقة للميزانية الحالية.</p></div>';
@@ -295,7 +225,8 @@
     const moreButton = document.getElementById('load-more-btn');
     if (moreButton) {
       moreButton.hidden = !hasMore;
-      moreButton.textContent = showAllProducts ? 'عرض أقل' : 'عرض باقي المنتجات';
+      moreButton.textContent = 'عرض باقي المنتجات';
+      moreButton.onclick = () => { window.location.href = 'products.html'; };
     }
     const catalogTitle = document.getElementById('catalog-title');
     if (catalogTitle) {
@@ -1074,9 +1005,11 @@
 
   function init() {
     addExtraProducts();
+    assignMerchantData();
     setInitialTheme();
     injectOffersHub();
     setupBranding();
+    injectMarketplaceSections();
     installFunctionWrappers();
     restoreState();
     resetBudgetUI();

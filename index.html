@@ -65,6 +65,7 @@
   <!-- Custom styles -->
   <link rel="stylesheet" href="css/my.css">
   <link rel="stylesheet" href="css/hypernest-upgrade.css">
+  <link rel="stylesheet" href="css/pages.css">
 </head>
 
 <body
@@ -209,6 +210,9 @@
         <!-- Controls: Wishlist, Theme & Drop Zone Cart -->
         <div class="hn-header-controls flex items-center gap-2 sm:gap-3">
 
+          <a href="dashboard.html"
+            class="min-h-11 min-w-11 p-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-skyBrand-700 dark:text-amber-300 flex items-center justify-center"
+            title="حسابي" aria-label="لوحة حسابي"><i class="fa-solid fa-user"></i></a>
           <!-- Wishlist -->
           <button type="button" onclick="openWishlistDrawer()"
             class="relative min-h-11 min-w-11 p-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-rose-500 hover:bg-rose-50 dark:hover:bg-slate-700 transition"
@@ -258,7 +262,7 @@
         <a href="#categories"
           class="flex items-center gap-1.5 hover:text-skyBrand-600 dark:hover:text-skyBrand-400 transition-colors"><i
             class="fa-solid fa-table-cells-large text-skyBrand-500" aria-hidden="true"></i> الأقسام</a>
-        <a href="#products-catalog"
+        <a href="products.html"
           class="flex items-center gap-1.5 hover:text-skyBrand-600 dark:hover:text-skyBrand-400 transition-colors"><i
             class="fa-solid fa-star text-skyBrand-500" aria-hidden="true"></i> المختارة</a>
         <a href="#store-map"
@@ -296,15 +300,33 @@
     <!-- Mobile Nav Menu Drawer -->
     <div id="mobile-menu"
       class="hidden lg:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 py-4 flex flex-col gap-3 font-semibold text-sm">
-      <a href="#categories" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-grip" aria-hidden="true"></i><span>الأقسام</span><i class="fa-solid fa-arrow-left hn-mobile-arrow" aria-hidden="true"></i></a>
-      <a href="#products-catalog" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-basket-shopping" aria-hidden="true"></i><span>المنتجات</span><i class="fa-solid fa-arrow-left hn-mobile-arrow" aria-hidden="true"></i></a>
-      <a href="#smart-baskets" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-boxes-stacked" aria-hidden="true"></i><span>السلال الذكية</span><i class="fa-solid fa-arrow-left hn-mobile-arrow" aria-hidden="true"></i></a>
-      <a href="#store-map" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i><span>الخريطة</span><i class="fa-solid fa-arrow-left hn-mobile-arrow" aria-hidden="true"></i></a>
-      <a href="#order-track" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-truck-fast" aria-hidden="true"></i><span>تتبع الطلب</span><i class="fa-solid fa-arrow-left hn-mobile-arrow" aria-hidden="true"></i></a>
-      <a href="#testimonials" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-star" aria-hidden="true"></i><span>آراء العملاء</span><i class="fa-solid fa-arrow-left hn-mobile-arrow" aria-hidden="true"></i></a>
-      <a href="#faq" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-circle-question" aria-hidden="true"></i><span>الأسئلة الشائعة</span><i class="fa-solid fa-arrow-left hn-mobile-arrow" aria-hidden="true"></i></a>
-      <a href="#careers" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-briefcase" aria-hidden="true"></i><span>الوظائف</span><i class="fa-solid fa-arrow-left hn-mobile-arrow" aria-hidden="true"></i></a>
-      <a href="#support" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-headset" aria-hidden="true"></i><span>التواصل</span><i class="fa-solid fa-arrow-left hn-mobile-arrow" aria-hidden="true"></i></a>
+      <a href="#categories" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-grip"
+          aria-hidden="true"></i><span>الأقسام</span><i class="fa-solid fa-arrow-left hn-mobile-arrow"
+          aria-hidden="true"></i></a>
+      <a href="products.html" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-basket-shopping"
+          aria-hidden="true"></i><span>المنتجات</span><i class="fa-solid fa-arrow-left hn-mobile-arrow"
+          aria-hidden="true"></i></a>
+      <a href="#smart-baskets" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-boxes-stacked"
+          aria-hidden="true"></i><span>السلال الذكية</span><i class="fa-solid fa-arrow-left hn-mobile-arrow"
+          aria-hidden="true"></i></a>
+      <a href="#store-map" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-map-location-dot"
+          aria-hidden="true"></i><span>الخريطة</span><i class="fa-solid fa-arrow-left hn-mobile-arrow"
+          aria-hidden="true"></i></a>
+      <a href="#order-track" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-truck-fast"
+          aria-hidden="true"></i><span>تتبع الطلب</span><i class="fa-solid fa-arrow-left hn-mobile-arrow"
+          aria-hidden="true"></i></a>
+      <a href="#testimonials" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-star"
+          aria-hidden="true"></i><span>آراء العملاء</span><i class="fa-solid fa-arrow-left hn-mobile-arrow"
+          aria-hidden="true"></i></a>
+      <a href="#faq" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-circle-question"
+          aria-hidden="true"></i><span>الأسئلة الشائعة</span><i class="fa-solid fa-arrow-left hn-mobile-arrow"
+          aria-hidden="true"></i></a>
+      <a href="#careers" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-briefcase"
+          aria-hidden="true"></i><span>الوظائف</span><i class="fa-solid fa-arrow-left hn-mobile-arrow"
+          aria-hidden="true"></i></a>
+      <a href="#support" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-headset"
+          aria-hidden="true"></i><span>التواصل</span><i class="fa-solid fa-arrow-left hn-mobile-arrow"
+          aria-hidden="true"></i></a>
     </div>
   </header>
 
@@ -480,7 +502,8 @@
     <section id="products-catalog" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 reveal-on-scroll">
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
-          <h2 id="catalog-title" tabindex="-1" class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">جميع المنتجات
+          <h2 id="catalog-title" tabindex="-1" class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
+            جميع المنتجات
           </h2>
           <p class="text-slate-500 dark:text-slate-400 text-sm mt-0.5">يمكنك سحب أي منتج وحطه في أيقونة السلة أعلى
             الصفحة!</p>
@@ -836,7 +859,8 @@
         <h4 class="text-white text-sm font-extrabold mb-4">روابط سريعة</h4>
         <ul class="space-y-2 text-xs">
           <li><a href="#categories" class="hover:text-skyBrand-400 transition">جميع الأقسام</a></li>
-          <li><a href="#products-catalog" class="hover:text-skyBrand-400 transition">المنتجات المميزة</a></li>
+          <li><a href="products.html" class="hover:text-skyBrand-400 transition">كل المنتجات</a></li>
+          <li><a href="dashboard.html" class="hover:text-skyBrand-400 transition">حسابي وطلباتي</a></li>
           <li><a href="#store-map" class="hover:text-skyBrand-400 transition">خريطة المتجر التفاعلية</a></li>
           <li><a href="#careers" class="hover:text-skyBrand-400 transition">الوظائف المتاحة</a></li>
           <li><a href="#smart-baskets" class="hover:text-skyBrand-400 transition">السلال الذكية</a></li>
@@ -1009,8 +1033,11 @@
   </div>
 
   <!-- JAVASCRIPT APPLICATION LOGIC -->
+  <script src="js/data.js"></script>
+  <script src="js/storage.js"></script>
   <script src="js/my.js"></script>
   <script src="js/hypernest-upgrade.js"></script>
+  <script src="js/pages.js"></script>
 </body>
 
 </html>

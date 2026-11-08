@@ -1,15 +1,10 @@
-HyperNest - Map Visual Refresh
+HyperNest - four-file JavaScript structure
 
-Replace the matching files in your project:
-- index.html
-- css/my.css
-- css/hypernest-upgrade.css
-- js/my.js
-- js/hypernest-upgrade.js
+Copy the js/ files into your project's js/ folder. Keep this exact HTML order:
+<script src="js/data.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/my.js"></script>
+<script src="js/hypernest-upgrade.js"></script>
 
-Keep your existing image/assets folders and any other project files.
-
-Main change:
-- Rebuilt the interactive store-map SVG as a colorful, high-angle isometric supermarket diorama.
-- Added shelf blocks, checkout styling, customer pathways, floor identity labels, dark elegant map backdrop, and soft ambient lighting.
-- Preserved the existing zone IDs, click handlers, keyboard activation, floor switching, and zone information panel.
+Copy imgs/cleaning/ into your project's imgs/cleaning/ folder.
+The original CSS and HTML are not included or modified.
