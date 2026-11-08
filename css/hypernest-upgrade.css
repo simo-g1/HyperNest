@@ -1491,7 +1491,6 @@ body.hn-cart-cooldown .vf-add {
   padding: 9px 12px;
   border-bottom: 1px solid var(--hn-border);
   border-radius: 13px;
-  color: var(--hn-ink);
   transition: background .2s, color .2s, transform .2s;
 }
 
@@ -1815,6 +1814,12 @@ Inspired by editorial scroll transitions and isometric maps.
   margin-top: 24px;
 }
 
+@media (max-width:760px) {
+  .hn-hub-features {
+    grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+  }
+}
+
 .hn-hub-feature {
   position: relative;
   min-width: 0;
@@ -2008,8 +2013,8 @@ Inspired by editorial scroll transitions and isometric maps.
   position: absolute;
   width: 118px;
   height: 118px;
-  left: -22px;
-  bottom: -31px;
+  left: -17px;
+  bottom: -15px;
   border: 1px dashed rgba(154, 82, 23, .25);
   border-radius: 50%;
   opacity: .75;
