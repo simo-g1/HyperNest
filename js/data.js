@@ -10,7 +10,7 @@ const PRODUCTS_DATABASE = [
   { id: 6, name: "كرواسون فرنسي بالزبدة (4 قطع)", category: "bakery", price: 42.00, rating: 4.8, icon: "🥐", stock: "محدود", image: "imgs/food/product-06.webp", desc: "كرواسون فرنسي هش غني بزبده نيوزيلاندية فاخرة." },
   { id: 7, name: "صدور دجاج طازجة بدون عظم (1 كجم)", category: "meat", price: 210.00, rating: 4.9, icon: "🍗", stock: "متوفر", image: "imgs/food/product-07.webp", desc: "صدور دجاج مغسولة ومنظفة وجاهزة للطهي الفوري." },
   { id: 8, name: "عصير برتقال طبيعي 100% (1 لتر)", category: "beverages", price: 32.00, rating: 4.7, icon: "🍊", stock: "متوفر", image: "imgs/food/product-08.webp", desc: "عصير برتقال معصور طازج بدون أي إضافات سكر أو ماء." },
-  { id: 9, name: "مسحوق غسيل أتوماتيك (3 كجم)", category: "household", price: 175.00, rating: 4.8, icon: "🧼", stock: "متوفر", image: "imgs/food/product-09.webp", desc: "مسحوق غسيل عالي التفاعل للنظافة والرائحة الانتعاشية للملابس." },
+  { id: 9, name: "بيض أبيض طازج (30 بيضة)", category: "dairy", price: 95.00, rating: 4.8, icon: "🥚", stock: "متوفر", image: "imgs/food/product-09.webp", desc: "بيض طازج مناسب للاستخدام اليومي وتحضير الوجبات." },
   { id: 10, name: "طماطم مزرعية طازجة (1 كجم)", category: "produce", price: 18.00, rating: 4.5, icon: "🍅", stock: "متوفر", image: "imgs/food/product-10.webp", desc: "طماطم حمراء طازجة مثالية للسلطات والطهي اليومي." }
 ];
 

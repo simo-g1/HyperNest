@@ -55,13 +55,11 @@
     meat: 'لحوم ومجمدات', beverages: 'مشروبات', cleaning: 'منظفات ومطهرات',
     'home-tools': 'أدوات منزلية', electronics: 'أجهزة كهربائية', household: 'مستلزمات منزلية'
   };
-  if (typeof CATEGORY_LABELS !== 'undefined') CATEGORY_LABELS.household = 'منظفات';
-
   const PRODUCT_GROUPS = [
-    { key: 'supermarket', title: 'السوبر ماركت', icon: 'fa-basket-shopping', categories: ['produce', 'dairy', 'bakery', 'meat', 'beverages'] },
-    { key: 'cleaning', title: 'المنظفات', icon: 'fa-pump-soap', categories: ['cleaning', 'household'] },
-    { key: 'home', title: 'الأدوات المنزلية', icon: 'fa-house', categories: ['home-tools'] },
-    { key: 'electronics', title: 'الأجهزة الكهربائية', icon: 'fa-plug', categories: ['electronics'] }
+    { key: 'cleaning', title: 'المنظفات والمطهرات', icon: 'fa-pump-soap', categories: ['cleaning'] },
+    { key: 'home', title: 'الأدوات المنزلية', icon: 'fa-house', categories: ['home-tools', 'household'] },
+    { key: 'electronics', title: 'الأجهزة الكهربائية', icon: 'fa-plug', categories: ['electronics'] },
+    { key: 'food', title: 'المنتجات الغذائية', icon: 'fa-carrot', categories: ['produce', 'dairy', 'bakery', 'meat', 'beverages'] }
   ];
 
   function refreshWishlistButtons() {
@@ -88,17 +86,12 @@
   }
 
   function productCard(p) {
+    const merchantLine = p.merchant ? `<small class="hn-page-category">من تاجر: ${p.merchant.name}</small>` : '<small class="hn-page-category">من HyperNest</small>';
     const safe = String(p.name).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-    const merchantName = p.merchant?.name ? `<small class="hn-page-merchant">من تاجر: ${String(p.merchant.name).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}</small>` : '';
     const active = (typeof wishlist !== 'undefined' ? wishlist : []).map(Number).includes(Number(p.id));
     const categoryLabel = CATEGORY_LABELS[p.category] || p.category;
-    const icon = p.faIcon || 'fa-box';
-    const image = p.image ? `<img src="${p.image}" alt="${safe}" loading="lazy" decoding="async" onerror="this.remove()">` : '';
-    return `<article class="hn-product-card product-card relative p-3 sm:p-4 flex flex-col" data-product-id="${p.id}" data-id="${p.id}">
-      <button type="button" class="hn-page-wish${active ? ' is-wishlisted' : ''}" aria-pressed="${active}" aria-label="${active ? 'إزالة' : 'إضافة'} ${safe} ${active ? 'من' : 'إلى'} المفضلة" onclick="toggleWishlist(${p.id})"><i class="fa-solid fa-heart" aria-hidden="true"></i></button>
-      <button type="button" class="hn-page-product-image hn-product-visual" onclick="openProductModal(${p.id})" aria-label="عرض تفاصيل ${safe}"><div class="hn-product-icon" aria-hidden="true"><i class="fa-solid ${icon}"></i></div>${image}<span class="hn-product-stock">${p.stock || 'متوفر'}</span>${p.id >= 51 && p.id <= 150 ? '<span class="hn-product-badge">قسم جديد</span>' : ''}</button>
-      <div class="hn-page-card-body"><div class="hn-product-meta"><span class="hn-page-rating"><i class="fa-solid fa-star" aria-hidden="true"></i> ${Number(p.rating || 4.5).toFixed(1)}</span><span class="hn-page-category">${categoryLabel}</span></div>${merchantName}<h3 class="hn-product-name">${safe}</h3>
-      <div class="hn-page-card-footer"><strong class="hn-product-price">${Number(p.price).toFixed(2)} <small>ج.م</small></strong><button class="hn-page-add hn-product-add" type="button" onclick="addToCart(${p.id},1,this)" aria-label="إضافة ${safe} للسلة"><i class="fa-solid fa-cart-plus" aria-hidden="true"></i></button></div></div></article>`;
+    const rating = Number(p.rating || 4.5).toFixed(1);
+    return `<article class="hn-product-card" data-product-id="${p.id}"><button class="hn-page-wish${active ? ' is-wishlisted' : ''}" type="button" aria-pressed="${active}" aria-label="${active ? 'إزالة' : 'إضافة'} ${safe} ${active ? 'من' : 'إلى'} المفضلة" onclick="toggleWishlist(${p.id})"><i class="fa-solid fa-heart" aria-hidden="true"></i></button><button class="hn-page-product-image" type="button" onclick="openProductModal(${p.id})"><img src="${p.image}" alt="${safe}" loading="lazy"></button><div class="hn-page-card-body"><span class="hn-page-category">${categoryLabel}</span>${merchantLine}<h3>${safe}</h3><p class="hn-page-rating"><i class="fa-solid fa-star" aria-hidden="true"></i> ${rating}</p><strong>${Number(p.price).toFixed(2)} ج.م</strong><button class="hn-page-add" type="button" onclick="addToCart(${p.id},1,this)"><i class="fa-solid fa-cart-plus" aria-hidden="true"></i> أضف للسلة</button></div></article>`;
   }
 
   const originalApplyPromo = window.applyPromoCode;
@@ -128,12 +121,11 @@
     const more = $('#hn-products-more');
     let shown = 16, filtered = [];
     const params = new URLSearchParams(location.search);
-    const validCats = new Set(['all','produce','dairy','bakery','meat','beverages','cleaning','household','home-tools','electronics']);
-    const initialCat = validCats.has(params.get('cat')) ? params.get('cat') : 'all';
+    const initialCat = params.get('cat') || 'all';
     if (category) category.value = initialCat;
     if (search && params.get('q')) search.value = params.get('q');
     function renderSmartSuggestions() {
-      const box=$('#hn-page-smart-baskets'); if(!box) return;
+      let box=$('#hn-page-smart-baskets'); if(!box) return;
       const inCart=new Set((typeof cart !== 'undefined' ? cart : []).map(x=>Number(x.id)));
       const picks=PRODUCTS_DATABASE.filter(p=>!inCart.has(Number(p.id))).slice(0,4);
       box.innerHTML=picks.map(productCard).join('');
@@ -148,19 +140,16 @@
       if(order==='price-high') filtered.sort((a,b)=>b.price-a.price);
       if(order==='rating') filtered.sort((a,b)=>(b.rating||0)-(a.rating||0));
       if(order==='name') filtered.sort((a,b)=>a.name.localeCompare(b.name,'ar'));
-      const selectedGroup = cat==='all' ? null : PRODUCT_GROUPS.find(g=>g.categories.includes(cat))?.key;
-      let hasMoreInGroups = false;
-      const groupedMarkup = PRODUCT_GROUPS.filter(group=>!selectedGroup || group.key===selectedGroup).map(group => {
-        const groupProducts = filtered.filter(product => group.categories.includes(product.category));
-        if (!groupProducts.length) return '';
-        if (groupProducts.length > shown) hasMoreInGroups = true;
-        const products = groupProducts.slice(0, shown);
-        return `<section class="hn-product-group" aria-label="${group.title}"><header class="hn-product-group-head"><span class="hn-product-group-icon"><i class="fa-solid ${group.icon}" aria-hidden="true"></i></span><div><h2>${group.title}</h2><p>${products.length} من ${groupProducts.length} منتج</p></div></header><div class="hn-page-products-grid">${products.map(productCard).join('')}</div></section>`;
+      const visible = filtered.slice(0,shown);
+      const groupedMarkup = PRODUCT_GROUPS.map(group => {
+        const products = visible.filter(product => group.categories.includes(product.category));
+        if (!products.length) return '';
+        return `<section class="hn-product-group" aria-label="${group.title}"><header class="hn-product-group-head"><span class="hn-product-group-icon"><i class="fa-solid ${group.icon}" aria-hidden="true"></i></span><div><h2>${group.title}</h2><p>${products.length} من المنتجات المعروضة</p></div></header><div class="hn-page-products-grid">${products.map(productCard).join('')}</div></section>`;
       }).join('');
       grid.innerHTML = groupedMarkup || '<div class="hn-empty-state">مفيش منتجات مطابقة للبحث أو الفلاتر.</div>';
       refreshWishlistButtons();
       $('#hn-products-count').textContent=`${filtered.length} منتج`;
-      if(more) more.hidden=!hasMoreInGroups;
+      more.hidden=shown>=filtered.length;
       renderSmartSuggestions();
       if(budgetLabel) budgetLabel.textContent=max.toLocaleString('en-US')+' ج.م';
     }

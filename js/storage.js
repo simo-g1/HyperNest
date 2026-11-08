@@ -36,10 +36,13 @@ let loyaltyPoints = 0; // نقاط نادي الولاء
 
     const validIds = new Set(PRODUCTS_DATABASE.map(product => Number(product.id)));
     if (Array.isArray(saved.cart)) {
+      let restoredTotal = 0;
       cart = saved.cart.map(entry => {
         const product = PRODUCTS_DATABASE.find(item => Number(item.id) === Number(entry.id));
-        const quantity = Math.max(1, Math.min(99, Math.floor(Number(entry.quantity) || 1)));
-        return product && validIds.has(Number(entry.id)) ? { ...product, quantity } : null;
+        const requested = Math.max(1, Math.min(15, Math.floor(Number(entry.quantity) || 1)));
+        const quantity = Math.min(requested, Math.max(0, 30 - restoredTotal));
+        if (product && quantity > 0) restoredTotal += quantity;
+        return product && validIds.has(Number(entry.id)) && quantity > 0 ? { ...product, quantity } : null;
       }).filter(Boolean);
     }
     if (Array.isArray(saved.wishlist)) {
@@ -67,6 +70,8 @@ let loyaltyPoints = 0; // نقاط نادي الولاء
     const deliveryRadio = document.querySelector(`input[name="delivery-slot"][value="${CSS.escape(selectedDeliverySlot)}"]`);
     if (deliveryRadio) deliveryRadio.checked = true;
     if (typeof renderRecentlyViewed === 'function') renderRecentlyViewed();
-    updateLoyaltyUI();
+    if (typeof window.updateLoyaltyUI === 'function') window.updateLoyaltyUI();
   }
 
+
+window.getHyperNestLoyaltyPoints = () => loyaltyPoints;
