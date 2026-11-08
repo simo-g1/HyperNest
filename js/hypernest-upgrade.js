@@ -74,37 +74,6 @@
     }
   }
 
-  function assignMerchantData() {
-    const merchants = [
-      { id: 'merchant-1', name: 'بيت العيلة', rating: 4.8, delivery: '30–45 دقيقة', logo: 'fa-house' },
-      { id: 'merchant-2', name: 'سوق النخبة', rating: 4.7, delivery: '35–50 دقيقة', logo: 'fa-store' },
-      { id: 'merchant-3', name: 'ركن الطازج', rating: 4.9, delivery: '25–40 دقيقة', logo: 'fa-leaf' },
-      { id: 'merchant-4', name: 'لمسة بيت', rating: 4.6, delivery: '40–55 دقيقة', logo: 'fa-box' }
-    ];
-    PRODUCTS_DATABASE.forEach((product, index) => {
-      product.merchant = index % 4 === 0 ? merchants[(index / 4 | 0) % merchants.length] : null;
-    });
-    window.HN_MERCHANTS = merchants;
-    window.HN_DELIVERY_COMPANIES = [
-      { name: 'وصلة', rating: '4.9', time: '25–40 دقيقة', icon: 'fa-truck-fast' },
-      { name: 'درب', rating: '4.8', time: '30–45 دقيقة', icon: 'fa-motorcycle' },
-      { name: 'خطوة', rating: '4.7', time: '35–50 دقيقة', icon: 'fa-route' }
-    ];
-  }
-
-  function injectMarketplaceSections() {
-    const footer = document.querySelector('footer');
-    if (!footer || document.getElementById('hn-marketplace-partners')) return;
-    const section = document.createElement('section');
-    section.id = 'hn-marketplace-partners';
-    section.className = 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8';
-    section.innerHTML = `
-      <div><div class="hn-product-group-head"><div class="hn-product-group-icon"><i class="fa-solid fa-store"></i></div><div><h3>تجّار HyperNest</h3><p>شركاء افتراضيون يقدمون مجموعة مختارة من المنتجات</p></div></div><div class="hn-partner-grid">${window.HN_MERCHANTS.map(m=>`<article class="hn-partner-card"><span class="hn-partner-icon"><i class="fa-solid ${m.logo}"></i></span><h4>${m.name}</h4><p><i class="fa-solid fa-star"></i> ${m.rating} · توصيل ${m.delivery}</p></article>`).join('')}</div></div>
-      <div><div class="hn-product-group-head"><div class="hn-product-group-icon"><i class="fa-solid fa-truck-fast"></i></div><div><h3>شركات التوصيل</h3><p>خيارات توصيل تجريبية داخل نموذج المتجر</p></div></div><div class="hn-partner-grid">${window.HN_DELIVERY_COMPANIES.map(c=>`<article class="hn-partner-card"><span class="hn-partner-icon"><i class="fa-solid ${c.icon}"></i></span><h4>${c.name}</h4><p><i class="fa-solid fa-star"></i> ${c.rating} · ${c.time}</p></article>`).join('')}</div></div>`;
-    const catalog = document.getElementById('products-catalog');
-    if (catalog) catalog.insertAdjacentElement('afterend', section);
-  }
-
   function escapeHTML(value) {
     return String(value ?? '').replace(/[&<>"']/g, char => ({
       '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
@@ -202,9 +171,9 @@
       const selected = activeCategory === 'all' && group.id === 'base'
         ? filtered
         : filtered.filter(product => activeCategory === 'all' || group.id !== 'base' || product.category === activeCategory);
-      const limit = 4;
+      const limit = showAllProducts ? selected.length : 8;
       const visible = selected.slice(0, limit);
-      if (selected.length > 4) hasMore = true;
+      if (selected.length > 8) hasMore = true;
       const cards = visible.length
         ? visible.map(renderProductCard).join('')
         : '<div class="hn-empty-state"><i class="fa-solid fa-magnifying-glass mb-2 text-xl"></i><p class="font-bold">مفيش منتجات مطابقة للميزانية الحالية.</p></div>';
@@ -225,8 +194,7 @@
     const moreButton = document.getElementById('load-more-btn');
     if (moreButton) {
       moreButton.hidden = !hasMore;
-      moreButton.textContent = 'عرض باقي المنتجات';
-      moreButton.onclick = () => { window.location.href = 'products.html'; };
+      moreButton.textContent = showAllProducts ? 'عرض أقل' : 'عرض باقي المنتجات';
     }
     const catalogTitle = document.getElementById('catalog-title');
     if (catalogTitle) {
@@ -760,14 +728,13 @@
     const target = document.getElementById('hn-loyalty-points');
     if (points && target) target.textContent = points.textContent.replace(/[^0-9]/g, '') || '240';
   }
-  const BUDGET_MIN = 100;
-  const BUDGET_MAX = 10000;
+  const BUDGET_MAX = 1500;
 
   function resetBudgetUI() {
     maxBudget = BUDGET_MAX;
     const range = document.getElementById('budget-range');
     const label = document.getElementById('budget-value');
-    if (range) { range.min = BUDGET_MIN; range.max = BUDGET_MAX; range.value = BUDGET_MAX; }
+    if (range) { range.max = BUDGET_MAX; range.value = BUDGET_MAX; }
     if (label) label.textContent = `${BUDGET_MAX} ج.م`;
   }
   /* ===== HyperNest round 3 extras ===== */
@@ -869,8 +836,6 @@
     const el = document.getElementById('hn-loyalty-points');
     if (el) el.textContent = String(loyaltyPoints);
   }
-
-  window.updateLoyaltyUI = updateLoyaltyUI;
 
   function initBasketReveal() {
     const section = document.getElementById('smart-baskets');
@@ -1008,11 +973,9 @@
 
   function init() {
     addExtraProducts();
-    assignMerchantData();
     setInitialTheme();
     injectOffersHub();
     setupBranding();
-    injectMarketplaceSections();
     installFunctionWrappers();
     restoreState();
     resetBudgetUI();
@@ -1058,6 +1021,13 @@
     }));
     emojiObserver.observe(document.body, { childList: true, subtree: true });
   }
+
+  // Open the products page focused on the category selected on the homepage.
+  window.filterCategory = function(categoryId) {
+    const allowed = new Set(['all','produce','dairy','bakery','meat','beverages','cleaning','household','home-tools','electronics']);
+    const selected = allowed.has(String(categoryId)) ? String(categoryId) : 'all';
+    window.location.href = 'products.html?cat=' + encodeURIComponent(selected);
+  };
 
   // Add the products and patch handlers before the original DOMContentLoaded callback renders.
   addExtraProducts();

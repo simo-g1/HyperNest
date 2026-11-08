@@ -1,0 +1,15 @@
+HyperNest — Responsive & Product Catalog Update
+
+Included changes:
+- Fixed mobile offer-slide text/artwork overlap and repositioned the floating hero product arc on small screens.
+- Homepage category selections now open products.html focused on the selected category.
+- Products page is organized into: supermarket, cleaning, household tools, and electrical appliances.
+- Search, category, sort, and maximum-price controls apply to the complete catalog; group headings remain separate.
+- The selected homepage category is the only group shown on arrival; the category dropdown remains usable.
+- Product cards retain the existing HyperNest card visual language. Merchant attribution appears only when a product has a merchant name.
+
+Original core files preserved unchanged:
+- css/my.css
+- js/my.js
+
+No Git commit or push was performed. The project remains a front-end demo; no backend/payment behavior was added.

@@ -2149,3 +2149,45 @@ html.dark #store-map #map-zone-info {
   border-color: rgba(213, 141, 63, 0.35) !important;
   box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45) !important;
 }
+
+/* Responsive repair: offer copy and floating artwork occupy separate zones. */
+@media (max-width: 767px) {
+  #vf-hero.vf-hero { --vf-by: 58%; }
+  #vf-hero .vf-model { bottom: calc(100% - var(--vf-by)); }
+  .hn-offer-slide { min-height: 470px; align-items: flex-start; justify-content: flex-start; padding: 24px 20px 185px; }
+  .hn-offer-copy { width: 100%; max-width: none; }
+  .hn-offer-copy h3 { font-size: clamp(25px, 7vw, 34px); line-height: 1.35; margin: 12px 0 8px; }
+  .hn-offer-copy p { max-width: 100%; font-size: 13px; line-height: 1.8; }
+  .hn-offer-cta { margin-top: 14px; max-width: 100%; white-space: normal; }
+  .hn-offer-art { top: auto; bottom: 8px; left: 50%; width: min(88%, 340px); height: 160px; transform: translateX(-50%); }
+  .hn-offer-art span { width: clamp(58px, 17vw, 76px); border-radius: 18px; font-size: 30px; }
+  .hn-offer-art span:nth-child(1) { left: 2%; top: 4%; }
+  .hn-offer-art span:nth-child(2) { right: 2%; top: 0; }
+  .hn-offer-art span:nth-child(3) { left: 27%; bottom: 0; }
+  .hn-offer-art span:nth-child(4) { right: 24%; bottom: 0; }
+}
+@media (max-width: 380px) { .hn-offer-slide { min-height: 500px; padding-inline: 16px; padding-bottom: 190px; } .hn-offer-art { width: 94%; } }
+
+/* Mobile layout for the three feature cards beneath the offers slider. */
+@media (max-width: 900px) {
+  .hn-hub-features { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hn-arrivals-feature { grid-column: 1 / -1; }
+}
+@media (max-width: 640px) {
+  .hn-hub-features { grid-template-columns: minmax(0, 1fr); gap: 12px; margin-top: 16px; }
+  .hn-hub-feature { min-height: 0; padding: 18px; border-radius: 20px; }
+  .hn-feature-topline { margin-bottom: 12px; }
+  .hn-hub-feature h3 { font-size: 19px; line-height: 1.45; }
+  .hn-hub-feature p { font-size: 12px; line-height: 1.85; }
+  .hn-coupon-list { gap: 10px; margin-top: 14px; }
+  .hn-coupon-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; }
+  .hn-coupon-row > div { grid-column: 1 / -1; padding-bottom: 2px; }
+  .hn-coupon-row b { font-size: 12px; }
+  .hn-coupon-row button { width: 100%; min-height: 38px; font-size: 11px; }
+  .hn-rewards-actions { display: grid; grid-template-columns: minmax(0, 1fr); gap: 9px; margin-top: 14px; }
+  .hn-feature-primary, .hn-feature-secondary { width: 100%; min-height: 42px; font-size: 12px; }
+  .hn-reward-orbit { opacity: .18; transform: scale(.72); transform-origin: bottom left; pointer-events: none; }
+  .hn-arrival-tags { display: grid; grid-template-columns: minmax(0, 1fr); gap: 9px; margin-top: 14px; }
+  .hn-arrival-tags button { width: 100%; justify-content: center; min-height: 42px; font-size: 11px; }
+  .hn-hub-footnote { align-items: flex-start; font-size: 11px; line-height: 1.8; }
+}

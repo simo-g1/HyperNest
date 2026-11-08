@@ -65,7 +65,6 @@
   <!-- Custom styles -->
   <link rel="stylesheet" href="css/my.css">
   <link rel="stylesheet" href="css/hypernest-upgrade.css">
-  <link rel="stylesheet" href="css/pages.css">
 </head>
 
 <body
@@ -210,7 +209,6 @@
         <!-- Controls: Wishlist, Theme & Drop Zone Cart -->
         <div class="hn-header-controls flex items-center gap-2 sm:gap-3">
 
-          <a href="dashboard.html" class="min-h-11 min-w-11 p-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-skyBrand-700 dark:text-amber-300 flex items-center justify-center" title="حسابي" aria-label="لوحة حسابي"><i class="fa-solid fa-user"></i></a>
           <!-- Wishlist -->
           <button type="button" onclick="openWishlistDrawer()"
             class="relative min-h-11 min-w-11 p-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-rose-500 hover:bg-rose-50 dark:hover:bg-slate-700 transition"
@@ -260,7 +258,7 @@
         <a href="#categories"
           class="flex items-center gap-1.5 hover:text-skyBrand-600 dark:hover:text-skyBrand-400 transition-colors"><i
             class="fa-solid fa-table-cells-large text-skyBrand-500" aria-hidden="true"></i> الأقسام</a>
-        <a href="products.html"
+        <a href="#products-catalog"
           class="flex items-center gap-1.5 hover:text-skyBrand-600 dark:hover:text-skyBrand-400 transition-colors"><i
             class="fa-solid fa-star text-skyBrand-500" aria-hidden="true"></i> المختارة</a>
         <a href="#store-map"
@@ -301,7 +299,7 @@
       <a href="#categories" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-grip"
           aria-hidden="true"></i><span>الأقسام</span><i class="fa-solid fa-arrow-left hn-mobile-arrow"
           aria-hidden="true"></i></a>
-      <a href="products.html" onclick="toggleMobileMenu()" class="hn-mobile-link"><i
+      <a href="#products-catalog" onclick="toggleMobileMenu()" class="hn-mobile-link"><i
           class="fa-solid fa-basket-shopping" aria-hidden="true"></i><span>المنتجات</span><i
           class="fa-solid fa-arrow-left hn-mobile-arrow" aria-hidden="true"></i></a>
       <a href="#smart-baskets" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-boxes-stacked"
@@ -511,9 +509,9 @@
           <div
             class="bg-white dark:bg-slate-800 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center gap-3 text-xs">
             <span class="font-extrabold text-slate-600 dark:text-slate-300">أقصى ميزانية:</span>
-            <input type="range" id="budget-range" min="100" max="10000" step="100" value="10000"
+            <input type="range" id="budget-range" min="10" max="400" step="10" value="400"
               oninput="handleBudgetFilter(this.value)" class="w-24 accent-skyBrand-500">
-            <span id="budget-value" class="font-black text-skyBrand-600 dark:text-skyBrand-400 min-w-[50px]">10000
+            <span id="budget-value" class="font-black text-skyBrand-600 dark:text-skyBrand-400 min-w-[50px]">400
               ج.م</span>
           </div>
 
@@ -857,8 +855,7 @@
         <h4 class="text-white text-sm font-extrabold mb-4">روابط سريعة</h4>
         <ul class="space-y-2 text-xs">
           <li><a href="#categories" class="hover:text-skyBrand-400 transition">جميع الأقسام</a></li>
-          <li><a href="products.html" class="hover:text-skyBrand-400 transition">كل المنتجات</a></li>
-          <li><a href="dashboard.html" class="hover:text-skyBrand-400 transition">حسابي وطلباتي</a></li>
+          <li><a href="#products-catalog" class="hover:text-skyBrand-400 transition">المنتجات المميزة</a></li>
           <li><a href="#store-map" class="hover:text-skyBrand-400 transition">خريطة المتجر التفاعلية</a></li>
           <li><a href="#careers" class="hover:text-skyBrand-400 transition">الوظائف المتاحة</a></li>
           <li><a href="#smart-baskets" class="hover:text-skyBrand-400 transition">السلال الذكية</a></li>
@@ -1035,7 +1032,6 @@
   <script src="js/storage.js"></script>
   <script src="js/my.js"></script>
   <script src="js/hypernest-upgrade.js"></script>
-  <script src="js/pages.js"></script>
 </body>
 
 </html>
