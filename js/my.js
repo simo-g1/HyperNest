@@ -25,7 +25,6 @@ const CATEGORY_LABELS = {
 window.addEventListener('DOMContentLoaded', () => {
   initArc();
   renderCategoryPills();
-  renderCatalogProducts();
   renderFloorSVG(1);
   setupDragAndDrop();
   setupScrollProgressAndReveal();
@@ -54,7 +53,7 @@ function initArc() {
   VF.items = PRODUCTS_DATABASE.filter(p => p.id <= 10); // الـ sort ما يأثرش عليهم
   arc.innerHTML = VF.items.map(p => `
     <div class="vf-card vf-glass" data-id="${p.id}">
-      <img class="vf-g" src="${p.image}" alt="" draggable="false">
+      <img class="vf-g" src="${p.image}" alt="" width="500" height="500" decoding="async" draggable="false">
       <span class="vf-n">${p.name}</span>
       <span class="vf-p">${p.price.toFixed(0)} ج.م</span>
       <i class="vf-sheen"></i>
@@ -553,7 +552,7 @@ function updateCartUI() {
   } else {
     drawer.innerHTML = cart.map(i => `
           <div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-2xl border">
-            <img src="${i.image}" class="w-10 h-10 object-cover rounded-xl">
+            <img src="${i.image}" alt="" loading="lazy" decoding="async" width="40" height="40" class="w-10 h-10 object-cover rounded-xl">
             <div class="flex-1 px-3">
               <h4 class="text-xs font-bold text-slate-800 dark:text-white line-clamp-1">${i.name}</h4>
               <span class="text-xs font-black text-skyBrand-600">${(i.price * i.quantity).toFixed(2)} ج.م</span>
@@ -607,7 +606,7 @@ function updateWishlistUI() {
   const items = PRODUCTS_DATABASE.filter(p => wishlist.includes(p.id));
   container.innerHTML = items.map(item => `
         <div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700">
-            <img src="${item.image}" alt="${item.name}" class="w-12 h-12 object-cover rounded-xl">
+            <img src="${item.image}" alt="${item.name}" loading="lazy" decoding="async" width="48" height="48" class="w-12 h-12 object-cover rounded-xl">
             <div class="flex-1 px-3">
                 <h4 class="text-xs font-bold text-slate-800 dark:text-white line-clamp-1">${item.name}</h4>
                 <span class="text-xs font-black text-skyBrand-600 dark:text-skyBrand-400">${item.price.toFixed(2)} ج.م</span>
@@ -672,7 +671,7 @@ function renderRecentlyViewed() {
 
   grid.innerHTML = products.map(p => `
         <div class="bg-white dark:bg-slate-800 p-2.5 rounded-2xl border border-slate-200/80 dark:border-slate-700 text-center cursor-pointer hover:shadow-md transition" onclick="openProductModal(${p.id})">
-            <img src="${p.image}" class="w-full h-16 object-cover rounded-xl mb-1.5">
+            <img src="${p.image}" alt="" loading="lazy" decoding="async" width="100" height="64" class="w-full h-16 object-cover rounded-xl mb-1.5">>
             <h5 class="text-[11px] font-bold text-slate-800 dark:text-white line-clamp-1">${p.name}</h5>
             <span class="text-xs font-black text-skyBrand-600 dark:text-skyBrand-400">${p.price} ج.م</span>
         </div>
