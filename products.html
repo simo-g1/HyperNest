@@ -6,59 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script>try { if (JSON.parse(localStorage.getItem("hypernest-demo-state-v1") || "{}").theme === "dark") document.documentElement.classList.add("dark") } catch (e) { }</script>
   <title>كل المنتجات | تسوّق بذكاء</title>
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            slate: { 50: '#fafaf9', 100: '#f5f5f4', 200: '#e7e5e4', 300: '#d6d3d1', 400: '#a8a29e', 500: '#78716c', 600: '#57534e', 700: '#44403c', 800: '#292524', 900: '#1c1917', 950: '#0c0a09' },
-            skyBrand: {
-              50: '#fdf6ec',
-              100: '#f8e7cd',
-              200: '#f0cd9c',
-              300: '#e5ae6a',
-              400: '#d58d3f',
-              500: '#b5651d',
-              600: '#9a5217',
-              700: '#7c4214',
-              800: '#5f3411',
-              900: '#44250c',
-            },
-            cream: {
-              50: '#fbf7ef',
-              100: '#f3eee4',
-              200: '#e7dcc8',
-            }
-          },
-          animation: {
-            'gradient-wave': 'gradientWave 8s ease infinite',
-            'float': 'float 3s ease-in-out infinite',
-            'pulse-glow': 'pulseGlow 2s infinite',
-          },
-          keyframes: {
-            gradientWave: {
-              '0%, 100%': { 'background-position': '0% 50%' },
-              '50%': { 'background-position': '100% 50%' },
-            },
-            float: {
-              '0%, 100%': { transform: 'translateY(0)' },
-              '50%': { transform: 'translateY(-8px)' },
-            },
-            pulseGlow: {
-              '0%, 100%': { opacity: '0.6', transform: 'scale(1)' },
-              '50%': { opacity: '1', transform: 'scale(1.05)' },
-            }
-          }
-        }
-      }
-    }
-  </script>
   <!-- Normalize + FontAwesome (local files) -->
   <link rel="stylesheet" href="css/normalize.css">
   <link rel="stylesheet" href="css/all.min.css">
+  <!-- Tailwind CSS -->
+  <link rel="stylesheet" href="css/tailwind.css">
   <!-- Google Font Cairo -->
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap"
     rel="stylesheet">
@@ -210,7 +162,9 @@
         <!-- Controls: Wishlist, Theme & Drop Zone Cart -->
         <div class="hn-header-controls flex items-center gap-2 sm:gap-3">
 
-          <a href="dashboard.html" class="min-h-11 min-w-11 p-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-skyBrand-700 dark:text-amber-300 flex items-center justify-center" title="حسابي" aria-label="لوحة حسابي"><i class="fa-solid fa-user"></i></a>
+          <a href="dashboard.html"
+            class="min-h-11 min-w-11 p-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-skyBrand-700 dark:text-amber-300 flex items-center justify-center"
+            title="حسابي" aria-label="لوحة حسابي"><i class="fa-solid fa-user"></i></a>
           <!-- Wishlist -->
           <button type="button" onclick="openWishlistDrawer()"
             class="relative min-h-11 min-w-11 p-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-rose-500 hover:bg-rose-50 dark:hover:bg-slate-700 transition"
@@ -257,7 +211,9 @@
       <!-- Navigation Links (كلمة واحدة فقط لكل عنصر) -->
       <nav class="hidden lg:flex items-center justify-center gap-6 font-semibold text-sm pb-1"
         aria-label="التنقل الرئيسي">
-        <a href="index.html" class="flex items-center gap-1.5 hover:text-skyBrand-600 dark:hover:text-skyBrand-400 transition-colors"><i class="fa-solid fa-house text-skyBrand-500" aria-hidden="true"></i> الرئيسية</a>
+        <a href="index.html"
+          class="flex items-center gap-1.5 hover:text-skyBrand-600 dark:hover:text-skyBrand-400 transition-colors"><i
+            class="fa-solid fa-house text-skyBrand-500" aria-hidden="true"></i> الرئيسية</a>
         <a href="index.html#categories"
           class="flex items-center gap-1.5 hover:text-skyBrand-600 dark:hover:text-skyBrand-400 transition-colors"><i
             class="fa-solid fa-table-cells-large text-skyBrand-500" aria-hidden="true"></i> الأقسام</a>
@@ -299,28 +255,30 @@
     <!-- Mobile Nav Menu Drawer -->
     <div id="mobile-menu"
       class="hidden lg:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 py-4 flex flex-col gap-3 font-semibold text-sm">
-      <a href="index.html" class="hn-mobile-link"><i class="fa-solid fa-house" aria-hidden="true"></i><span>الرئيسية</span><i class="fa-solid fa-arrow-left hn-mobile-arrow" aria-hidden="true"></i></a>
+      <a href="index.html" class="hn-mobile-link"><i class="fa-solid fa-house"
+          aria-hidden="true"></i><span>الرئيسية</span><i class="fa-solid fa-arrow-left hn-mobile-arrow"
+          aria-hidden="true"></i></a>
       <a href="index.html#categories" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-grip"
           aria-hidden="true"></i><span>الأقسام</span><i class="fa-solid fa-arrow-left hn-mobile-arrow"
           aria-hidden="true"></i></a>
-      <a href="products.html" onclick="toggleMobileMenu()" class="hn-mobile-link"><i
-          class="fa-solid fa-basket-shopping" aria-hidden="true"></i><span>المنتجات</span><i
+      <a href="products.html" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-basket-shopping"
+          aria-hidden="true"></i><span>المنتجات</span><i class="fa-solid fa-arrow-left hn-mobile-arrow"
+          aria-hidden="true"></i></a>
+      <a href="index.html#smart-baskets" onclick="toggleMobileMenu()" class="hn-mobile-link"><i
+          class="fa-solid fa-boxes-stacked" aria-hidden="true"></i><span>السلال الذكية</span><i
           class="fa-solid fa-arrow-left hn-mobile-arrow" aria-hidden="true"></i></a>
-      <a href="index.html#smart-baskets" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-boxes-stacked"
-          aria-hidden="true"></i><span>السلال الذكية</span><i class="fa-solid fa-arrow-left hn-mobile-arrow"
-          aria-hidden="true"></i></a>
-      <a href="index.html#store-map" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-map-location-dot"
-          aria-hidden="true"></i><span>الخريطة</span><i class="fa-solid fa-arrow-left hn-mobile-arrow"
-          aria-hidden="true"></i></a>
-      <a href="index.html#order-track" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-truck-fast"
-          aria-hidden="true"></i><span>تتبع الطلب</span><i class="fa-solid fa-arrow-left hn-mobile-arrow"
-          aria-hidden="true"></i></a>
+      <a href="index.html#store-map" onclick="toggleMobileMenu()" class="hn-mobile-link"><i
+          class="fa-solid fa-map-location-dot" aria-hidden="true"></i><span>الخريطة</span><i
+          class="fa-solid fa-arrow-left hn-mobile-arrow" aria-hidden="true"></i></a>
+      <a href="index.html#order-track" onclick="toggleMobileMenu()" class="hn-mobile-link"><i
+          class="fa-solid fa-truck-fast" aria-hidden="true"></i><span>تتبع الطلب</span><i
+          class="fa-solid fa-arrow-left hn-mobile-arrow" aria-hidden="true"></i></a>
       <a href="index.html#testimonials" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-star"
           aria-hidden="true"></i><span>آراء العملاء</span><i class="fa-solid fa-arrow-left hn-mobile-arrow"
           aria-hidden="true"></i></a>
-      <a href="index.html#faq" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-circle-question"
-          aria-hidden="true"></i><span>الأسئلة الشائعة</span><i class="fa-solid fa-arrow-left hn-mobile-arrow"
-          aria-hidden="true"></i></a>
+      <a href="index.html#faq" onclick="toggleMobileMenu()" class="hn-mobile-link"><i
+          class="fa-solid fa-circle-question" aria-hidden="true"></i><span>الأسئلة الشائعة</span><i
+          class="fa-solid fa-arrow-left hn-mobile-arrow" aria-hidden="true"></i></a>
       <a href="index.html#careers" onclick="toggleMobileMenu()" class="hn-mobile-link"><i class="fa-solid fa-briefcase"
           aria-hidden="true"></i><span>الوظائف</span><i class="fa-solid fa-arrow-left hn-mobile-arrow"
           aria-hidden="true"></i></a>
@@ -332,15 +290,41 @@
 
   <!-- MAIN CONTENT CONTAINER -->
   <main id="main" class="hn-page-wrap" data-page="products">
-    <section class="hn-page-heading"><div><h1>كل منتجات HyperNest</h1><p>اختار احتياجاتك من كل الأقسام في مكان واحد.</p></div><span id="hn-products-count" class="hn-product-count">150 منتج</span></section>
+    <section class="hn-page-heading">
+      <div>
+        <h1>كل منتجات HyperNest</h1>
+        <p>اختار احتياجاتك من كل الأقسام في مكان واحد.</p>
+      </div><span id="hn-products-count" class="hn-product-count">150 منتج</span>
+    </section>
     <section class="hn-page-filters" aria-label="فلاتر المنتجات">
       <input id="hn-product-search" type="search" placeholder="ابحث عن منتج..." aria-label="ابحث عن منتج">
-      <select id="hn-product-category" aria-label="التصنيف"><option value="all">كل التصنيفات</option><option value="produce">خضار وفاكهة</option><option value="dairy">ألبان وأجبان</option><option value="bakery">مخبوزات</option><option value="meat">لحوم ومجمدات</option><option value="beverages">مشروبات</option><option value="home-tools">أدوات منزلية</option><option value="electronics">أجهزة كهربائية</option><option value="cleaning">منظفات ومطهرات</option><option value="household">مستلزمات منزلية</option></select>
-      <select id="hn-product-sort" aria-label="ترتيب المنتجات"><option value="featured">الترتيب الافتراضي</option><option value="price-low">السعر: الأقل أولًا</option><option value="price-high">السعر: الأعلى أولًا</option><option value="rating">الأعلى تقييمًا</option><option value="name">الاسم</option></select>
-      <label class="hn-page-range">الحد الأقصى للسعر <input id="hn-product-budget" type="range" min="100" max="10000" step="100" value="10000"><b id="hn-product-budget-value">10000 ج.م</b></label>
+      <select id="hn-product-category" aria-label="التصنيف">
+        <option value="all">كل التصنيفات</option>
+        <option value="produce">خضار وفاكهة</option>
+        <option value="dairy">ألبان وأجبان</option>
+        <option value="bakery">مخبوزات</option>
+        <option value="meat">لحوم ومجمدات</option>
+        <option value="beverages">مشروبات</option>
+        <option value="home-tools">أدوات منزلية</option>
+        <option value="electronics">أجهزة كهربائية</option>
+        <option value="cleaning">منظفات ومطهرات</option>
+        <option value="household">مستلزمات منزلية</option>
+      </select>
+      <select id="hn-product-sort" aria-label="ترتيب المنتجات">
+        <option value="featured">الترتيب الافتراضي</option>
+        <option value="price-low">السعر: الأقل أولًا</option>
+        <option value="price-high">السعر: الأعلى أولًا</option>
+        <option value="rating">الأعلى تقييمًا</option>
+        <option value="name">الاسم</option>
+      </select>
+      <label class="hn-page-range">الحد الأقصى للسعر <input id="hn-product-budget" type="range" min="100" max="10000"
+          step="100" value="10000"><b id="hn-product-budget-value">10000 ج.م</b></label>
     </section>
     <section id="hn-all-products" class="hn-page-products-grid" aria-live="polite"></section>
-    <section class="hn-orders-card mt-10"><h2 class="text-lg font-black mb-3">اقتراحات تكمل سلتك</h2><div id="hn-page-smart-baskets" class="hn-page-products-grid"></div></section>
+    <section class="hn-orders-card mt-10">
+      <h2 class="text-lg font-black mb-3">اقتراحات تكمل سلتك</h2>
+      <div id="hn-page-smart-baskets" class="hn-page-products-grid"></div>
+    </section>
     <button id="hn-products-more" class="hn-page-more" type="button">تحميل المزيد</button>
   </main>
   <!-- FOOTER -->
