@@ -108,7 +108,7 @@
     let W = innerWidth, H = innerHeight;
     let target = 0, current = 0, ticking = false, finished = false;
     let entry = reduced ? 1 : 0;
-    const entryStart = performance.now() + 250, ENTRY_MS = 1200;
+    const entryStart = performance.now() + 250, ENTRY_MS = 1000;
 
     function request() { if (!ticking) { ticking = true; requestAnimationFrame(loop); } }
 

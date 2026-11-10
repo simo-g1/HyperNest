@@ -536,15 +536,132 @@
         </div>
       </div>
     </section>
+    <section id="hn-news-hub" class="hn-offers-section reveal-on-scroll hn-motion-section hn-in-view revealed"
+      aria-labelledby="hn-hub-heading">
+      <div class="hn-offers-heading hn-motion-heading">
+        <div>
+          <span class="hn-hub-eyebrow"><i class="fa-solid fa-sparkles" aria-hidden="true"></i> جديد HyperNest</span>
+          <h2 id="hn-hub-heading" class="hn-hub-title"><span class="bw" style="--w:0">كل</span> <span class="bw"
+              style="--w:1">جديد</span> <span class="bw" style="--w:2">من</span> <span class="bw"
+              style="--w:3">HyperNest</span> <span class="bw" style="--w:4">في</span> <span class="bw"
+              style="--w:5">مكان</span> <span class="bw" style="--w:6">واحد</span></h2>
+          <p class="hn-hub-subtitle">عروض واضحة، أكواد خصم، ومكافآت — من غير ما تزاحم تجربة التسوق.</p>
+        </div>
+        <span class="hn-loyalty-pill"><i class="fa-solid fa-award" aria-hidden="true"></i> نادي الولاء · <b
+            id="hn-loyalty-points">662</b> نقطة</span>
+      </div>
 
-    <!-- How it works (explains existing shelf + drag ideas) -->
-    <section id="how-it-works" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 reveal-on-scroll">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="p-5 rounded-3xl bg-white dark:bg-slate-800 border border-skyBrand-100 dark:border-slate-700">
-          <div class="w-11 h-11 rounded-2xl bg-skyBrand-100 text-skyBrand-700 flex items-center justify-center mb-3"
-            aria-hidden="true"><i class="fa-solid fa-lightbulb"></i></div>
-          <h3 class="font-black text-slate-900 dark:text-white">1. سلّط الضوء على الرف</h3>
-          <p class="text-sm text-slate-500 mt-1">نفس أرفف هايبر نست ثلاثية الأبعاد: مرّر للتسليط واضغط للتفاصيل.</p>
+      <div class="hn-offer-slider" aria-roledescription="carousel" aria-label="عروض HyperNest">
+        <div class="hn-offer-track" id="hn-offer-track" aria-live="polite">
+          <article class="hn-offer-slide hn-offer-slide--fresh" data-slide="0">
+            <div class="hn-offer-copy"><span class="hn-offer-kicker">اختيارات طازجة كل يوم</span>
+              <h3>الطازج اللي بتحبه<br>في مشوار واحد</h3>
+              <p>اختار احتياجات بيتك من الخضار والفاكهة والمنتجات اليومية بسهولة.</p><button type="button"
+                class="hn-offer-cta" data-offer-category="produce">تسوق الخضار والفاكهة <i
+                  class="fa-solid fa-arrow-left" aria-hidden="true"></i></button>
+            </div>
+            <div class="hn-offer-art hn-offer-art--produce" aria-hidden="true"><span><i
+                  class="fa-solid fa-carrot"></i></span><span><i class="fa-solid fa-lemon"></i></span><span><i
+                  class="fa-solid fa-apple-whole"></i></span><span><i class="fa-solid fa-leaf"></i></span></div>
+            <span class="hn-offer-number">01 / 03</span>
+          </article>
+          <article class="hn-offer-slide hn-offer-slide--pantry" data-slide="1" hidden="">
+            <div class="hn-offer-copy"><span class="hn-offer-kicker">كل أساسيات البيت</span>
+              <h3>كمّل مشترياتك<br>من غير لف كتير</h3>
+              <p>من الألبان والمخبوزات لحد احتياجات المطبخ اليومية — كل قسم واضح وسهل.</p><button type="button"
+                class="hn-offer-cta" data-offer-category="dairy">اكتشف المنتجات <i class="fa-solid fa-arrow-left"
+                  aria-hidden="true"></i></button>
+            </div>
+            <div class="hn-offer-art hn-offer-art--pantry" aria-hidden="true"><span><i
+                  class="fa-solid fa-glass-water"></i></span><span><i class="fa-solid fa-cheese"></i></span><span><i
+                  class="fa-solid fa-cookie-bite"></i></span><span><i class="fa-solid fa-bread-slice"></i></span></div>
+            <span class="hn-offer-number">02 / 03</span>
+          </article>
+          <article class="hn-offer-slide hn-offer-slide--home" data-slide="2" hidden="">
+            <div class="hn-offer-copy"><span class="hn-offer-kicker">وصل حديثًا</span>
+              <h3>من المطبخ<br>لحد كل ركن في البيت</h3>
+              <p>50 منتجًا جديدًا بين الأدوات المنزلية والأجهزة والإلكترونيات لتجربة كتالوج أوسع.</p><button
+                type="button" class="hn-offer-cta" data-offer-category="home-tools">شوف المنتجات الجديدة <i
+                  class="fa-solid fa-arrow-left" aria-hidden="true"></i></button>
+            </div>
+            <div class="hn-offer-art hn-offer-art--home" aria-hidden="true"><span><i
+                  class="fa-solid fa-mug-hot"></i></span><span><i class="fa-solid fa-kitchen-set"></i></span><span><i
+                  class="fa-solid fa-basket-shopping"></i></span><span><i class="fa-solid fa-lightbulb"></i></span>
+            </div>
+            <span class="hn-offer-number">03 / 03</span>
+          </article>
+        </div>
+        <div class="hn-offer-controls">
+          <div class="hn-offer-dots" role="group" aria-label="اختيار العرض">
+            <button type="button" class="is-active" data-offer-dot="0" aria-label="العرض الأول"
+              aria-pressed="true"></button>
+            <button type="button" data-offer-dot="1" aria-label="العرض الثاني" aria-pressed="false"></button>
+            <button type="button" data-offer-dot="2" aria-label="العرض الثالث" aria-pressed="false"></button>
+          </div>
+          <div class="hn-offer-arrows"><button type="button" id="hn-offer-prev" aria-label="العرض السابق"><i
+                class="fa-solid fa-arrow-right" aria-hidden="true"></i></button><button type="button" id="hn-offer-next"
+              aria-label="العرض التالي"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i></button></div>
+        </div>
+      </div>
+
+      <div class="hn-hub-features" aria-label="مميزات وعروض إضافية">
+        <article class="hn-hub-feature hn-coupon-feature hn-motion-item" data-hn-stagger=""
+          style="--hn-motion-index: 0;">
+          <div class="hn-feature-topline"><span class="hn-feature-icon"><i class="fa-solid fa-ticket"
+                aria-hidden="true"></i></span><span class="hn-feature-label">عرض ترحيبي</span></div>
+          <h3>وفّر على طلبك القادم</h3>
+          <p>اختار الكود المناسب وطبّقه من السلة. الأكواد هنا تجريبية للعرض وليست مرتبطة ببوابة دفع حقيقية.</p>
+          <div class="hn-coupon-list">
+            <div class="hn-coupon-row">
+              <div><b>HYPERNEST20</b><small>خصم 20%</small></div><button type="button" data-copy-code="HYPERNEST20"
+                aria-label="نسخ كود HYPERNEST20"><i class="fa-regular fa-copy" aria-hidden="true"></i>
+                نسخ</button><button type="button" data-apply-code="HYPERNEST20">تطبيق</button>
+            </div>
+            <div class="hn-coupon-row">
+              <div><b>SAVE10</b><small>خصم 10%</small></div><button type="button" data-copy-code="SAVE10"
+                aria-label="نسخ كود SAVE10"><i class="fa-regular fa-copy" aria-hidden="true"></i> نسخ</button><button
+                type="button" data-apply-code="SAVE10">تطبيق</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="hn-hub-feature hn-rewards-feature hn-motion-item" data-hn-stagger=""
+          style="--hn-motion-index: 1;">
+          <div class="hn-feature-topline"><span class="hn-feature-icon"><i class="fa-solid fa-gift"
+                aria-hidden="true"></i></span><span class="hn-feature-label">مكافآت التوفير</span></div>
+          <h3>جرّب عجلة التوفير</h3>
+          <p>لف العجلة وشاهد تجربة الخصم داخل النموذج التجريبي، من غير ما تغطي على الـ Hero.</p>
+          <div class="hn-rewards-actions"><button type="button" class="hn-feature-primary"
+              onclick="toggleSpinWheelModal()"><i class="fa-solid fa-rotate" aria-hidden="true"></i> افتح
+              العجلة</button><button type="button" class="hn-feature-secondary" onclick="shareFamilyList()"><i
+                class="fa-solid fa-share-nodes" aria-hidden="true"></i> مشاركة قائمة العائلة</button></div>
+          <div class="hn-reward-orbit" aria-hidden="true"><span><i class="fa-solid fa-percent"></i></span><span><i
+                class="fa-solid fa-star"></i></span><span><i class="fa-solid fa-gift"></i></span></div>
+        </article>
+
+        <article class="hn-hub-feature hn-arrivals-feature hn-motion-item" data-hn-stagger=""
+          style="--hn-motion-index: 2;">
+          <div class="hn-feature-topline"><span class="hn-feature-icon"><i class="fa-solid fa-box-open"
+                aria-hidden="true"></i></span><span class="hn-feature-label">وصل حديثًا</span></div>
+          <h3>البيت والإلكترونيات</h3>
+          <p>أضفنا 50 منتجًا جديدًا بين الأدوات المنزلية والأجهزة والإلكترونيات لتجربة كتالوج أوسع.</p>
+          <div class="hn-arrival-tags"><button type="button" data-offer-category="home-tools"><i
+                class="fa-solid fa-house" aria-hidden="true"></i> الأدوات المنزلية</button><button type="button"
+              data-offer-category="electronics"><i class="fa-solid fa-plug" aria-hidden="true"></i>
+              الإلكترونيات</button></div>
+        </article>
+      </div>
+      <div class="hn-hub-footnote"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> العروض والأكواد والمكافآت
+        المعروضة تجريبية ضمن نموذج HyperNest.</div>
+    </section>
+    <section id="hn-news-hub" class="hn-offers-section reveal-on-scroll hn-motion-section hn-in-view revealed"
+      aria-labelledby="hn-hub-heading">
+      <div class="hn-offers-heading hn-motion-heading">
+        <div>
+          <span class="hn-hub-eyebrow"><i class="fa-solid fa-sparkles" aria-hidden="true"></i> جديد HyperNest</span>
+          <h2 id="hn-hub-heading" class="hn-hub-title"><span class="bw" style="--w:0">كل</span> <span class="bw"
+              style="--w:1">جديد</span> <span class="bw" style="--w:2">من</span> <span 500 mt-1">نفس أرفف هايبر نست
+              ثلاثية الأبعاد: مرّر للتسليط واضغط للتفاصيل.</p>
         </div>
         <div class="p-5 rounded-3xl bg-white dark:bg-slate-800 border border-skyBrand-100 dark:border-slate-700">
           <div class="w-11 h-11 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center mb-3"
