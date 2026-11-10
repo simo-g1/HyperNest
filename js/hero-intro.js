@@ -3,6 +3,7 @@
 
   const KEY = 'hn_hero_intro_completed';
   const SHIFT = 0.10; // بيأخر إطلاق/هبوط المنتجات لحد ما السلة توصل النص
+  const INTRO_SCROLL_SPEED_PX_PER_SECOND = 500; // سرعة السكرول أثناء الـ Intro فقط (px/s)
   const root = document.documentElement;
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   let done = false;
@@ -107,6 +108,8 @@
 
     let W = innerWidth, H = innerHeight;
     let target = 0, current = 0, ticking = false, finished = false;
+    let lastFrameTime = 0;
+    const SMOOTHING_MS = 180; // مدة استجابة تقدم الأنيميشن للسكرول السريع
     let entry = reduced ? 1 : 0;
     const entryStart = performance.now() + 250, ENTRY_MS = 1000;
 
@@ -116,22 +119,165 @@
       ticking = false;
       let busy = false;
       if (entry < 1) { entry = clamp((now - entryStart) / ENTRY_MS, 0, 1); busy = entry < 1; }
+
+      // تنعيم مستقل عن عدد الإطارات: يمنع قفز الأنيميشن عند السكرول السريع.
+      const deltaTime = lastFrameTime ? Math.min(now - lastFrameTime, 50) : 16.67;
+      lastFrameTime = now;
+      const smoothing = 1 - Math.exp(-deltaTime / SMOOTHING_MS);
       const diff = target - current;
-      if (Math.abs(diff) > 0.0005) { current += diff * 0.16; busy = true; } else current = target;
+      if (Math.abs(diff) > 0.0005) {
+        current += diff * smoothing;
+        busy = true;
+      } else {
+        current = target;
+      }
+
       render(current);
-      if (!finished && current >= 0.95) finish();
+      if (!finished && current >= 0.999 && target >= 0.999 && entry >= 1) finish();
       if (busy && !finished) request();
     }
 
+    // يقفل النزول عند نهاية الـ Intro، ثم عند نهاية الـ Hero مؤقتًا.
+    let scrollBoundaryActive = true;
+    let touchStartY = 0;
+    let controlledScrollTarget = window.scrollY;
+    let controlledScrollFrame = 0;
+    let controlledScrollTime = 0;
+
+    function queueControlledScroll(delta) {
+      const maxScroll = getMaxAllowedScroll();
+      controlledScrollTarget = clamp(controlledScrollTarget + delta, 0, maxScroll);
+      if (!controlledScrollFrame) {
+        controlledScrollTime = performance.now();
+        controlledScrollFrame = requestAnimationFrame(stepControlledScroll);
+      }
+    }
+
+    function stepControlledScroll(now) {
+      const elapsed = Math.min((now - controlledScrollTime) / 1000, 0.05);
+      controlledScrollTime = now;
+      const currentScroll = window.scrollY;
+      const difference = controlledScrollTarget - currentScroll;
+      const maxStep = INTRO_SCROLL_SPEED_PX_PER_SECOND * elapsed;
+      const step = clamp(difference, -maxStep, maxStep);
+
+      if (Math.abs(difference) <= 1) {
+        window.scrollTo({ top: controlledScrollTarget, left: 0, behavior: 'instant' });
+        controlledScrollFrame = 0;
+        return;
+      }
+
+      window.scrollTo({ top: currentScroll + step, left: 0, behavior: 'instant' });
+      controlledScrollFrame = requestAnimationFrame(stepControlledScroll);
+    }
+
+    function getMaxAllowedScroll() {
+      const boundaryElement = finished ? hero : track;
+      const boundaryBottom = boundaryElement.getBoundingClientRect().bottom + window.scrollY;
+      return Math.max(0, boundaryBottom - window.innerHeight);
+    }
+
+    function clampAtBoundary(event) {
+      event.preventDefault();
+      window.scrollTo({
+        top: getMaxAllowedScroll(),
+        left: 0,
+        behavior: 'instant'
+      });
+    }
+
+    function preventWheelPastBoundary(event) {
+      if (!scrollBoundaryActive) return;
+      const multiplier = event.deltaMode === 1 ? 16 :
+        event.deltaMode === 2 ? window.innerHeight : 1;
+      if (!finished) {
+        event.preventDefault();
+        queueControlledScroll(event.deltaY * multiplier);
+        return;
+      }
+      if (event.deltaY > 0 && window.scrollY + event.deltaY * multiplier > getMaxAllowedScroll()) {
+        clampAtBoundary(event);
+      }
+    }
+
+    function rememberTouchStart(event) {
+      if (event.touches.length) touchStartY = event.touches[0].clientY;
+    }
+
+    function preventTouchPastBoundary(event) {
+      if (!scrollBoundaryActive || !event.touches.length) return;
+      const currentY = event.touches[0].clientY;
+      const delta = touchStartY - currentY;
+      touchStartY = currentY;
+      if (!finished) {
+        event.preventDefault();
+        queueControlledScroll(delta);
+        return;
+      }
+      if (delta > 0 && window.scrollY + delta > getMaxAllowedScroll()) clampAtBoundary(event);
+    }
+
+    function preventKeyboardPastBoundary(event) {
+      if (!scrollBoundaryActive || event.altKey || event.ctrlKey || event.metaKey) return;
+      if (event.target instanceof Element &&
+        (event.target.isContentEditable || event.target.closest('input, textarea, select, [contenteditable="true"]'))) return;
+
+      const downKeys = ['ArrowDown', 'PageDown', 'End', ' '];
+      if (!downKeys.includes(event.key)) return;
+      if (event.key === ' ' && event.target instanceof Element &&
+        event.target.closest('button, a, [role="button"]')) return;
+
+      const amount = event.key === 'ArrowDown' ? 40 : window.innerHeight;
+      if (!finished) {
+        event.preventDefault();
+        queueControlledScroll(amount);
+        return;
+      }
+      if (window.scrollY + amount > getMaxAllowedScroll()) clampAtBoundary(event);
+    }
+
+    window.addEventListener('wheel', preventWheelPastBoundary, { passive: false });
+    window.addEventListener('touchstart', rememberTouchStart, { passive: true });
+    window.addEventListener('touchmove', preventTouchPastBoundary, { passive: false });
+    window.addEventListener('keydown', preventKeyboardPastBoundary);
+
     function finish() {
-      finished = true; done = true;
+      finished = true;
+      done = true;
+      if (controlledScrollFrame) {
+        cancelAnimationFrame(controlledScrollFrame);
+        controlledScrollFrame = 0;
+      }
+
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'instant'
+      });
+
       root.classList.add('hn-intro-completed');
-      try { sessionStorage.setItem(KEY, 'true'); } catch (e) { }
+
+      try {
+        sessionStorage.setItem(KEY, 'true');
+      } catch (e) { }
+
       render(1);
+
       hero.classList.remove('hn-intro-active');
       hero.style.removeProperty('--hn-reveal');
+
       if (layer) layer.style.display = 'none';
+
       updateHeader();
+
+      // يبدأ العد من لحظة ظهور الـ Hero بالكامل.
+      window.setTimeout(() => {
+        scrollBoundaryActive = false;
+        window.removeEventListener('wheel', preventWheelPastBoundary);
+        window.removeEventListener('touchstart', rememberTouchStart);
+        window.removeEventListener('touchmove', preventTouchPastBoundary);
+        window.removeEventListener('keydown', preventKeyboardPastBoundary);
+      }, 10);
     }
 
     function onScroll() {
