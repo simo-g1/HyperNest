@@ -517,7 +517,7 @@ html.hn-intro-completed #vf-hero .vf-buy {
   background-image:
     linear-gradient(180deg, rgba(12, 15, 12, .48) 0%, rgba(12, 15, 12, .18) 34%, rgba(12, 15, 12, .22) 66%, rgba(12, 15, 12, .72) 100%),
     linear-gradient(90deg, rgba(8, 12, 9, .26), transparent 22%, transparent 78%, rgba(8, 12, 9, .26)),
-    url('../imgs/supermarket-aisle.jpg') !important;
+    url('../imgs/supermarket-aisle.webp') !important;
   background-position: center, center, center 48% !important;
   background-size: cover, cover, cover !important;
   background-repeat: no-repeat !important;
