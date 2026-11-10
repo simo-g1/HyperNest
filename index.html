@@ -5,7 +5,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script>try { if (JSON.parse(localStorage.getItem("hypernest-demo-state-v1") || "{}").theme === "dark") document.documentElement.classList.add("dark") } catch (e) { }</script>
-  <title>HyperNest | تسوّق بذكاء</title>
+  <title>HyperNest Studio &amp; Code Audit | فاحص متجر هايبر نست</title>
+  <meta name="description"
+    content="فحص ومراجعة كود مشروع HyperNest وتشغيل المتجر التفاعلي الكامل مع تدقيق برمجي شامل لجميع الملفات والوظائف.">
+  <meta property="og:title" content="HyperNest Studio &amp; Code Audit | فاحص متجر هايبر نست">
+  <meta property="og:description"
+    content="فحص ومراجعة كود مشروع HyperNest وتشغيل المتجر التفاعلي الكامل مع تدقيق برمجي شامل لجميع الملفات والوظائف.">
   <!-- Normalize + FontAwesome (local files) -->
   <link rel="stylesheet" href="css/normalize.css">
   <link rel="stylesheet" href="css/all.min.css">
@@ -18,6 +23,8 @@
   <link rel="stylesheet" href="css/my.css">
   <link rel="stylesheet" href="css/hypernest-upgrade.css">
   <link rel="stylesheet" href="css/pages.css">
+  <link rel="stylesheet" href="css/hero-intro.css">
+  <script>try { if (sessionStorage.getItem('hn_hero_intro_completed') === 'true') document.documentElement.classList.add('hn-intro-completed') } catch (e) { }</script>
 </head>
 
 <body
@@ -31,44 +38,41 @@
   <!-- Theme Circular Expansion Overlay Layer -->
   <div id="theme-ripple"></div>
 
-  <!-- Glowing Custom Cursor Follower -->
-  <div id="cursor-glow" class="hidden md:block"></div>
-
   <!-- Toast Notification Container -->
   <div id="toast-container" class="fixed bottom-5 left-3 lg:left-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
-  <!-- TOP LOCATION BAR -->
-  <div
-    class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs py-1.5 border-b border-slate-200 dark:border-slate-700 hidden md:block">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-      <div class="flex items-center gap-6">
-        <div class="flex items-center gap-1.5 cursor-pointer hover:text-skyBrand-600 transition"
-          onclick="showToast('📍 تم اختيار موقعك الحالي: المنصورة، حي الجامعة')">
-          <i class="fa-solid fa-location-dot text-rose-500"></i>
-          <span>التوصيل إلى: <strong class="text-slate-800 dark:text-white">المنصورة، حي الجامعة</strong></span>
-          <i class="fa-solid fa-chevron-down text-[10px] mr-1"></i>
-        </div>
-        <div class="flex items-center gap-1.5">
-          <i class="fa-solid fa-store text-skyBrand-500"></i>
-          <span>الفرع المختار: <strong class="text-slate-800 dark:text-white">فرع هايبر نست الرئيسي</strong></span>
-        </div>
-      </div>
-      <div class="flex items-center gap-6">
-        <span class="text-emerald-600 dark:text-emerald-400 font-bold"><i class="fa-solid fa-truck-fast"></i> التوصيل
-          مجاني للطلبات فوق 200 ج.م</span>
-        <div class="flex items-center gap-2">
-          <i class="fa-solid fa-headset text-skyBrand-600"></i>
-          <span class="font-extrabold">19988</span>
-        </div>
-        <button onclick="showToast('اللغة الحالية هي العربية')"
-          class="hover:text-skyBrand-600 font-bold">English</button>
-      </div>
-    </div>
-  </div>
-
   <!-- HEADER & NAVIGATION -->
   <header
-    class="sticky top-0 z-40 bg-[#fffdf8]/92 dark:bg-slate-950/90 backdrop-blur-md shadow-sm border-b border-cream-200 dark:border-slate-800 transition-colors duration-300">
+    class="sticky top-0 z-40 bg-[#fffdf8]/95 dark:bg-slate-950/95 backdrop-blur-md shadow-sm border-b border-cream-200 dark:border-slate-800 transition-colors duration-300">
+    <!-- TOP LOCATION BAR (Anchored inside sticky header to eliminate scroll jump) -->
+    <div
+      class="bg-slate-100/90 dark:bg-slate-800/90 text-slate-600 dark:text-slate-300 text-xs py-1.5 border-b border-slate-200 dark:border-slate-700 hidden md:block">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+        <div class="flex items-center gap-6">
+          <div class="flex items-center gap-1.5 cursor-pointer hover:text-skyBrand-600 transition"
+            onclick="showToast('📍 تم اختيار موقعك الحالي: المنصورة، حي الجامعة')">
+            <i class="fa-solid fa-location-dot text-rose-500"></i>
+            <span>التوصيل إلى: <strong class="text-slate-800 dark:text-white">المنصورة، حي الجامعة</strong></span>
+            <i class="fa-solid fa-chevron-down text-[10px] mr-1"></i>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <i class="fa-solid fa-store text-skyBrand-500"></i>
+            <span>الفرع المختار: <strong class="text-slate-800 dark:text-white">فرع هايبر نست الرئيسي</strong></span>
+          </div>
+        </div>
+        <div class="flex items-center gap-6">
+          <span class="text-emerald-600 dark:text-emerald-400 font-bold"><i class="fa-solid fa-truck-fast"></i> التوصيل
+            مجاني للطلبات فوق 200 ج.م</span>
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-headset text-skyBrand-600"></i>
+            <span class="font-extrabold">19988</span>
+          </div>
+          <button onclick="showToast('اللغة الحالية هي العربية')"
+            class="hover:text-skyBrand-600 font-bold">English</button>
+        </div>
+      </div>
+    </div>
+
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col gap-3">
       <div class="hn-header-row h-auto flex items-center justify-between gap-4">
 
@@ -235,6 +239,12 @@
         <a href="#support"
           class="flex items-center gap-1.5 hover:text-skyBrand-600 dark:hover:text-skyBrand-400 transition-colors"><i
             class="fa-solid fa-headset text-skyBrand-500" aria-hidden="true"></i> التواصل</a>
+        <button type="button" onclick="replayHeroIntro()"
+          class="flex items-center gap-1.5 text-xs font-bold text-amber-700 dark:text-amber-300 bg-amber-500/10 dark:bg-amber-500/20 hover:bg-amber-500/25 border border-amber-500/30 px-3 py-1.5 rounded-xl transition shadow-xs cursor-pointer"
+          title="إعادة تشغيل مقدمة عربة التسوق السينمائية">
+          <i class="fa-solid fa-rotate-right text-amber-600 dark:text-amber-400" aria-hidden="true"></i>
+          <span>إعادة المقدمة</span>
+        </button>
       </nav>
     </div>
 
@@ -285,50 +295,245 @@
   <!-- MAIN CONTENT CONTAINER -->
   <main id="main" class="space-y-16 pb-16">
 
-    <!-- HERO: 3D SUPERMARKET AISLE -->
-    <section id="vf-hero" class="hero-aisle vf-hero" tabindex="0"
-      aria-label="عرض المنتجات ثلاثي الأبعاد، استخدم أسهم الكيبورد للتنقل">
-
-      <div class="vf-head">
-        <h1>تسوق كأنك جوه السوبر ماركت بالظبط!</h1>
-        <p>اسحب الكروت أو مرّر • اضغط على كارت لتقريبه • اسحب المنتج لأيقونة السلة</p>
-      </div>
-
-      <div class="vf-ghost" id="vf-ghost" aria-hidden="true">
-        <span>F</span><span>R</span><span>E</span><span>S</span><span>H</span>
-      </div>
-
-      <div class="vf-stage" id="vf-stage">
-        <div class="vf-arc" id="vf-arc"></div>
-      </div>
-
-      <div class="vf-model" id="vf-model" draggable="true" role="button" tabindex="0"
-        aria-label="المنتج المحدد، اضغط للتفاصيل أو اسحبه للسلة">
-        <div class="vf-img" id="vf-cur"></div>
-        <div class="vf-img vf-next" id="vf-next"></div>
-        <div class="vf-grid" id="vf-grid"></div>
-        <div class="vf-scan" id="vf-scan"></div>
-      </div>
-
-      <button type="button" class="vf-arrow vf-arrow-l vf-glass" onclick="navigateShelves('left')"
-        aria-label="المنتج السابق">
-        <i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
-      <button type="button" class="vf-arrow vf-arrow-r vf-glass" onclick="navigateShelves('right')"
-        aria-label="المنتج التالي">
-        <i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
-
-      <div class="vf-buy vf-glass">
-        <div class="vf-thumb"><img id="vf-thumb-img" alt=""></div>
-        <div class="vf-info">
-          <div class="vf-ln vf-bname" id="vf-bname" aria-live="polite"></div>
-          <div class="vf-ln vf-bprice" id="vf-bprice"></div>
+    <!-- SCROLL-DRIVEN SHOPPING CART HERO INTRO -->
+    <section id="hn-hero-intro" class="hn-hero-intro-track" aria-label="مقدمة عربة التسوق السينمائية التفاعلية">
+      <div class="hn-hero-intro-viewport">
+        <!-- Live Progress Bar -->
+        <div class="hn-intro-progress-bar-track" aria-hidden="true">
+          <div class="hn-intro-progress-bar-fill"></div>
         </div>
-        <div>
-          <span class="vf-lbl">الكمية</span>
-          <div class="vf-chips" id="vf-chips" role="group" aria-label="الكمية"></div>
+
+        <!-- HERO: 3D SUPERMARKET AISLE (Pre-mounted in the viewport) -->
+        <section id="vf-hero" class="hero-aisle vf-hero hn-intro-active" tabindex="0"
+          aria-label="عرض المنتجات ثلاثي الأبعاد، استخدم أسهم الكيبورد للتنقل">
+
+          <div class="vf-head">
+            <h1>تسوق كأنك جوه السوبر ماركت بالظبط!</h1>
+            <p>اسحب الكروت أو مرّر • اضغط على كارت لتقريبه • اسحب المنتج لأيقونة السلة</p>
+          </div>
+
+          <div class="vf-ghost" id="vf-ghost" aria-hidden="true">
+            <span>F</span><span>R</span><span>E</span><span>S</span><span>H</span>
+          </div>
+
+          <div class="vf-stage" id="vf-stage">
+            <div class="vf-arc" id="vf-arc"></div>
+          </div>
+
+          <div class="vf-model" id="vf-model" draggable="true" role="button" tabindex="0"
+            aria-label="المنتج المحدد، اضغط للتفاصيل أو اسحبه للسلة">
+            <div class="vf-img" id="vf-cur"></div>
+            <div class="vf-img vf-next" id="vf-next"></div>
+            <div class="vf-grid" id="vf-grid"></div>
+            <div class="vf-scan" id="vf-scan"></div>
+          </div>
+
+          <button type="button" class="vf-arrow vf-arrow-l vf-glass" onclick="navigateShelves('left')"
+            aria-label="المنتج السابق">
+            <i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
+          <button type="button" class="vf-arrow vf-arrow-r vf-glass" onclick="navigateShelves('right')"
+            aria-label="المنتج التالي">
+            <i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+
+          <div class="vf-buy vf-glass">
+            <div class="vf-thumb"><img id="vf-thumb-img" alt=""></div>
+            <div class="vf-info">
+              <div class="vf-ln vf-bname" id="vf-bname" aria-live="polite"></div>
+              <div class="vf-ln vf-bprice" id="vf-bprice"></div>
+            </div>
+            <div>
+              <span class="vf-lbl">الكمية</span>
+              <div class="vf-chips" id="vf-chips" role="group" aria-label="الكمية"></div>
+            </div>
+            <button type="button" class="vf-add" onclick="vfAddToCart(this)" data-added-label="تمت الإضافة">
+              <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> أضف للسلة</button>
+          </div>
+        </section>
+
+        <!-- Cart & Groceries Spilling Layer (Overlays #vf-hero during intro) -->
+        <div class="hn-intro-cart-layer">
+          <div class="hn-intro-overhead-glow" aria-hidden="true"></div>
+          <div class="hn-intro-floor-sheen" aria-hidden="true"></div>
+
+          <!-- Cinematic Title HUD -->
+          <div class="hn-intro-hud">
+            <div class="hn-intro-badge"><span class="live-dot"></span><span>HyperNest • تسوّق بذكاء</span></div>
+            <h2 class="hn-intro-title">أهلاً بك في HyperNest</h2>
+            <p class="hn-intro-subtitle">كل احتياجات بيتك من السوبر ماركت والأدوات المنزلية في مكان واحد، بتوصيل سريع
+              وأسعار
+              مناسبة.</p>
+            <button type="button" class="hn-intro-cta" id="hn-intro-cta">ابدأ التسوق <i class="fa-solid fa-arrow-left"
+                aria-hidden="true"></i></button>
+            <ul class="hn-intro-features">
+              <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i><b>جودة عالية</b><small>أفضل المنتجات
+                  لك</small></li>
+              <li><i class="fa-solid fa-tags" aria-hidden="true"></i><b>عروض مميزة</b><small>أسعار وعروض دايمًا</small>
+              </li>
+              <li><i class="fa-solid fa-truck-fast" aria-hidden="true"></i><b>توصيل سريع</b><small>لحد باب بيتك</small>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Stage Container -->
+          <div class="hn-intro-stage">
+            <!-- Realistic Shopping Cart -->
+            <div class="hn-intro-cart-wrapper">
+              <div class="hn-cart-chassis">
+                <!-- Cart Floor Drop Shadow -->
+                <div class="hn-cart-floor-shadow" aria-hidden="true"></div>
+
+                <!-- High-Fidelity SVG Metal Mesh Supermarket Cart -->
+                <svg class="hn-cart-svg" viewBox="0 0 380 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <!-- Metallic Chrome Tube Gradients -->
+                    <linearGradient id="hnChromeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#f8fafc" />
+                      <stop offset="25%" stop-color="#cbd5e1" />
+                      <stop offset="50%" stop-color="#64748b" />
+                      <stop offset="75%" stop-color="#94a3b8" />
+                      <stop offset="100%" stop-color="#e2e8f0" />
+                    </linearGradient>
+
+                    <linearGradient id="hnWireGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95" />
+                      <stop offset="50%" stop-color="#94a3b8" stop-opacity="0.8" />
+                      <stop offset="100%" stop-color="#475569" stop-opacity="0.9" />
+                    </linearGradient>
+
+                    <!-- HyperNest Brand Amber / Orange Handle Gradient -->
+                    <linearGradient id="hnHandleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stop-color="#ea580c" />
+                      <stop offset="35%" stop-color="#f59e0b" />
+                      <stop offset="70%" stop-color="#ea580c" />
+                      <stop offset="100%" stop-color="#c2410c" />
+                    </linearGradient>
+
+                    <linearGradient id="hnRubberGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#334155" />
+                      <stop offset="50%" stop-color="#0f172a" />
+                      <stop offset="100%" stop-color="#1e293b" />
+                    </linearGradient>
+                  </defs>
+
+                  <!-- 1. Lower Chassis Tubular Base Frame -->
+                  <!-- Bottom cargo tray grid -->
+                  <path d="M 85 240 L 290 240" stroke="url(#hnChromeGrad)" stroke-width="4.5" stroke-linecap="round" />
+                  <path
+                    d="M 105 240 L 115 225 M 140 240 L 150 225 M 175 240 L 185 225 M 210 240 L 220 225 M 245 240 L 255 225 M 275 240 L 285 225"
+                    stroke="url(#hnWireGrad)" stroke-width="2.2" stroke-linecap="round" />
+
+                  <!-- Main S-Curved Heavy-Duty Tubular Frame -->
+                  <path d="M 320 65 L 305 160 L 295 240 L 80 240 L 65 265" stroke="url(#hnChromeGrad)"
+                    stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round" />
+                  <!-- Front Bumper Cross Bar -->
+                  <path d="M 65 240 L 85 195 L 95 165" stroke="url(#hnChromeGrad)" stroke-width="5"
+                    stroke-linecap="round" />
+
+                  <!-- 2. Basket Back Wall (behind groceries) -->
+                  <polygon points="120,70 300,55 300,165 140,180" fill="rgba(15, 23, 42, 0.45)"
+                    stroke="url(#hnWireGrad)" stroke-width="1.5" />
+                  <!-- Back Wire Grid -->
+                  <path
+                    d="M 140 70 L 155 180 M 170 68 L 185 180 M 200 66 L 215 175 M 230 64 L 245 170 M 260 62 L 275 170 M 285 60 L 295 168"
+                    stroke="url(#hnWireGrad)" stroke-width="1.4" opacity="0.6" />
+                  <path d="M 125 90 L 300 78 M 130 115 L 300 102 M 135 140 L 300 128 M 138 160 L 300 148"
+                    stroke="url(#hnWireGrad)" stroke-width="1.4" opacity="0.6" />
+
+                  <!-- 3. Rear Child Seat Flap / Back Plate (Red Accent) -->
+                  <polygon points="282,65 305,58 302,120 282,125" fill="#ef4444" opacity="0.85" />
+                  <path d="M 288 80 L 298 77 M 288 95 L 298 92 M 288 110 L 298 107" stroke="#ffffff" stroke-width="1.8"
+                    stroke-linecap="round" opacity="0.8" />
+
+                  <!-- 4. Front Wire Mesh (Semi-transparent overlay with metallic gleam) -->
+                  <!-- Top Perimeter Rim Bar (Thick chrome pipe with shine) -->
+                  <polygon points="65,95 295,55 300,75 75,115" fill="none" stroke="url(#hnChromeGrad)" stroke-width="6"
+                    stroke-linejoin="round" />
+                  <polygon points="68,97 293,57 298,73 77,113" fill="none" stroke="#ffffff" stroke-width="1.5"
+                    opacity="0.8" />
+
+                  <!-- Basket Side Wire Grid (Dense realistic supermarket pattern) -->
+                  <g opacity="0.75">
+                    <!-- Vertical wires with perspective fan -->
+                    <path d="M 80 114 L 85 190" stroke="url(#hnWireGrad)" stroke-width="2.2" />
+                    <path d="M 100 110 L 105 188" stroke="url(#hnWireGrad)" stroke-width="2.2" />
+                    <path d="M 120 106 L 126 186" stroke="url(#hnWireGrad)" stroke-width="2.2" />
+                    <path d="M 140 102 L 147 184" stroke="url(#hnWireGrad)" stroke-width="2.2" />
+                    <path d="M 160 98 L 168 182" stroke="url(#hnWireGrad)" stroke-width="2.2" />
+                    <path d="M 180 94 L 189 180" stroke="url(#hnWireGrad)" stroke-width="2.2" />
+                    <path d="M 200 90 L 210 178" stroke="url(#hnWireGrad)" stroke-width="2.2" />
+                    <path d="M 220 86 L 231 176" stroke="url(#hnWireGrad)" stroke-width="2.2" />
+                    <path d="M 240 82 L 252 174" stroke="url(#hnWireGrad)" stroke-width="2.2" />
+                    <path d="M 260 78 L 273 172" stroke="url(#hnWireGrad)" stroke-width="2.2" />
+                    <path d="M 280 74 L 290 170" stroke="url(#hnWireGrad)" stroke-width="2.2" />
+
+                    <!-- Horizontal wires -->
+                    <path d="M 72 125 L 295 85" stroke="url(#hnWireGrad)" stroke-width="2" />
+                    <path d="M 75 140 L 295 102" stroke="url(#hnWireGrad)" stroke-width="2" />
+                    <path d="M 78 155 L 293 120" stroke="url(#hnWireGrad)" stroke-width="2" />
+                    <path d="M 81 170 L 290 140" stroke="url(#hnWireGrad)" stroke-width="2" />
+                    <path d="M 83 182 L 288 158" stroke="url(#hnWireGrad)" stroke-width="2.2" />
+                  </g>
+
+                  <!-- Basket Bottom Edge Tube -->
+                  <path d="M 82 192 L 288 174" stroke="url(#hnChromeGrad)" stroke-width="5" stroke-linecap="round" />
+
+                  <!-- 5. Ergonomic Plastic Handle Bar Grip -->
+                  <path d="M 295 60 L 340 38" stroke="url(#hnChromeGrad)" stroke-width="5.5" stroke-linecap="round" />
+                  <path d="M 292 72 L 332 50" stroke="url(#hnChromeGrad)" stroke-width="4.5" stroke-linecap="round" />
+
+                  <!-- Cyan/SkyBrand Textured Ergonomic Handle Tube -->
+                  <rect x="330" y="24" width="22" height="38" rx="6" fill="url(#hnHandleGrad)" stroke="#0369a1"
+                    stroke-width="2" transform="rotate(18, 330, 24)" />
+                  <line x1="335" y1="30" x2="338" y2="44" stroke="#ffffff" stroke-width="2" opacity="0.6"
+                    stroke-linecap="round" />
+                  <line x1="341" y1="32" x2="344" y2="46" stroke="#ffffff" stroke-width="2" opacity="0.6"
+                    stroke-linecap="round" />
+                  <line x1="347" y1="34" x2="350" y2="48" stroke="#ffffff" stroke-width="2" opacity="0.6"
+                    stroke-linecap="round" />
+
+                  <!-- 6. Heavy-Duty Swivel Caster Wheels -->
+                  <!-- Front Wheel Assembly -->
+                  <g class="hn-cart-front-wheel" transform="translate(75, 275)">
+                    <path d="M -2 -25 L 8 0 L -8 0 Z" fill="url(#hnChromeGrad)" stroke="#475569" stroke-width="1.5" />
+                    <g class="hn-cart-wheel-rotate">
+                      <circle cx="0" cy="0" r="19" fill="url(#hnRubberGrad)" stroke="#0f172a" stroke-width="3" />
+                      <circle cx="0" cy="0" r="13" fill="url(#hnChromeGrad)" stroke="#64748b" stroke-width="1.5" />
+                      <circle cx="0" cy="-6" r="2.2" fill="#334155" />
+                      <circle cx="5" cy="3" r="2.2" fill="#334155" />
+                      <circle cx="-5" cy="3" r="2.2" fill="#334155" />
+                      <circle cx="0" cy="0" r="4.5" fill="#f8fafc" stroke="#334155" stroke-width="1" />
+                    </g>
+                  </g>
+
+                  <!-- Rear Wheel Assembly -->
+                  <g class="hn-cart-rear-wheel" transform="translate(290, 275)">
+                    <path d="M -2 -25 L 8 0 L -8 0 Z" fill="url(#hnChromeGrad)" stroke="#475569" stroke-width="1.5" />
+                    <g class="hn-cart-wheel-rotate">
+                      <circle cx="0" cy="0" r="19" fill="url(#hnRubberGrad)" stroke="#0f172a" stroke-width="3" />
+                      <circle cx="0" cy="0" r="13" fill="url(#hnChromeGrad)" stroke="#64748b" stroke-width="1.5" />
+                      <circle cx="0" cy="-6" r="2.2" fill="#334155" />
+                      <circle cx="5" cy="3" r="2.2" fill="#334155" />
+                      <circle cx="-5" cy="3" r="2.2" fill="#334155" />
+                      <circle cx="0" cy="0" r="4.5" fill="#f8fafc" stroke="#334155" stroke-width="1" />
+                    </g>
+                  </g>
+                </svg>
+              </div>
+            </div>
+
+            <!-- Spilling Products Flight Plane -->
+            <div class="hn-intro-products-plane" aria-label="المنتجات المتساقطة من العربة">
+              <!-- Product elements dynamically mapped via JS -->
+            </div>
+          </div>
+
+          <!-- Scroll Indicator Hint -->
+          <div class="hn-intro-scroll-hint" role="button" tabindex="0" aria-label="مرّر للأسفل لمتابعة التسوق">
+            <div class="hn-intro-scroll-mouse" aria-hidden="true"></div>
+            <span>مرّر للأسفل للمتابعة</span>
+            <i class="fa-solid fa-chevron-down text-amber-400" aria-hidden="true"></i>
+          </div>
         </div>
-        <button type="button" class="vf-add" onclick="vfAddToCart(this)" data-added-label="تمت الإضافة">
-          <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> أضف للسلة</button>
       </div>
     </section>
 
@@ -990,6 +1195,7 @@
   <script src="js/my.js"></script>
   <script src="js/hypernest-upgrade.js"></script>
   <script src="js/pages.js"></script>
+  <script src="js/hero-intro.js"></script>
 </body>
 
 </html>

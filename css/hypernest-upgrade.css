@@ -80,14 +80,16 @@ header.sticky {
 .vf-hero {
   min-height: 680px;
   background:
-    radial-gradient(ellipse 72% 48% at 50% 18%, rgba(255, 248, 231, .24), transparent 72%),
-    linear-gradient(180deg, #202b2d 0%, #46554b 43%, #887457 76%, #bba98d 100%);
+    radial-gradient(ellipse 90% 70% at 50% 45%, rgba(0, 0, 0, 0.12) 0%, rgba(6, 12, 17, 0.65) 75%, rgba(4, 8, 12, 0.92) 100%),
+    linear-gradient(180deg, rgba(3, 7, 10, 0.55) 0%, transparent 22%, transparent 70%, rgba(4, 9, 13, 0.85) 100%),
+    url('../imgs/supermarket-aisle.jpg') center 46% / cover no-repeat;
 }
 
 .dark .vf-hero {
   background:
-    radial-gradient(ellipse 72% 48% at 50% 18%, rgba(193, 132, 68, .13), transparent 72%),
-    linear-gradient(180deg, #0e1515 0%, #18221d 48%, #292116 100%);
+    radial-gradient(ellipse 90% 70% at 50% 45%, rgba(0, 0, 0, 0.25) 0%, rgba(4, 8, 12, 0.82) 75%, rgba(2, 5, 8, 0.96) 100%),
+    linear-gradient(180deg, rgba(2, 5, 8, 0.65) 0%, transparent 22%, transparent 70%, rgba(2, 5, 8, 0.92) 100%),
+    url('../imgs/supermarket-aisle.jpg') center 46% / cover no-repeat;
 }
 
 .vf-head {
@@ -971,23 +973,11 @@ html {
   }
 }
 
-/* مؤشر الماوس: مخفي على اللمس والشاشات الصغيرة، وأوضح في الوضع الفاتح */
+/* مؤشر الماوس: ملغي تماماً بناءً على طلب المستخدم */
 #cursor-glow {
-  width: 360px;
-  height: 360px;
-  background: radial-gradient(circle, rgba(154, 82, 23, .34) 0%, rgba(213, 141, 63, .14) 38%, rgba(213, 141, 63, 0) 70%);
-}
-
-.dark #cursor-glow {
-  background: radial-gradient(circle, rgba(213, 141, 63, .26) 0%, rgba(181, 101, 29, 0) 72%);
-}
-
-@media (hover: none),
-(pointer: coarse),
-(max-width: 767px) {
-  #cursor-glow {
-    display: none !important;
-  }
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 
 /* السلال الذكية: hover + نزول المكعبات من الشمال لليمين (بيشتغل لما الكروت تظهر فعلاً) */
