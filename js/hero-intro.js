@@ -61,7 +61,7 @@
     const y = window.scrollY;
     let limit = 80;
     if (track && !root.classList.contains('hn-intro-completed')) {
-      limit = track.getBoundingClientRect().top + y + track.offsetHeight - window.innerHeight + 40;
+      limit = track.getBoundingClientRect().top + y + track.offsetHeight - window.innerHeight;
     }
     header.classList.toggle('hn-header-hidden', y < limit);
   }
@@ -125,6 +125,7 @@
 
     function finish() {
       finished = true; done = true;
+      root.classList.add('hn-intro-completed');
       try { sessionStorage.setItem(KEY, 'true'); } catch (e) { }
       render(1);
       hero.classList.remove('hn-intro-active');
