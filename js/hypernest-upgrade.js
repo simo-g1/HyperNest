@@ -636,8 +636,6 @@
       if (promoMessage) promoMessage.classList.add('hidden');
       saveState();
     });
-    wrap('checkoutCart', saveState);
-    wrap('toggleWishlist', saveState);
     wrap('selectDeliverySlot', saveState);
     wrap('toggleThemeWithRipple', saveState);
     wrap('applyPromoCode', saveState);
@@ -932,8 +930,11 @@
   }
 
   function updateLoyaltyUI() {
-    const el = document.getElementById('hn-loyalty-points');
-    if (el) el.textContent = String(loyaltyPoints);
+    const value = String(loyaltyPoints);
+    ['hn-loyalty-points', 'hn-dash-points'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = value;
+    });
   }
 
   window.updateLoyaltyUI = updateLoyaltyUI;
@@ -1014,24 +1015,6 @@
       }
     };
 
-    // نقاط الولاء: كل 100 ج.م = 10 نقاط، والمنتج الأغلى يكسّب نقاط أكتر
-    const baseCheckout = window.checkoutCart;
-    if (typeof baseCheckout === 'function' && !baseCheckout.__hnPoints) {
-      const withPoints = function (...args) {
-        const hadItems = cart.length > 0;
-        const earned = cart.reduce((sum, item) => sum + Math.max(1, Math.round(Number(item.price) * Number(item.quantity) / 10)), 0);
-        const result = baseCheckout.apply(this, args);
-        if (hadItems) {
-          loyaltyPoints += earned;
-          updateLoyaltyUI();
-          saveState();
-          showToast(`كسبت ${earned} نقطة في نادي الولاء`);
-        }
-        return result;
-      };
-      withPoints.__hnPoints = true;
-      window.checkoutCart = withPoints;
-    }
 
     // كول داون: بعد 3 إضافات للسلة يتوقف الإضافة 3 ثواني
     const ACTIONS_BEFORE_COOLDOWN = 3, COOLDOWN_MS = 2000, IDLE_RESET_MS = 4000;

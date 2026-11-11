@@ -25,8 +25,10 @@ function saveState() {
       loyaltyPoints
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot));
+    return true;
   } catch (error) {
     console.warn('[HyperNest] Could not save state:', error);
+    return false;
   }
 }
 
@@ -71,7 +73,38 @@ function restoreState() {
   if (deliveryRadio) deliveryRadio.checked = true;
   if (typeof renderRecentlyViewed === 'function') renderRecentlyViewed();
   if (typeof window.updateLoyaltyUI === 'function') window.updateLoyaltyUI();
+  const dashboardPoints = document.getElementById('hn-dash-points');
+  if (dashboardPoints) dashboardPoints.textContent = String(loyaltyPoints);
 }
 
 
+
+const HN_ORDERS_KEY = 'hypernest-demo-orders-v1';
+function getHyperNestOrders() {
+  try {
+    const value = JSON.parse(localStorage.getItem(HN_ORDERS_KEY) || '[]');
+    return Array.isArray(value) ? value : [];
+  } catch (error) {
+    console.warn('[HyperNest] Could not read order history:', error);
+    return [];
+  }
+}
+function saveHyperNestOrder(order) {
+  try {
+    const orders = getHyperNestOrders();
+    if (orders.some(item => item.id === order.id)) return false;
+    localStorage.setItem(HN_ORDERS_KEY, JSON.stringify([order, ...orders].slice(0, 100)));
+    return true;
+  } catch (error) {
+    console.warn('[HyperNest] Could not save order:', error);
+    return false;
+  }
+}
+window.getHyperNestOrders = getHyperNestOrders;
 window.getHyperNestLoyaltyPoints = () => loyaltyPoints;
+window.setHyperNestLoyaltyPoints = value => {
+  loyaltyPoints = Math.max(0, Math.floor(Number(value) || 0));
+  window.updateLoyaltyUI?.();
+  saveState();
+  return loyaltyPoints;
+};

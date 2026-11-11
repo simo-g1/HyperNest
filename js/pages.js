@@ -19,7 +19,9 @@
       const requested = Math.max(1, Math.floor(Number(amount) || 1));
       if (current + requested > 15) return announce('الحد الأقصى للمنتج الواحد 15 قطعة.'), false;
       if (totalCart() + requested > 30) return announce('وصلت للحد الأقصى للسلة: 30 قطعة إجماليًا.'), false;
-      return originalAdd.call(this, id, requested, origin);
+      const result = originalAdd.call(this, id, requested, origin);
+      window.refreshHnSmartSuggestions?.();
+      return result;
     };
     limitedAdd.__hnLimits = true; window.addToCart = limitedAdd;
   }
@@ -30,25 +32,15 @@
       if (!item) return;
       if (delta > 0 && Number(item.quantity) >= 15) return announce('الحد الأقصى للمنتج الواحد 15 قطعة.');
       if (delta > 0 && totalCart() >= 30) return announce('وصلت للحد الأقصى للسلة: 30 قطعة إجماليًا.');
-      return originalUpdate.call(this, id, delta);
+      const result = originalUpdate.call(this, id, delta);
+      window.refreshHnSmartSuggestions?.();
+      return result;
     };
     limitedUpdate.__hnLimits = true; window.updateQuantity = limitedUpdate;
   }
 
-  // Save an order snapshot before the legacy checkout clears the cart.
-  const originalCheckout = window.checkoutCart;
-  if (originalCheckout && !originalCheckout.__hnOrders) {
-    const trackedCheckout = function (...args) {
-      if (!cart.length) return originalCheckout.apply(this, args);
-      const subtotal = cart.reduce((sum, p) => sum + Number(p.price) * Number(p.quantity), 0);
-      const discount = subtotal * (Number(window.appliedDiscountPercent) || 0);
-      const points = cart.reduce((sum, p) => sum + Math.max(1, Math.round(Number(p.price) * Number(p.quantity) / 10)), 0);
-      const order = { id: 'HN-' + Date.now().toString(36).toUpperCase(), date: new Date().toISOString(), items: cart.map(p => ({ id: p.id, name: p.name, price: p.price, quantity: p.quantity, category: p.category, image: p.image })), subtotal, discount, total: subtotal - discount, points, status: 'تم تسجيل الطلب (تجريبي)' };
-      const orders = readOrders(); orders.unshift(order); writeOrders(orders.slice(0, 100));
-      return originalCheckout.apply(this, args);
-    };
-    trackedCheckout.__hnOrders = true; window.checkoutCart = trackedCheckout;
-  }
+  // Checkout/order persistence is handled by checkoutCart() in my.js.
+  // Keep this file focused on page rendering; do not wrap checkout a second time.
 
   const PRODUCT_GROUPS = [ // same order and grouping as index
     { key: 'food', title: 'منتجات السوبر ماركت', subtitle: 'الأغذية والمشروبات والمنتجات اليومية', icon: 'fa-basket-shopping', categories: ['produce', 'dairy', 'bakery', 'meat', 'beverages', 'household'] },
@@ -95,14 +87,14 @@
   if (originalApplyPromo && !originalApplyPromo.__hnLoyalty) {
     const loyaltyApply = function () {
       const input = document.getElementById('promo-code-input');
-      if (input && input.value.trim().toUpperCase() === 'LOYALTY15') {
-        window.appliedDiscountPercent = 0.15;
+      if (input && input.value.trim().toUpperCase() === 'LOYALTY15' && Number(window.appliedDiscountPercent) === 0.15) {
         if (typeof updateCartUI === 'function') updateCartUI();
         const msg = document.getElementById('promo-message');
         if (msg) { msg.textContent = 'تم تفعيل خصم الولاء 15%.'; msg.classList.remove('hidden'); }
         if (typeof saveState === 'function') saveState();
         announce('تم تفعيل خصم الولاء 15%.'); return;
       }
+      if (input && input.value.trim().toUpperCase() === 'LOYALTY15') { announce('خصم الولاء يتطلب استبدال 1000 نقطة من لوحة التحكم أولًا.'); return; }
       return originalApplyPromo.apply(this, arguments);
     };
     loyaltyApply.__hnLoyalty = true; window.applyPromoCode = loyaltyApply;
@@ -112,7 +104,7 @@
     const search = $('#hn-product-search'), category = $('#hn-product-category');
     const sort = $('#hn-product-sort'), budget = $('#hn-product-budget');
     const budgetLabel = $('#hn-product-budget-value');
-    const GROUP_STEP = 8, SKELETON_MS = 2500;
+    const GROUP_STEP = 8;
     const shown = {};                 // group key -> visible count
     let filtered = [], ready = false;
 
@@ -120,11 +112,6 @@
     if (category) category.value = params.get('cat') || 'all';
     if (search && params.get('q')) search.value = params.get('q');
 
-    const skelCard = `<article class="hn-product-card hn-skel-card"><span class="hn-skel hn-skel-visual"></span><span class="hn-skel hn-skel-line hn-skel-w50"></span><span class="hn-skel hn-skel-line"></span><span class="hn-skel hn-skel-line hn-skel-w70"></span><span class="hn-skel hn-skel-btn"></span></article>`;
-    function showSkeleton() {
-      grid.setAttribute('aria-busy', 'true');
-      grid.innerHTML = [0, 1].map(() => `<section class="hn-product-group" aria-hidden="true"><div class="hn-product-group-head"><span class="hn-skel hn-skel-icon"></span><div class="hn-skel-lines"><span class="hn-skel hn-skel-line hn-skel-w35"></span><span class="hn-skel hn-skel-line hn-skel-w50"></span></div></div><div class="hn-product-grid">${skelCard.repeat(4)}</div></section>`).join('');
-    }
 
     function applyFilters() {
       const q = (search?.value || '').trim().toLocaleLowerCase('ar');
@@ -140,10 +127,14 @@
     }
     const productsOf = group => filtered.filter(p => group.categories.includes(p.category));
 
-    function cardsFragment(list) {
+    function cardsFragment(list, prioritizeFirstImages = false) {
       const tpl = document.createElement('template');
       tpl.innerHTML = list.map(p => window.hnRenderProductCard(p)).join('');
-      [...tpl.content.children].forEach((el, i) => { el.classList.add('hn-card-enter'); el.style.setProperty('--i', Math.min(i, 11)); });
+      [...tpl.content.children].forEach((el, i) => {
+        el.classList.add('hn-card-enter'); el.style.setProperty('--i', Math.min(i, 11));
+        const image = el.querySelector('img');
+        if (image && prioritizeFirstImages && i < 2) { image.loading = 'eager'; image.fetchPriority = image.src.includes('product-02.webp') ? 'high' : 'auto'; }
+      });
       return tpl.content;
     }
     function updateMoreButton(section, total) {
@@ -158,13 +149,15 @@
       $('#hn-products-count').textContent = `${filtered.length} منتج`;
       grid.setAttribute('aria-busy', 'false');
       grid.innerHTML = '';
+      let prioritizeFirstGroup = true;
       PRODUCT_GROUPS.forEach(group => {
         const list = productsOf(group);
         if (!list.length) return;
         shown[group.key] = Math.min(GROUP_STEP, list.length);
         grid.insertAdjacentHTML('beforeend', `<section class="hn-product-group" data-group="${group.key}" aria-label="${group.title}"><div class="hn-product-group-head"><div class="hn-product-group-icon"><i class="fa-solid ${group.icon}" aria-hidden="true"></i></div><div class="min-w-0"><h3>${group.title}</h3><p>${group.subtitle}</p></div><span class="hn-product-count">${list.length} منتج</span></div><div class="hn-product-grid"></div><div class="hn-more-wrap"><button type="button" class="hn-more-btn" data-more="${group.key}"></button></div></section>`);
         const section = grid.lastElementChild;
-        section.querySelector('.hn-product-grid').append(cardsFragment(list.slice(0, shown[group.key])));
+        section.querySelector('.hn-product-grid').append(cardsFragment(list.slice(0, shown[group.key]), prioritizeFirstGroup));
+        prioritizeFirstGroup = false;
         updateMoreButton(section, list.length);
       });
       if (!grid.children.length) grid.innerHTML = '<div class="hn-empty-state">مفيش منتجات مطابقة للبحث أو الفلاتر.</div>';
@@ -188,20 +181,71 @@
     function renderSmartSuggestions() {
       const box = $('#hn-page-smart-baskets');
       if (!box) return;
-      const inCart = new Set((typeof cart !== 'undefined' ? cart : []).map(x => Number(x.id)));
-      box.replaceChildren(cardsFragment(PRODUCTS_DATABASE.filter(p => !inCart.has(Number(p.id))).slice(0, 4)));
+      const storageKey = 'hn-smart-suggestions-v2';
+      const groups = [
+        { key: 'food', categories: ['produce', 'dairy', 'bakery', 'meat', 'beverages', 'household'] },
+        { key: 'home', categories: ['home-tools'] },
+        { key: 'electronics', categories: ['electronics'] },
+        { key: 'cleaning', categories: ['cleaning'] }
+      ];
+      const available = product => !['غير متوفر', 'نفد المخزون', 'out of stock'].includes(String(product.stock || '').trim().toLowerCase());
+      const shuffle = list => {
+        const copy = list.slice();
+        for (let i = copy.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return copy;
+      };
+      let ids;
+      try { ids = JSON.parse(sessionStorage.getItem(storageKey) || 'null'); } catch { ids = null; }
+      const inCart = new Set((typeof cart !== 'undefined' ? cart : []).map(item => Number(item.id)));
+      const productById = id => PRODUCTS_DATABASE.find(p => Number(p.id) === Number(id));
+      const valid = Array.isArray(ids) && ids.length === 20 && new Set(ids.map(Number)).size === 20 &&
+        groups.every(group => ids.filter(id => { const p = productById(id); return p && group.categories.includes(p.category); }).length === 5);
+      if (!valid) ids = [];
+
+      // Keep five products per group. If a recommendation enters the cart, replace it
+      // with another available product from the same group and persist that choice.
+      const refreshedGroups = groups.map(group => {
+        const existing = ids.map(productById).filter(p => p && group.categories.includes(p.category) && available(p) && !inCart.has(Number(p.id)));
+        const chosen = existing.slice(0, 5);
+        const used = new Set(ids.map(Number));
+        const replacements = shuffle(PRODUCTS_DATABASE.filter(p => group.categories.includes(p.category) && available(p) &&
+          !inCart.has(Number(p.id)) && !used.has(Number(p.id)) && !chosen.some(item => Number(item.id) === Number(p.id))));
+        while (chosen.length < 5 && replacements.length) chosen.push(replacements.shift());
+        return chosen;
+      });
+      ids = refreshedGroups.flat().map(p => Number(p.id));
+      try { sessionStorage.setItem(storageKey, JSON.stringify(ids)); } catch { /* session storage may be unavailable */ }
+      const selected = ids.map(productById).filter(Boolean);
+      box.classList.add('hn-suggestions-marquee');
+      box.setAttribute('aria-label', 'اقتراحات منتجات تكمل سلتك');
+      box.innerHTML = '<div class="hn-suggestions-viewport"><div class="hn-suggestions-track"></div></div>';
+      const track = box.querySelector('.hn-suggestions-track');
+      const firstRun = cardsFragment(selected);
+      track.append(firstRun);
+      const duplicate = track.cloneNode(true);
+      duplicate.querySelectorAll('.hn-product-card').forEach(card => {
+        card.setAttribute('aria-hidden', 'true');
+        card.querySelectorAll('a,button,[tabindex]').forEach(el => el.setAttribute('tabindex', '-1'));
+      });
+      [...duplicate.children].forEach(card => track.append(card));
+      track.parentElement.style.setProperty('--hn-marquee-duration', `${Math.max(34, selected.length * 3.2)}s`);
+      if (selected.length < 2) track.parentElement.classList.add('is-static');
     }
+    window.refreshHnSmartSuggestions = renderSmartSuggestions;
 
     [search, category, sort, budget].filter(Boolean).forEach(el => el.addEventListener(el === search ? 'input' : 'change', render));
     window.handleSearch = q => { if (search) { search.value = q; render(); } };
 
-    function boot() { showSkeleton(); setTimeout(() => { ready = true; render(); }, SKELETON_MS); }
+    function boot() { ready = true; render(); }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, { once: true });
     else boot();
   }
 
   if (isDashboard) {
-    const DASH_SKELETON_MS = 2500;
+    const DASH_SKELETON_MS = 160;
     const main = $('#main');
 
     const skeletonFor = card => {
@@ -226,9 +270,32 @@
     }
 
     function renderDashboard() {
-      // حافظ على كود renderDashboard القديم زي ما هو بالضبط، 
-      // بس امسح السطر ده منه لو كان موجود:
-      // setTimeout(() => document.body.classList.remove('hn-loading'), 3500);
+      const points = Math.max(0, Number(window.getHyperNestLoyaltyPoints?.() ?? 0));
+      const orders = readOrders();
+      const items = orders.reduce((sum, order) => sum + (order.items || []).reduce((n, item) => n + Number(item.quantity || 0), 0), 0);
+      const spent = orders.reduce((sum, order) => sum + Number(order.total || 0), 0);
+      const setText = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = value; };
+      setText('hn-dash-points', points.toLocaleString('en-US'));
+      setText('hn-redeem-balance', points.toLocaleString('en-US'));
+      setText('hn-dash-orders', String(orders.length));
+      setText('hn-dash-items', String(items));
+      setText('hn-dash-spent', `${spent.toFixed(2)} ج.م`);
+      const list = document.getElementById('hn-dash-orders-list');
+      if (list) {
+        if (!orders.length) list.innerHTML = '<p class="hn-dashboard-empty">لسه مفيش طلبات مسجلة.</p>';
+        else list.innerHTML = orders.slice(0, 8).map(order => {
+          const date = new Date(order.date);
+          const dateLabel = Number.isNaN(date.getTime()) ? 'تاريخ غير محدد' : date.toLocaleString('ar-EG', { dateStyle: 'medium', timeStyle: 'short' });
+          const count = (order.items || []).reduce((n, item) => n + Number(item.quantity || 0), 0);
+          return `<article class="hn-order-row"><div><b>طلب #${String(order.id).slice(-8)}</b><small>${dateLabel} · ${count} منتج</small></div><div class="hn-order-total"><b>${Number(order.total || 0).toFixed(2)} ج.م</b><small>+${Number(order.points || 0)} نقطة</small></div></article>`;
+        }).join('');
+      }
+      const redeem = document.getElementById('hn-redeem-btn');
+      if (redeem) {
+        redeem.disabled = points < 1000;
+        redeem.setAttribute('aria-disabled', String(points < 1000));
+        redeem.title = points < 1000 ? 'تحتاج إلى 1000 نقطة على الأقل' : 'استبدال 1000 نقطة بخصم 15%';
+      }
     }
 
     function finishDashboardLoading() {
@@ -237,10 +304,24 @@
       main?.setAttribute('aria-busy', 'false');
     }
 
-    $('#hn-redeem-btn')?.addEventListener('click', () => { /* كود الزرار القديم بدون تغيير */ });
+    $('#hn-redeem-btn')?.addEventListener('click', () => {
+      const balance = Math.max(0, Number(window.getHyperNestLoyaltyPoints?.() ?? 0));
+      if (balance < 1000) { announce('تحتاج إلى 1000 نقطة على الأقل لاستبدالها.'); return; }
+      if (typeof window.setHyperNestLoyaltyPoints !== 'function') { announce('تعذر تحديث رصيد الولاء.'); return; }
+      window.setHyperNestLoyaltyPoints(balance - 1000);
+      window.appliedDiscountPercent = 0.15;
+      const promo = document.getElementById('promo-code-input');
+      if (promo) promo.value = 'LOYALTY15';
+      window.saveState?.();
+      renderDashboard();
+      announce('تم استبدال 1000 نقطة! خصم 15% جاهز على سلتك القادمة.');
+    });
 
+    renderDashboard();
+    window.addEventListener('hn:orders-updated', renderDashboard);
+    window.addEventListener('storage', event => { if (event.key === 'hypernest-demo-orders-v1' || event.key === 'hypernest-demo-state-v1') renderDashboard(); });
     mountDashboardSkeleton();
-    setTimeout(finishDashboardLoading, DASH_SKELETON_MS);
+    window.setTimeout(finishDashboardLoading, DASH_SKELETON_MS);
   }
 
   // Search from any page opens the shared catalog with the entered query.

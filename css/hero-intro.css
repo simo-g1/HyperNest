@@ -673,15 +673,9 @@ body>header.hn-header-hidden {
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   transition: none;
-  animation: hnHudIn .8s .2s cubic-bezier(.2, .8, .2, 1) backwards;
+  animation: none;
 }
 
-@keyframes hnHudIn {
-  from {
-    opacity: 0;
-    transform: translateY(-46%);
-  }
-}
 
 .hn-intro-title {
   font-size: clamp(1.7rem, 3.6vw, 2.8rem);
@@ -792,22 +786,7 @@ body>header.hn-header-hidden {
   background: linear-gradient(0deg, rgba(9, 8, 4, .66), rgba(25, 17, 5, .12) 56%, transparent);
 }
 
-.hn-intro-golden-arch {
-  position: absolute;
-  z-index: 3;
-  top: 13%;
-  right: 8.5%;
-  width: min(38vw, 610px);
-  height: 79%;
-  border: 2px solid rgba(255, 190, 28, .92);
-  border-left-color: rgba(255, 190, 28, .20);
-  border-bottom-color: rgba(255, 190, 28, .12);
-  border-radius: 52% 52% 0 0 / 35% 35% 0 0;
-  transform: skewY(-8deg) rotate(-1deg);
-  box-shadow: 0 0 8px rgba(255, 184, 25, .48), inset 0 0 22px rgba(255, 184, 25, .08), 0 0 34px rgba(255, 184, 25, .12);
-  opacity: .88;
-  pointer-events: none;
-}
+
 
 .hn-intro-light-trail {
   position: absolute;
@@ -849,7 +828,6 @@ body>header.hn-header-hidden {
   text-align: right;
   gap: clamp(12px, 1.55vh, 18px);
   transform: translateY(-48%);
-  animation: hnHudIn .85s .15s cubic-bezier(.2, .8, .2, 1) backwards;
   margin-left: -50px;
 }
 
@@ -1067,6 +1045,7 @@ body>header.hn-header-hidden {
   box-shadow: 0 18px 42px rgba(0, 0, 0, .28), inset 0 1px rgba(255, 255, 255, .08);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+  transition: opacity .28s ease, visibility .28s ease;
 }
 
 .hn-delivery-pin {
@@ -1350,13 +1329,7 @@ body>header.hn-header-hidden {
     font-size: .65rem;
   }
 
-  .hn-intro-golden-arch {
-    top: 46%;
-    right: -4%;
-    width: 72vw;
-    height: 46%;
-    opacity: .55;
-  }
+  
 
   .hn-intro-light-trail {
     right: 2%;
@@ -1416,4 +1389,39 @@ body>header.hn-header-hidden {
     width: 390px;
     height: 329px;
   }
+}
+
+/* Initial Hero copy is critical content: never delay its first paint. */
+.hn-intro-hud { animation: none !important; }
+
+
+/* Cart-synchronised golden trail: soft halo + crisp warm core */
+.hn-intro-light-trail {
+  z-index: 8;
+  right: 13%;
+  bottom: 1%;
+  width: 67%;
+  height: 82%;
+  overflow: visible;
+  filter: none;
+  opacity: 1;
+}
+.hn-intro-light-trail path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.hn-intro-light-trail .hn-trail-glow {
+  stroke: rgba(255, 176, 25, .58);
+  stroke-width: 22;
+  filter: blur(10px);
+  opacity: 0;
+}
+.hn-intro-light-trail .hn-trail-core {
+  stroke: url(#hn-light-trail-gradient);
+  stroke: #ffd15c;
+  stroke-width: 5.5;
+  filter: drop-shadow(0 0 5px rgba(255, 190, 52, .95));
+  opacity: 0;
+}
+@media (max-width: 767px) {
+  .hn-intro-light-trail { right: 2%; width: 86%; height: 76%; }
+  .hn-intro-light-trail .hn-trail-glow { stroke-width: 17; }
+  .hn-intro-light-trail .hn-trail-core { stroke-width: 4; }
 }

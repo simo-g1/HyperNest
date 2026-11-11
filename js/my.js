@@ -38,7 +38,7 @@ window.addEventListener('DOMContentLoaded', () => {
 const VF = {
   items: [], cards: [], pos: 0, target: 0, intro: 0, shown: -1, drag: null,
   sx: 0, sy: 0, tx: 0, ty: 0, qty: 1, W: 1, H: 1, anims: [], visible: true,
-  wheelAcc: 0, lastWheel: 0
+  wheelAcc: 0, lastWheel: 0, frameId: 0
 };
 const VF_XS = [0, .215, .345, .432, .49, .52];
 const VF_XS_M = [0, .36, .5, .56, .6, .62];
@@ -65,9 +65,11 @@ function initArc() {
 
   vfResize();
   window.addEventListener('resize', vfResize);
-  new IntersectionObserver(([e]) => { VF.visible = e.isIntersecting; }).observe(hero);
+  new IntersectionObserver(([e]) => {
+    VF.visible = e.isIntersecting;
+    if (VF.visible && !VF.frameId) VF.frameId = requestAnimationFrame(vfFrame);
+  }).observe(hero);
   vfBindInput(stage, hero);
-  requestAnimationFrame(vfFrame);
 }
 
 function vfResize() {
@@ -82,7 +84,7 @@ function vfResize() {
 }
 
 function vfFrame(t) {
-  requestAnimationFrame(vfFrame);
+  VF.frameId = 0;
   if (!VF.visible) return;
   const N = VF.items.length, W = VF.W, H = VF.H, XS = vfXS();
 
@@ -135,6 +137,8 @@ function vfFrame(t) {
     const idx = vfMod(Math.round(VF.target), N);
     if (idx !== VF.shown) vfTryOn(idx);
   }
+
+  if (VF.visible && !VF.frameId) VF.frameId = requestAnimationFrame(vfFrame);
 }
 
 function vfTryOn(idx) {
@@ -572,12 +576,45 @@ function closeCartDrawer() { document.getElementById('cart-drawer').classList.ad
 function openWishlistDrawer() { updateWishlistUI(); document.getElementById('wishlist-drawer').classList.remove('hidden'); }
 function closeWishlistDrawer() { document.getElementById('wishlist-drawer').classList.add('hidden'); }
 
+let hnCheckoutInProgress = false;
 function checkoutCart() {
-  if (cart.length === 0) return showToast('السلة فارغة!');
-  showToast(`🎉 تم تسجيل طلبك بنجاح! التوصيل: ${selectedDeliverySlot}`);
-  cart = [];
-  updateCartUI();
-  closeCartDrawer();
+  if (hnCheckoutInProgress) return;
+  if (!Array.isArray(cart) || cart.length === 0) return showToast('السلة فارغة!');
+  hnCheckoutInProgress = true;
+  const items = cart.map(item => ({
+    id: Number(item.id), name: String(item.name), price: Number(item.price),
+    quantity: Number(item.quantity), category: item.category || '', image: item.image || ''
+  }));
+  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const discountPercent = Math.max(0, Math.min(.9, Number(appliedDiscountPercent) || 0));
+  const discount = subtotal * discountPercent;
+  const earned = items.reduce((sum, item) => sum + Math.max(1, Math.round(item.price * item.quantity / 10)), 0);
+  const orderId = `HN-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`.toUpperCase();
+  const order = {
+    id: orderId, date: new Date().toISOString(), items, subtotal, discount,
+    total: Math.max(0, subtotal - discount), points: earned,
+    deliverySlot: selectedDeliverySlot, status: 'تم تسجيل الطلب'
+  };
+  try {
+    if (typeof window.saveHyperNestOrder !== 'function' || !window.saveHyperNestOrder(order)) {
+      showToast('تعذر حفظ الطلب. لم يتم إفراغ السلة، حاول مرة أخرى.');
+      return;
+    }
+    loyaltyPoints = Math.max(0, Number(loyaltyPoints) || 0) + earned;
+    appliedDiscountPercent = 0;
+    cart = [];
+    if (typeof saveState === 'function' && !saveState()) {
+      // Keep the order, but report that the points snapshot may need a refresh.
+      console.warn('[HyperNest] Order saved but loyalty state could not be persisted.');
+    }
+    if (typeof updateCartUI === 'function') updateCartUI();
+    if (typeof closeCartDrawer === 'function') closeCartDrawer();
+    window.updateLoyaltyUI?.();
+    window.dispatchEvent(new CustomEvent('hn:orders-updated', { detail: { order } }));
+    showToast(`🎉 تم تسجيل طلبك! كسبت ${earned} نقطة. التوصيل: ${selectedDeliverySlot}`);
+  } finally {
+    hnCheckoutInProgress = false;
+  }
 }
 
 function toggleWishlist(productId) {
@@ -589,21 +626,25 @@ function toggleWishlist(productId) {
     wishlist.push(productId);
     showToast('❤️ تم إضافة المنتج للمفضلة!');
   }
-  document.getElementById('wishlist-count').innerText = wishlist.length;
+  const count = document.getElementById('wishlist-count');
+  if (count) count.innerText = wishlist.length;
   renderCatalogProducts();
   updateWishlistUI();
+  if (typeof saveState === 'function') saveState();
 }
 
 function updateWishlistUI() {
   const container = document.getElementById('wishlist-drawer-items');
   if (!container) return;
 
+  window.removeFromWishlist = function (productId) {
+    const id = Number(productId);
+    if (wishlist.includes(id)) toggleWishlist(id);
+  };
+
   if (wishlist.length === 0) {
     container.innerHTML = `<div class="text-center py-12 text-slate-400"><i class="fa-solid fa-heart-crack text-4xl mb-2"></i><p class="text-sm">قائمة المفضلة فارغة</p></div>`;
     return;
-  }
-  function removeFromWishlist(productId) {
-    if (wishlist.includes(productId)) toggleWishlist(productId);
   }
   const items = PRODUCTS_DATABASE.filter(p => wishlist.includes(p.id));
   container.innerHTML = items.map(item => `

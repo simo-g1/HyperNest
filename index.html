@@ -16,6 +16,9 @@
   <link rel="stylesheet" href="css/all.min.css">
   <!-- Tailwind CSS -->
   <link rel="stylesheet" href="css/tailwind.css">
+  <!-- Establish font connections early; Cairo uses display=swap. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <!-- Google Font Cairo -->
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap"
     rel="stylesheet">
@@ -349,22 +352,17 @@
         <div class="hn-intro-cart-layer">
           <div class="hn-intro-overhead-glow" aria-hidden="true"></div>
           <div class="hn-intro-floor-sheen" aria-hidden="true"></div>
-          <div class="hn-intro-golden-arch" aria-hidden="true"></div>
           <svg class="hn-intro-light-trail" viewBox="0 0 900 650" preserveAspectRatio="none" aria-hidden="true">
-            <path d="M 900 120 C 700 40 610 100 585 235 C 560 365 710 395 565 470 C 455 525 505 590 650 650" />
+            <path class="hn-trail-glow" d="" />
+            <path class="hn-trail-core" d="" />
           </svg>
 
           <!-- Premium left-side brand message -->
           <div class="hn-intro-hud">
-            <div class="hn-intro-badge"><span class="live-dot"></span><span>تسوّق بذكاء مع HyperNest</span><span
-                class="hn-badge-spark">✦</span>
-            </div>
-            <h2 class="hn-intro-title">كل احتياجات بيتك<br>في مكان <span>واحد</span></h2>
+<h2 class="hn-intro-title">كل احتياجات بيتك<br>في مكان <span>واحد</span></h2>
             <p class="hn-intro-subtitle">من السوبر ماركت للأدوات المنزلية، نوفر لك جودة عالية، أسعار مناسبة، وتوصيل سريع
               لحد باب بيتك.</p>
-            <button type="button" class="hn-intro-cta" id="hn-intro-cta"><i class="fa-solid fa-arrow-left"
-                aria-hidden="true"></i> ابدأ التسوق</button>
-            <ul class="hn-intro-features">
+<ul class="hn-intro-features">
               <li><span class="hn-feature-icon"><i class="fa-solid fa-shield-halved"
                     aria-hidden="true"></i></span><b>جودة مضمونة</b><small>أفضل المنتجات لك</small></li>
               <li><span class="hn-feature-icon"><i class="fa-solid fa-tag" aria-hidden="true"></i></span><b>عروض
@@ -556,12 +554,6 @@
             </div>
           </div>
 
-          <!-- Scroll Indicator Hint -->
-          <div class="hn-intro-scroll-hint" role="button" tabindex="0" aria-label="مرّر للأسفل لمتابعة التسوق">
-            <div class="hn-intro-scroll-mouse" aria-hidden="true"></div>
-            <span>مرّر للأسفل للمتابعة</span>
-            <i class="fa-solid fa-chevron-down text-amber-400" aria-hidden="true"></i>
-          </div>
         </div>
       </div>
     </section>

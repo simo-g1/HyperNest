@@ -555,3 +555,60 @@ body.hn-loading :is(.hn-stat-card, .hn-level-card, .hn-orders-card)::after {
     animation: none;
   }
 }
+
+/* Smart Suggestions: continuous right-to-left product ribbon */
+.hn-suggestions-marquee { min-width: 0; display: block; }
+.hn-suggestions-viewport {
+  --hn-marquee-duration: 64s;
+  display: flex;
+  gap: 1rem;
+  overflow: hidden;
+  direction: ltr;
+  padding: .35rem .15rem .9rem;
+  mask-image: linear-gradient(90deg, transparent, #000 3%, #000 97%, transparent);
+}
+.hn-suggestions-track {
+  display: flex;
+  flex: 0 0 auto;
+  width: max-content;
+  gap: 1rem;
+  direction: rtl;
+  animation: hn-suggestions-marquee var(--hn-marquee-duration, 64s) linear infinite;
+  will-change: transform;
+}
+.hn-suggestions-track .hn-product-card {
+  flex: 0 0 218px;
+  width: 218px;
+  min-height: 310px;
+}
+.hn-suggestions-track .hn-product-visual { min-height: 142px; }
+.hn-suggestions-track .hn-product-card.hn-card-enter { animation: none; }
+.hn-suggestions-viewport:hover .hn-suggestions-track,
+.hn-suggestions-viewport:focus-within .hn-suggestions-track { animation-play-state: paused; }
+.hn-suggestions-viewport.is-static .hn-suggestions-track { animation: none; }
+@keyframes hn-suggestions-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@media (max-width: 640px) {
+  .hn-suggestions-track { gap: .75rem; }
+  .hn-suggestions-track .hn-product-card { flex-basis: 176px; width: 176px; min-height: 290px; }
+  .hn-suggestions-track .hn-product-visual { min-height: 118px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hn-suggestions-track { animation: none !important; }
+}
+
+/* Dashboard order history */
+.hn-order-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  padding: .9rem 1rem; border: 1px solid #ead8c4; border-radius: 1rem;
+  background: #fffaf4; margin-block: .65rem;
+}
+.dark .hn-order-row { background: #1e293b; border-color: #475569; }
+.hn-order-row > div, .hn-order-total { display: flex; flex-direction: column; gap: .25rem; }
+.hn-order-row small { color: #64748b; font-size: .72rem; }
+.hn-order-total { text-align: left; }
+.hn-redeem button:disabled { opacity: .48; cursor: not-allowed; filter: grayscale(.35); }
+@media (max-width: 520px) { .hn-order-row { align-items: flex-start; } }
+.hn-suggestions-track > .hn-product-card[aria-hidden="true"] { pointer-events: none; }

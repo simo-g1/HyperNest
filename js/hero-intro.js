@@ -59,12 +59,11 @@
   const track = document.getElementById('hn-hero-intro');
   function updateHeader() {
     if (!header) return;
-    const y = window.scrollY;
-    let limit = 80;
-    if (track && !root.classList.contains('hn-intro-completed')) {
-      limit = track.getBoundingClientRect().top + y + track.offsetHeight - window.innerHeight;
-    }
-    header.classList.toggle('hn-header-hidden', y < limit);
+    const mainHero = document.getElementById('vf-hero');
+    // Keep the header completely out of the intro and the main aisle hero.
+    // Reveal it only after the real hero has left the viewport.
+    const heroHasPassed = mainHero ? mainHero.getBoundingClientRect().bottom <= 0 : window.scrollY > 80;
+    header.classList.toggle('hn-header-hidden', !heroHasPassed);
   }
   window.addEventListener('scroll', updateHeader, { passive: true });
   window.addEventListener('resize', updateHeader, { passive: true });
@@ -81,12 +80,16 @@
 
     const layer = track.querySelector('.hn-intro-cart-layer');
     const cart = track.querySelector('.hn-intro-cart-wrapper');
+    const stage = track.querySelector('.hn-intro-stage');
+    const trailSvg = track.querySelector('.hn-intro-light-trail');
+    const trailGlow = trailSvg?.querySelector('.hn-trail-glow');
+    const trailPath = trailSvg?.querySelector('.hn-trail-core');
     const shadow = track.querySelector('.hn-cart-floor-shadow');
     const plane = track.querySelector('.hn-intro-products-plane');
     const bar = track.querySelector('.hn-intro-progress-bar-fill');
     const hud = track.querySelector('.hn-intro-hud');
-    const hint = track.querySelector('.hn-intro-scroll-hint');
-    const cta = document.getElementById('hn-intro-cta');
+    const deliveryCard = track.querySelector('.hn-intro-delivery-card');
+    let deliveryCardDismissed = false;
     const wheels = track.querySelectorAll('.hn-cart-wheel-rotate');
     const airflow = track.querySelector('.hn-intro-airflow');
     if (!cart || !plane) return;
@@ -102,6 +105,21 @@
     });
 
     let W = innerWidth, H = innerHeight;
+    let trailGeometry = null;
+    const trailPoints = [];
+    const measureTrail = () => {
+      if (!stage || !trailSvg) return;
+      const stageRect = stage.getBoundingClientRect();
+      const trailRect = trailSvg.getBoundingClientRect();
+      trailGeometry = {
+        left: trailRect.left - stageRect.left,
+        top: trailRect.top - stageRect.top,
+        width: Math.max(1, trailRect.width),
+        height: Math.max(1, trailRect.height)
+      };
+      trailPoints.length = 0;
+    };
+    measureTrail();
     let target = 0, current = 0, ticking = false, finished = false;
     let lastFrameTime = 0;
     // Shared with render() because it also runs on resize and initial paint.
@@ -338,6 +356,37 @@
 
       cart.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) rotateZ(${rot.toFixed(2)}deg)`;
       cart.style.opacity = op.toFixed(3);
+
+      // Draw the golden trail from the cart's measured movement, not an independent timer.
+      if (trailPath && trailGeometry && p > 0.015 && p < 0.88) {
+        const point = {
+          x: ((x + cw * 0.76 - trailGeometry.left) / trailGeometry.width) * 900,
+          y: ((y + ch * 0.72 - trailGeometry.top) / trailGeometry.height) * 650
+        };
+        const previous = trailPoints[trailPoints.length - 1];
+        if (!previous || Math.hypot(point.x - previous.x, point.y - previous.y) > 2.5) {
+          trailPoints.push(point);
+          if (trailPoints.length > 28) trailPoints.shift();
+        }
+        if (trailPoints.length > 1) {
+          let d = `M ${trailPoints[0].x.toFixed(1)} ${trailPoints[0].y.toFixed(1)}`;
+          for (let i = 1; i < trailPoints.length - 1; i++) {
+            const a = trailPoints[i], b = trailPoints[i + 1];
+            const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+            d += ` Q ${a.x.toFixed(1)} ${a.y.toFixed(1)} ${mx.toFixed(1)} ${my.toFixed(1)}`;
+          }
+          const last = trailPoints[trailPoints.length - 1];
+          d += ` L ${last.x.toFixed(1)} ${last.y.toFixed(1)}`;
+          trailPath.setAttribute('d', d);
+          if (trailGlow) trailGlow.setAttribute('d', d);
+          const trailOpacity = clamp(cartVelocity / 1.8, 0.42, 0.96);
+          trailPath.style.opacity = trailOpacity.toFixed(2);
+          if (trailGlow) trailGlow.style.opacity = (trailOpacity * 0.72).toFixed(2);
+        }
+      } else if (trailPath && (p <= 0.015 || p >= 0.88)) {
+        trailPath.style.opacity = '0';
+        if (trailGlow) trailGlow.style.opacity = '0';
+      }
       wheels.forEach(w => { w.style.transform = `rotate(${wheel.toFixed(1)}deg)`; });
       if (shadow) {
         const tn = Math.abs(rot) / 34;
@@ -347,8 +396,16 @@
 
       // النص التعريفي + المؤشرات
       const hudO = clamp(1 - p / 0.10, 0, 1);
-      if (hud) { hud.style.opacity = hudO.toFixed(3); hud.style.visibility = hudO < 0.02 ? 'hidden' : 'visible'; }
-      if (hint) hint.style.opacity = hudO.toFixed(3);
+      if (hud) {
+        hud.style.opacity = hudO.toFixed(3);
+        hud.style.visibility = hudO < 0.02 ? 'hidden' : 'visible';
+      }
+      if (deliveryCard && p > 0.005 && !deliveryCardDismissed) {
+        deliveryCardDismissed = true;
+        deliveryCard.style.opacity = '0';
+        deliveryCard.style.pointerEvents = 'none';
+        window.setTimeout(() => { deliveryCard.style.visibility = 'hidden'; }, 300);
+      }
       if (bar) bar.style.width = (p * 100).toFixed(1) + '%';
 
       // المنتجات
@@ -391,18 +448,8 @@
       hero.style.setProperty('--hn-reveal', tH.toFixed(3));
     }
 
-    const goOn = () => {
-      const max = track.offsetHeight - H;
-      window.scrollTo({ top: track.getBoundingClientRect().top + window.scrollY + max * 0.97, behavior: reduced ? 'auto' : 'smooth' });
-    };
-    if (cta) cta.addEventListener('click', goOn);
-    if (hint) {
-      hint.addEventListener('click', goOn);
-      hint.addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); goOn(); } });
-    }
-
     window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', () => { W = innerWidth; H = innerHeight; render(current); }, { passive: true });
+    window.addEventListener('resize', () => { W = innerWidth; H = innerHeight; measureTrail(); render(current); }, { passive: true });
 
     render(0);
     request(); // يشغّل حركة دخول السلة
