@@ -151,6 +151,7 @@
           <span>${categoryLabel}</span>
         </div>
         <h3 class="hn-product-name">${escapeHTML(product.name)}</h3>
+        <p class="hn-product-seller"><i class="fa-solid fa-store" aria-hidden="true"></i><span>${escapeHTML(product.merchant?.name || 'HyperNest')}</span></p>
         <div class="mt-auto pt-3 mt-3 border-t border-stone-200/70 dark:border-stone-700 flex items-center justify-between gap-2">
           <div><span class="block text-[10px] text-stone-400">السعر</span>
             <span class="hn-product-price">${Number(product.price).toFixed(2)} <small class="text-[10px] font-semibold">ج.م</small></span>
@@ -162,6 +163,8 @@
         </div>
       </article>`;
   }
+
+  window.hnRenderProductCard = renderProductCard;
 
   function renderProducts() {
     const catalog = document.getElementById('products-catalog');
@@ -235,7 +238,6 @@
     }
     if (typeof setupDragAndDrop === 'function') setupDragAndDrop();
   }
-
   function injectOffersHub() {
     const hero = document.getElementById('vf-hero');
     if (!hero || document.getElementById('hn-news-hub')) return;
@@ -310,7 +312,7 @@
       </div>
       <div class="hn-hub-footnote"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> العروض والأكواد والمكافآت المعروضة تجريبية ضمن نموذج HyperNest.</div>`;
 
-    hero.insertAdjacentElement('afterend', hub);
+    (document.getElementById('hn-hero-intro') || hero).insertAdjacentElement('afterend', hub);
     const loyaltySource = document.getElementById('loyalty-points');
     const loyaltyTarget = document.getElementById('hn-loyalty-points');
     if (loyaltySource && loyaltyTarget) loyaltyTarget.textContent = loyaltySource.textContent.replace(/[^0-9]/g, '') || '0';

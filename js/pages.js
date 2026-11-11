@@ -50,27 +50,24 @@
     trackedCheckout.__hnOrders = true; window.checkoutCart = trackedCheckout;
   }
 
-  const CATEGORY_LABELS = {
-    produce: 'خضار وفاكهة', dairy: 'ألبان وأجبان', bakery: 'مخبوزات',
-    meat: 'لحوم ومجمدات', beverages: 'مشروبات', cleaning: 'منظفات ومطهرات',
-    'home-tools': 'أدوات منزلية', electronics: 'أجهزة كهربائية', household: 'مستلزمات منزلية'
-  };
-  const PRODUCT_GROUPS = [
-    { key: 'cleaning', title: 'المنظفات والمطهرات', icon: 'fa-pump-soap', categories: ['cleaning'] },
-    { key: 'home', title: 'الأدوات المنزلية', icon: 'fa-house', categories: ['home-tools', 'household'] },
-    { key: 'electronics', title: 'الأجهزة الكهربائية', icon: 'fa-plug', categories: ['electronics'] },
-    { key: 'food', title: 'المنتجات الغذائية', icon: 'fa-carrot', categories: ['produce', 'dairy', 'bakery', 'meat', 'beverages'] }
+  const PRODUCT_GROUPS = [ // same order and grouping as index
+    { key: 'food', title: 'منتجات السوبر ماركت', subtitle: 'الأغذية والمشروبات والمنتجات اليومية', icon: 'fa-basket-shopping', categories: ['produce', 'dairy', 'bakery', 'meat', 'beverages', 'household'] },
+    { key: 'home', title: 'الأدوات المنزلية', subtitle: 'كل ما تحتاجه لتنظيم وتجهيز منزلك', icon: 'fa-house', categories: ['home-tools'] },
+    { key: 'electronics', title: 'الأجهزة الكهربائية', subtitle: 'أجهزة عملية وأدوات تساعدك في البيت', icon: 'fa-plug', categories: ['electronics'] },
+    { key: 'cleaning', title: 'المنظفات والمطهرات', subtitle: 'منتجات العناية بنظافة البيت والأسطح والملابس', icon: 'fa-spray-can-sparkles', categories: ['cleaning'] }
   ];
 
   function refreshWishlistButtons() {
     const saved = new Set((typeof wishlist !== 'undefined' ? wishlist : []).map(Number));
-    $$('.hn-page-wish').forEach(button => {
-      const card = button.closest('[data-product-id]');
-      const active = !!card && saved.has(Number(card.dataset.productId));
-      button.classList.toggle('is-wishlisted', active);
-      button.setAttribute('aria-pressed', String(active));
-      const name = card?.querySelector('h3')?.textContent || 'المنتج';
-      button.setAttribute('aria-label', active ? `إزالة ${name} من المفضلة` : `إضافة ${name} للمفضلة`);
+    $$('.hn-product-card[data-id]').forEach(card => {
+      const btn = card.querySelector('button[onclick^="toggleWishlist"]');
+      if (!btn) return;
+      const active = saved.has(Number(card.dataset.id));
+      btn.classList.toggle('text-rose-500', active);
+      btn.classList.toggle('text-slate-400', !active);
+      btn.classList.toggle('hover:text-rose-500', !active);
+      const name = card.querySelector('.hn-product-name')?.textContent || '';
+      btn.setAttribute('aria-label', `${active ? 'إزالة من المفضلة' : 'إضافة للمفضلة'}: ${name}`);
     });
   }
   window.refreshHnProductWishlist = refreshWishlistButtons;
@@ -110,58 +107,102 @@
     };
     loyaltyApply.__hnLoyalty = true; window.applyPromoCode = loyaltyApply;
   }
-
   if (isProducts) {
     const grid = $('#hn-all-products');
-    const search = $('#hn-product-search');
-    const category = $('#hn-product-category');
-    const sort = $('#hn-product-sort');
-    const budget = $('#hn-product-budget');
+    const search = $('#hn-product-search'), category = $('#hn-product-category');
+    const sort = $('#hn-product-sort'), budget = $('#hn-product-budget');
     const budgetLabel = $('#hn-product-budget-value');
-    const more = $('#hn-products-more');
-    let shown = 16, filtered = [];
+    const GROUP_STEP = 8, SKELETON_MS = 3500;
+    const shown = {};                 // group key -> visible count
+    let filtered = [], ready = false;
+
     const params = new URLSearchParams(location.search);
-    const initialCat = params.get('cat') || 'all';
-    if (category) category.value = initialCat;
+    if (category) category.value = params.get('cat') || 'all';
     if (search && params.get('q')) search.value = params.get('q');
-    function renderSmartSuggestions() {
-      let box = $('#hn-page-smart-baskets'); if (!box) return;
-      const inCart = new Set((typeof cart !== 'undefined' ? cart : []).map(x => Number(x.id)));
-      const picks = PRODUCTS_DATABASE.filter(p => !inCart.has(Number(p.id))).slice(0, 4);
-      box.innerHTML = picks.map(productCard).join('');
+
+    const skelCard = `<article class="hn-product-card hn-skel-card"><span class="hn-skel hn-skel-visual"></span><span class="hn-skel hn-skel-line hn-skel-w50"></span><span class="hn-skel hn-skel-line"></span><span class="hn-skel hn-skel-line hn-skel-w70"></span><span class="hn-skel hn-skel-btn"></span></article>`;
+    function showSkeleton() {
+      grid.setAttribute('aria-busy', 'true');
+      grid.innerHTML = [0, 1].map(() => `<section class="hn-product-group" aria-hidden="true"><div class="hn-product-group-head"><span class="hn-skel hn-skel-icon"></span><div class="hn-skel-lines"><span class="hn-skel hn-skel-line hn-skel-w35"></span><span class="hn-skel hn-skel-line hn-skel-w50"></span></div></div><div class="hn-product-grid">${skelCard.repeat(4)}</div></section>`).join('');
     }
-    function render(reset = true) {
-      if (reset) shown = 16;
+
+    function applyFilters() {
       const q = (search?.value || '').trim().toLocaleLowerCase('ar');
-      const cat = category?.value || 'all'; const max = Number(budget?.value || 10000);
-      filtered = PRODUCTS_DATABASE.filter(p => (cat === 'all' || p.category === cat) && Number(p.price) <= max && (!q || p.name.toLocaleLowerCase('ar').includes(q) || (CATEGORY_LABELS[p.category] || p.category).toLocaleLowerCase('ar').includes(q)));
+      const cat = category?.value || 'all', max = Number(budget?.value || 10000);
+      filtered = PRODUCTS_DATABASE.filter(p => (cat === 'all' || p.category === cat) && Number(p.price) <= max &&
+        (!q || p.name.toLocaleLowerCase('ar').includes(q) || (CATEGORY_LABELS[p.category] || p.category).toLocaleLowerCase('ar').includes(q)));
       const order = sort?.value || 'featured';
       if (order === 'price-low') filtered.sort((a, b) => a.price - b.price);
       if (order === 'price-high') filtered.sort((a, b) => b.price - a.price);
       if (order === 'rating') filtered.sort((a, b) => (b.rating || 0) - (a.rating || 0));
       if (order === 'name') filtered.sort((a, b) => a.name.localeCompare(b.name, 'ar'));
-      const visible = filtered.slice(0, shown);
-      const groupedMarkup = PRODUCT_GROUPS.map(group => {
-        const products = visible.filter(product => group.categories.includes(product.category));
-        if (!products.length) return '';
-        return `<section class="hn-product-group" aria-label="${group.title}"><header class="hn-product-group-head"><span class="hn-product-group-icon"><i class="fa-solid ${group.icon}" aria-hidden="true"></i></span><div><h2>${group.title}</h2><p>${products.length} من المنتجات المعروضة</p></div></header><div class="hn-page-products-grid">${products.map(productCard).join('')}</div></section>`;
-      }).join('');
-      grid.innerHTML = groupedMarkup || '<div class="hn-empty-state">مفيش منتجات مطابقة للبحث أو الفلاتر.</div>';
-      refreshWishlistButtons();
-      $('#hn-products-count').textContent = `${filtered.length} منتج`;
-      more.hidden = shown >= filtered.length;
-      renderSmartSuggestions();
       if (budgetLabel) budgetLabel.textContent = max.toLocaleString('en-US') + ' ج.م';
     }
-    [search, category, sort, budget].filter(Boolean).forEach(el => el.addEventListener(el === search ? 'input' : 'change', () => render(true)));
-    more?.addEventListener('click', () => { shown += 16; render(false) });
-    window.handleSearch = function (q) { if (search) { search.value = q; render(true); } };
-    document.addEventListener('DOMContentLoaded', () => render(true));
-    if (document.readyState !== 'loading') setTimeout(() => render(true), 0);
+    const productsOf = group => filtered.filter(p => group.categories.includes(p.category));
+
+    function cardsFragment(list) {
+      const tpl = document.createElement('template');
+      tpl.innerHTML = list.map(p => window.hnRenderProductCard(p)).join('');
+      [...tpl.content.children].forEach((el, i) => { el.classList.add('hn-card-enter'); el.style.setProperty('--i', Math.min(i, 11)); });
+      return tpl.content;
+    }
+    function updateMoreButton(section, total) {
+      const key = section.dataset.group, btn = section.querySelector('.hn-more-btn'), left = total - shown[key];
+      btn.hidden = left <= 0;
+      btn.innerHTML = `عرض المزيد · باقي ${left} <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>`;
+    }
+
+    function render() {
+      if (!ready) return;
+      applyFilters();
+      $('#hn-products-count').textContent = `${filtered.length} منتج`;
+      grid.setAttribute('aria-busy', 'false');
+      grid.innerHTML = '';
+      PRODUCT_GROUPS.forEach(group => {
+        const list = productsOf(group);
+        if (!list.length) return;
+        shown[group.key] = Math.min(GROUP_STEP, list.length);
+        grid.insertAdjacentHTML('beforeend', `<section class="hn-product-group" data-group="${group.key}" aria-label="${group.title}"><div class="hn-product-group-head"><div class="hn-product-group-icon"><i class="fa-solid ${group.icon}" aria-hidden="true"></i></div><div class="min-w-0"><h3>${group.title}</h3><p>${group.subtitle}</p></div><span class="hn-product-count">${list.length} منتج</span></div><div class="hn-product-grid"></div><div class="hn-more-wrap"><button type="button" class="hn-more-btn" data-more="${group.key}"></button></div></section>`);
+        const section = grid.lastElementChild;
+        section.querySelector('.hn-product-grid').append(cardsFragment(list.slice(0, shown[group.key])));
+        updateMoreButton(section, list.length);
+      });
+      if (!grid.children.length) grid.innerHTML = '<div class="hn-empty-state">مفيش منتجات مطابقة للبحث أو الفلاتر.</div>';
+      renderSmartSuggestions();
+      window.setupDragAndDrop?.();
+    }
+
+    // "Show more" appends inline, under its own section, with no re-render and no scroll jump
+    grid.addEventListener('click', event => {
+      const btn = event.target.closest('[data-more]');
+      if (!btn) return;
+      const group = PRODUCT_GROUPS.find(g => g.key === btn.dataset.more);
+      const section = btn.closest('.hn-product-group');
+      const list = productsOf(group), from = shown[group.key];
+      shown[group.key] = Math.min(from + GROUP_STEP, list.length);
+      section.querySelector('.hn-product-grid').append(cardsFragment(list.slice(from, shown[group.key])));
+      updateMoreButton(section, list.length);
+      window.setupDragAndDrop?.();
+    });
+
+    function renderSmartSuggestions() {
+      const box = $('#hn-page-smart-baskets');
+      if (!box) return;
+      const inCart = new Set((typeof cart !== 'undefined' ? cart : []).map(x => Number(x.id)));
+      box.replaceChildren(cardsFragment(PRODUCTS_DATABASE.filter(p => !inCart.has(Number(p.id))).slice(0, 4)));
+    }
+
+    [search, category, sort, budget].filter(Boolean).forEach(el => el.addEventListener(el === search ? 'input' : 'change', render));
+    window.handleSearch = q => { if (search) { search.value = q; render(); } };
+
+    function boot() { showSkeleton(); setTimeout(() => { ready = true; render(); }, SKELETON_MS); }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, { once: true });
+    else boot();
   }
 
   if (isDashboard) {
     function renderDashboard() {
+      setTimeout(() => document.body.classList.remove('hn-loading'), 3500);
       const orders = readOrders();
       const productsBought = orders.reduce((n, o) => n + o.items.reduce((a, p) => a + p.quantity, 0), 0);
       const spent = orders.reduce((n, o) => n + o.total, 0);

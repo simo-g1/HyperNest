@@ -602,7 +602,9 @@ function updateWishlistUI() {
     container.innerHTML = `<div class="text-center py-12 text-slate-400"><i class="fa-solid fa-heart-crack text-4xl mb-2"></i><p class="text-sm">قائمة المفضلة فارغة</p></div>`;
     return;
   }
-
+  function removeFromWishlist(productId) {
+    if (wishlist.includes(productId)) toggleWishlist(productId);
+  }
   const items = PRODUCTS_DATABASE.filter(p => wishlist.includes(p.id));
   container.innerHTML = items.map(item => `
         <div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700">
@@ -614,6 +616,7 @@ function updateWishlistUI() {
             <button onclick="addToCart(${item.id})" class="px-2.5 py-1.5 bg-skyBrand-500 text-white rounded-xl text-xs font-bold hover:bg-skyBrand-600 transition">
                 + السلة
             </button>
+            <button type="button" onclick="removeFromWishlist(${item.id})" class="hn-wish-remove" title="إزالة من المفضلة" aria-label="إزالة ${item.name} من المفضلة"><i class="fa-solid fa-trash-can" aria-hidden="true"></i></button>
         </div>
       `).join('');
 }

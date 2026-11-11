@@ -70,12 +70,6 @@
   window.addEventListener('resize', updateHeader, { passive: true });
   updateHeader();
 
-  window.replayHeroIntro = function () {
-    try { sessionStorage.removeItem(KEY); } catch (e) { }
-    window.scrollTo(0, 0);
-    location.reload();
-  };
-
   function init() {
     const hero = document.getElementById('vf-hero');
     if (!track || !hero) return;

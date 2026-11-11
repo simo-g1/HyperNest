@@ -320,12 +320,11 @@
       <label class="hn-page-range">الحد الأقصى للسعر <input id="hn-product-budget" type="range" min="100" max="10000"
           step="100" value="10000"><b id="hn-product-budget-value">10000 ج.م</b></label>
     </section>
-    <section id="hn-all-products" class="hn-page-products-grid" aria-live="polite"></section>
+    <section id="hn-all-products" aria-live="polite" aria-busy="true"></section>
     <section class="hn-orders-card mt-10">
       <h2 class="text-lg font-black mb-3">اقتراحات تكمل سلتك</h2>
-      <div id="hn-page-smart-baskets" class="hn-page-products-grid"></div>
+      <div id="hn-page-smart-baskets" class="hn-product-grid"></div>
     </section>
-    <button id="hn-products-more" class="hn-page-more" type="button">تحميل المزيد</button>
   </main>
   <!-- FOOTER -->
   <footer class="bg-slate-900 text-slate-300 pt-16 pb-8 border-t border-slate-800">
