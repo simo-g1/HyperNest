@@ -88,6 +88,7 @@
     const hint = track.querySelector('.hn-intro-scroll-hint');
     const cta = document.getElementById('hn-intro-cta');
     const wheels = track.querySelectorAll('.hn-cart-wheel-rotate');
+    const airflow = track.querySelector('.hn-intro-airflow');
     if (!cart || !plane) return;
 
     plane.innerHTML = '';
@@ -103,6 +104,10 @@
     let W = innerWidth, H = innerHeight;
     let target = 0, current = 0, ticking = false, finished = false;
     let lastFrameTime = 0;
+    // Shared with render() because it also runs on resize and initial paint.
+    let deltaTime = 16.67;
+    let lastCartX = null;
+    let cartVelocity = 0;
     const SMOOTHING_MS = 180; // مدة استجابة تقدم الأنيميشن للسكرول السريع
     let entry = reduced ? 1 : 0;
     const entryStart = performance.now() + 250, ENTRY_MS = 1000;
@@ -115,7 +120,7 @@
       if (entry < 1) { entry = clamp((now - entryStart) / ENTRY_MS, 0, 1); busy = entry < 1; }
 
       // تنعيم مستقل عن عدد الإطارات: يمنع قفز الأنيميشن عند السكرول السريع.
-      const deltaTime = lastFrameTime ? Math.min(now - lastFrameTime, 50) : 16.67;
+      deltaTime = lastFrameTime ? Math.min(now - lastFrameTime, 50) : 16.67;
       lastFrameTime = now;
       const smoothing = 1 - Math.exp(-deltaTime / SMOOTHING_MS);
       const diff = target - current;
@@ -284,8 +289,8 @@
 
     function render(p) {
       const mobile = W < 768;
-      const cw = W >= 1024 ? 380 : (W <= 640 ? 260 : 320);
-      const ch = W >= 1024 ? 320 : (W <= 640 ? 220 : 270);
+      const cw = W >= 1200 ? 500 : (W >= 768 ? 390 : (W <= 640 ? 260 : 320));
+      const ch = W >= 1200 ? 421 : (W >= 768 ? 329 : (W <= 640 ? 220 : 270));
       const floorY = H * (mobile ? 0.74 : 0.76);
       const restX = W - cw - (mobile ? 12 : W * 0.07);
       const centerX = W / 2 - cw / 2;
@@ -304,9 +309,11 @@
         wheel -= t * 720;
       } else if (p <= 0.66) {
         const t = (p - 0.40) / 0.26;
-        rot = Math.sin(t * Math.PI) * -34;
-        x = centerX - (p - 0.40) * 60;
-        y += Math.sin(t * Math.PI) * 16;
+        const impact = Math.sin(t * Math.PI);
+        const recovery = Math.sin(t * Math.PI * 8) * Math.exp(-t * 3.2);
+        rot = impact * -27 + recovery * 5.5;
+        x = centerX - (p - 0.40) * 60 + recovery * 3;
+        y += impact * 13 + Math.abs(recovery) * 3.5;
         wheel -= 720 + (p - 0.40) * 260;
       } else if (p <= 0.84) {
         const t = easeInOutQuad((p - 0.66) / 0.18);
@@ -316,6 +323,17 @@
         wheel -= 790 + (p - 0.66) * 900;
       } else {
         x = -cw - 250; op = 0;
+      }
+
+      // Estimate trolley velocity from its actual rendered movement; airflow follows motion, not a timer.
+      const frameMs = Math.max(8, deltaTime || 16.67);
+      cartVelocity = lastCartX === null ? 0 : Math.abs(x - lastCartX) / frameMs;
+      lastCartX = x;
+      const wind = reduced ? 0 : clamp((cartVelocity - 0.025) / 0.42, 0, 1) * (p > 0.04 && p < 0.86 ? 1 : 0);
+      if (airflow) {
+        airflow.style.setProperty('--hn-wind', wind.toFixed(3));
+        airflow.style.setProperty('--hn-wind-shift', `${(-18 - wind * 58).toFixed(1)}px`);
+        airflow.style.opacity = wind.toFixed(3);
       }
 
       cart.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) rotateZ(${rot.toFixed(2)}deg)`;

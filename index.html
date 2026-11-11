@@ -349,28 +349,50 @@
         <div class="hn-intro-cart-layer">
           <div class="hn-intro-overhead-glow" aria-hidden="true"></div>
           <div class="hn-intro-floor-sheen" aria-hidden="true"></div>
+          <div class="hn-intro-golden-arch" aria-hidden="true"></div>
+          <svg class="hn-intro-light-trail" viewBox="0 0 900 650" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M 900 120 C 700 40 610 100 585 235 C 560 365 710 395 565 470 C 455 525 505 590 650 650" />
+          </svg>
 
-          <!-- Cinematic Title HUD -->
+          <!-- Premium left-side brand message -->
           <div class="hn-intro-hud">
-            <div class="hn-intro-badge"><span class="live-dot"></span><span>HyperNest • تسوّق بذكاء</span></div>
-            <h2 class="hn-intro-title">أهلاً بك في HyperNest</h2>
-            <p class="hn-intro-subtitle">كل احتياجات بيتك من السوبر ماركت والأدوات المنزلية في مكان واحد، بتوصيل سريع
-              وأسعار
-              مناسبة.</p>
-            <button type="button" class="hn-intro-cta" id="hn-intro-cta">ابدأ التسوق <i class="fa-solid fa-arrow-left"
-                aria-hidden="true"></i></button>
+            <div class="hn-intro-badge"><span class="live-dot"></span><span>تسوّق بذكاء مع HyperNest</span><span
+                class="hn-badge-spark">✦</span>
+            </div>
+            <h2 class="hn-intro-title">كل احتياجات بيتك<br>في مكان <span>واحد</span></h2>
+            <p class="hn-intro-subtitle">من السوبر ماركت للأدوات المنزلية، نوفر لك جودة عالية، أسعار مناسبة، وتوصيل سريع
+              لحد باب بيتك.</p>
+            <button type="button" class="hn-intro-cta" id="hn-intro-cta"><i class="fa-solid fa-arrow-left"
+                aria-hidden="true"></i> ابدأ التسوق</button>
             <ul class="hn-intro-features">
-              <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i><b>جودة عالية</b><small>أفضل المنتجات
-                  لك</small></li>
-              <li><i class="fa-solid fa-tags" aria-hidden="true"></i><b>عروض مميزة</b><small>أسعار وعروض دايمًا</small>
-              </li>
-              <li><i class="fa-solid fa-truck-fast" aria-hidden="true"></i><b>توصيل سريع</b><small>لحد باب بيتك</small>
-              </li>
+              <li><span class="hn-feature-icon"><i class="fa-solid fa-shield-halved"
+                    aria-hidden="true"></i></span><b>جودة مضمونة</b><small>أفضل المنتجات لك</small></li>
+              <li><span class="hn-feature-icon"><i class="fa-solid fa-tag" aria-hidden="true"></i></span><b>عروض
+                  حصرية</b><small>أسعار وعروض يومية</small></li>
+              <li><span class="hn-feature-icon"><i class="fa-solid fa-truck-fast" aria-hidden="true"></i></span><b>توصيل
+                  سريع</b><small>لحد باب بيتك</small></li>
             </ul>
+          </div>
+
+          <!-- <div class="hn-intro-offer-badge" aria-hidden="true"><span
+              class="hn-offer-percent">%</span><b>عروض<br>اليوم</b>
+          </div> -->
+
+          <div class="hn-intro-delivery-card" aria-hidden="true">
+            <span class="hn-delivery-pin"><i class="fa-solid fa-location-dot"></i></span>
+            <span><b>نصل إليك أينما كنت</b><small>توصيل سريع في جميع المناطق</small></span>
           </div>
 
           <!-- Stage Container -->
           <div class="hn-intro-stage">
+            <div class="hn-intro-airflow" aria-hidden="true">
+              <span class="hn-wind-streak hn-wind-streak--one"></span>
+              <span class="hn-wind-streak hn-wind-streak--two"></span>
+              <span class="hn-wind-streak hn-wind-streak--three"></span>
+              <span class="hn-wind-particle hn-wind-particle--one"></span>
+              <span class="hn-wind-particle hn-wind-particle--two"></span>
+              <span class="hn-wind-particle hn-wind-particle--three"></span>
+            </div>
             <!-- Realistic Shopping Cart -->
             <div class="hn-intro-cart-wrapper">
               <div class="hn-cart-chassis">
@@ -467,6 +489,18 @@
                     <path d="M 78 155 L 293 120" stroke="url(#hnWireGrad)" stroke-width="2" />
                     <path d="M 81 170 L 290 140" stroke="url(#hnWireGrad)" stroke-width="2" />
                     <path d="M 83 182 L 288 158" stroke="url(#hnWireGrad)" stroke-width="2.2" />
+                  </g>
+
+                  <!-- HyperNest branded front panel -->
+                  <g class="hn-cart-brand-panel">
+                    <path d="M 86 145 L 151 133 L 155 190 L 91 202 Z" fill="url(#hnHandleGrad)" stroke="#fcd34d"
+                      stroke-width="2.5" />
+                    <path d="M 105 160 L 111 160 L 108 178 L 130 174 L 127 156 L 133 155 L 138 181 L 101 187 Z"
+                      fill="#422006" opacity=".92" />
+                    <path d="M 104 184 L 136 179 M 108 191 L 131 187" stroke="#78350f" stroke-width="3"
+                      stroke-linecap="round" />
+                    <circle cx="110" cy="195" r="2.2" fill="#422006" />
+                    <circle cx="132" cy="191" r="2.2" fill="#422006" />
                   </g>
 
                   <!-- Basket Bottom Edge Tube -->
