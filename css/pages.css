@@ -408,3 +408,150 @@
 #hn-all-products {
   display: block;
 }
+
+/* ===== HyperNest warm skeleton ===== */
+:root {
+  --hn-sk-base: #ecdcc4;
+  --hn-sk-shine: #faf0df;
+  --hn-sk-tint: rgba(213, 141, 63, .12);
+}
+
+.dark {
+  --hn-sk-base: #3a2f27;
+  --hn-sk-shine: #53443a;
+  --hn-sk-tint: rgba(213, 141, 63, .10);
+}
+
+.hn-skel {
+  display: block;
+  border-radius: .65rem;
+  background: linear-gradient(100deg, var(--hn-sk-base) 30%, var(--hn-sk-shine) 50%, var(--hn-sk-base) 70%);
+  background-size: 200% 100%;
+  animation: hnSkelShimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes hnSkelShimmer {
+  from {
+    background-position: 150% 0;
+  }
+
+  to {
+    background-position: -50% 0;
+  }
+}
+
+.hn-skel-line {
+  height: .8rem;
+  width: 100%;
+}
+
+.hn-skel-value {
+  height: 1.7rem;
+  width: 65%;
+  border-radius: .8rem;
+}
+
+.hn-skel-bar {
+  height: .7rem;
+  width: 100%;
+  border-radius: 2rem;
+}
+
+.hn-skel-row {
+  height: 3.2rem;
+  width: 100%;
+  border-radius: .9rem;
+}
+
+.hn-skel-w35 {
+  width: 35%;
+}
+
+.hn-skel-w50 {
+  width: 50%;
+}
+
+.hn-skel-w70 {
+  width: 70%;
+}
+
+/* products page skeleton */
+.hn-skel-card {
+  padding: 13px;
+  min-height: 340px;
+  display: grid;
+  gap: .7rem;
+  align-content: start;
+}
+
+.hn-skel-visual {
+  height: 170px;
+  border-radius: 18px;
+}
+
+.hn-skel-btn {
+  height: 2.75rem;
+  border-radius: .9rem;
+  margin-top: auto;
+}
+
+.hn-skel-icon {
+  width: 2.8rem;
+  height: 2.8rem;
+  border-radius: .9rem;
+  flex: none;
+}
+
+.hn-skel-lines {
+  display: grid;
+  gap: .5rem;
+  flex: 1;
+}
+
+/* dashboard cards skeleton overlay */
+.hn-skel-layer {
+  display: none;
+}
+
+body.hn-loading :is(.hn-stat-card, .hn-level-card, .hn-orders-card) {
+  position: relative;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+body.hn-loading :is(.hn-stat-card, .hn-level-card, .hn-orders-card)> :not(.hn-skel-layer) {
+  visibility: hidden;
+}
+
+body.hn-loading .hn-skel-layer {
+  display: grid;
+  gap: .8rem;
+  align-content: start;
+  position: absolute;
+  inset: 0;
+  padding: 1.25rem;
+}
+
+body.hn-loading :is(.hn-stat-card, .hn-level-card, .hn-orders-card)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 35%, var(--hn-sk-tint) 50%, transparent 65%);
+  transform: translateX(-100%);
+  animation: hnSkelSweep 1.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes hnSkelSweep {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .hn-skel,
+  body.hn-loading :is(.hn-stat-card, .hn-level-card, .hn-orders-card)::after {
+    animation: none;
+  }
+}

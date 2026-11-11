@@ -238,6 +238,70 @@
     }
     if (typeof setupDragAndDrop === 'function') setupDragAndDrop();
   }
+
+  function bindOffersHub() {
+    if (window.__hnHubBound) return;
+    window.__hnHubBound = true;
+    let active = 0, startX = 0;
+
+    const getSlides = () => [...document.querySelectorAll('#hn-offer-track .hn-offer-slide')];
+    const getDots = () => [...document.querySelectorAll('[data-offer-dot]')];
+
+    const showSlide = index => {
+      const slides = getSlides();
+      if (!slides.length) return;
+      active = (index + slides.length) % slides.length;
+      slides.forEach((slide, i) => { slide.hidden = i !== active; });
+      getDots().forEach((dot, i) => {
+        dot.classList.toggle('is-active', i === active);
+        dot.setAttribute('aria-pressed', String(i === active));
+      });
+    };
+
+    document.addEventListener('click', event => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+
+      if (target.closest('#hn-offer-prev')) return showSlide(active - 1);
+      if (target.closest('#hn-offer-next')) return showSlide(active + 1);
+
+      const dot = target.closest('[data-offer-dot]');
+      if (dot) return showSlide(Number(dot.dataset.offerDot));
+
+      const categoryBtn = target.closest('[data-offer-category]');
+      if (categoryBtn) {
+        if (typeof filterCategory === 'function') filterCategory(categoryBtn.dataset.offerCategory);
+        return;
+      }
+
+      const copyBtn = target.closest('[data-copy-code]');
+      if (copyBtn) return window.copyPromoCode(copyBtn.dataset.copyCode);
+
+      const applyBtn = target.closest('[data-apply-code]');
+      if (applyBtn) {
+        const code = applyBtn.dataset.applyCode;
+        const input = document.getElementById('promo-code-input');
+        if (input) input.value = code;
+        openCartDrawer();
+        applyPromoCode();
+        showToast(`تم تجهيز كود ${code} في السلة التجريبية`);
+      }
+    });
+
+    document.addEventListener('touchstart', e => {
+      if (e.target.closest?.('.hn-offer-slider')) startX = e.changedTouches[0].clientX;
+    }, { passive: true });
+    document.addEventListener('touchend', e => {
+      if (!e.target.closest?.('.hn-offer-slider')) return;
+      const delta = e.changedTouches[0].clientX - startX;
+      if (Math.abs(delta) > 45) showSlide(active + (delta > 0 ? 1 : -1));
+    }, { passive: true });
+    document.addEventListener('keydown', e => {
+      if (!e.target.closest?.('.hn-offer-slider')) return;
+      if (e.key === 'ArrowLeft') showSlide(active + 1);
+      if (e.key === 'ArrowRight') showSlide(active - 1);
+    });
+  }
   function injectOffersHub() {
     const hero = document.getElementById('vf-hero');
     if (!hero || document.getElementById('hn-news-hub')) return;
@@ -1013,6 +1077,7 @@
     assignMerchantData();
     setInitialTheme();
     injectOffersHub();
+    bindOffersHub();
     setupBranding();
     injectMarketplaceSections();
     installFunctionWrappers();
