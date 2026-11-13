@@ -759,12 +759,16 @@ function setupScrollProgressAndReveal() {
   let ticking = false;
   const update = () => {
     ticking = false;
+    // 1) كل القراءات الأول
     const y = window.scrollY, vh = window.innerHeight;
     const max = document.documentElement.scrollHeight - vh;
+    const heroH = hero ? hero.offsetHeight : 0;
+    const tops = scrub.map(({ el }) => el.getBoundingClientRect().top);
+    // 2) بعدين كل الكتابات
     if (bar) bar.style.width = (max > 0 ? (y / max) * 100 : 0) + '%';
-    if (hero && !prefersReducedMotion) hero.style.setProperty('--hp', clamp01((y - hero.offsetHeight * .45) / (hero.offsetHeight * .55)).toFixed(3));
-    scrub.forEach(({ el, spans }) => {
-      const p = prefersReducedMotion ? 1 : clamp01((vh * .85 - el.getBoundingClientRect().top) / (vh * .4));
+    if (hero && !prefersReducedMotion) hero.style.setProperty('--hp', clamp01((y - heroH * .45) / (heroH * .55)).toFixed(3));
+    scrub.forEach(({ spans }, k) => {
+      const p = prefersReducedMotion ? 1 : clamp01((vh * .85 - tops[k]) / (vh * .4));
       spans.forEach((sp, i) => { sp.style.opacity = (.2 + .8 * clamp01(p * spans.length * 1.2 - i)).toFixed(2); });
     });
   };
