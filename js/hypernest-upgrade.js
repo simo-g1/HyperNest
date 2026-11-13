@@ -978,14 +978,36 @@
     after('trackRecentlyViewed', saveState);
 
     // السحب والإفلات: ربط منطقة السلة مرة واحدة بدل استبدال العنصر كل مرة
+    let _isDragging = false;
+    function updateDragHeaderState(active) {
+      const hdr = document.querySelector('body > header');
+      const dz = document.getElementById('cart-dropzone');
+      if (active) {
+        if (hdr) hdr.classList.remove('hn-header-hidden');
+        if (dz) dz.classList.add('hn-drag-active');
+      } else {
+        if (hdr) {
+          if (typeof window.updateHeader === 'function') {
+            window.updateHeader();
+          } else {
+            const mainHero = document.getElementById('vf-hero');
+            const heroHasPassed = mainHero ? mainHero.getBoundingClientRect().bottom <= 0 : window.scrollY > 80;
+            hdr.classList.toggle('hn-header-hidden', !heroHasPassed);
+          }
+        }
+        if (dz) dz.classList.remove('hn-drag-active');
+      }
+    }
+
     window.setupDragAndDrop = function () {
-      document.querySelectorAll('.shelf-product-item, .product-card, .vf-model').forEach(item => {
+      document.querySelectorAll('.shelf-product-item, .product-card, .hn-product-card, .vf-model').forEach(item => {
         if (item.dataset.dragBound) return;
         item.dataset.dragBound = '1';
         item.addEventListener('dragstart', event => {
-          event.dataTransfer.setData('text/plain', item.dataset.id);
+          const rawId = item.dataset.id || item.dataset.productId;
+          event.dataTransfer.setData('text/plain', rawId);
           event.dataTransfer.effectAllowed = 'copy';
-          const product = PRODUCTS_DATABASE.find(entry => entry.id === parseInt(item.dataset.id, 10));
+          const product = PRODUCTS_DATABASE.find(entry => entry.id === parseInt(rawId, 10));
           if (product && event.dataTransfer.setDragImage) {
             const ghost = document.createElement('div');
             ghost.className = 'drag-ghost';
@@ -995,8 +1017,96 @@
             window.setTimeout(() => ghost.remove(), 0);
           }
           item.classList.add('dragging');
+          if (!_isDragging) {
+            _isDragging = true;
+            updateDragHeaderState(true);
+          }
         });
-        item.addEventListener('dragend', () => item.classList.remove('dragging'));
+        item.addEventListener('dragend', () => {
+          item.classList.remove('dragging');
+          if (_isDragging) {
+            _isDragging = false;
+            updateDragHeaderState(false);
+          }
+        });
+
+        // Touch drag fallback for mobile
+        let touchTimer = null;
+        let touchGhost = null;
+        let startX = 0, startY = 0;
+        let isTouching = false;
+
+        const cleanupTouch = () => {
+          clearTimeout(touchTimer);
+          if (touchGhost) { touchGhost.remove(); touchGhost = null; }
+          item.classList.remove('dragging');
+          if (isTouching) {
+            isTouching = false;
+            _isDragging = false;
+            updateDragHeaderState(false);
+          }
+        };
+
+        item.addEventListener('touchstart', e => {
+          if (e.touches.length !== 1 || e.target.closest('button, a, input, select')) return;
+          const touch = e.touches[0];
+          startX = touch.clientX;
+          startY = touch.clientY;
+          const rawId = item.dataset.id || item.dataset.productId;
+          const product = PRODUCTS_DATABASE.find(entry => entry.id === parseInt(rawId, 10));
+          if (!product) return;
+
+          touchTimer = setTimeout(() => {
+            isTouching = true;
+            _isDragging = true;
+            item.classList.add('dragging');
+            updateDragHeaderState(true);
+            touchGhost = document.createElement('div');
+            touchGhost.className = 'drag-ghost touch-ghost';
+            touchGhost.style.position = 'fixed';
+            touchGhost.style.zIndex = '9999';
+            touchGhost.style.pointerEvents = 'none';
+            touchGhost.style.left = `${touch.clientX - 28}px`;
+            touchGhost.style.top = `${touch.clientY - 28}px`;
+            touchGhost.innerHTML = `<img src="${escapeHTML(product.image)}" alt="" style="width:56px;height:56px;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.3);">`;
+            document.body.appendChild(touchGhost);
+          }, 320);
+        }, { passive: true });
+
+        item.addEventListener('touchmove', e => {
+          if (!e.touches.length) return;
+          const touch = e.touches[0];
+          if (!isTouching) {
+            if (Math.hypot(touch.clientX - startX, touch.clientY - startY) > 10) {
+              clearTimeout(touchTimer);
+            }
+            return;
+          }
+          e.preventDefault();
+          if (touchGhost) {
+            touchGhost.style.left = `${touch.clientX - 28}px`;
+            touchGhost.style.top = `${touch.clientY - 28}px`;
+          }
+        }, { passive: false });
+
+        item.addEventListener('touchend', e => {
+          clearTimeout(touchTimer);
+          if (!isTouching) return;
+          const touch = e.changedTouches[0];
+          const dropzone = document.getElementById('cart-dropzone');
+          if (dropzone && touch) {
+            const rect = dropzone.getBoundingClientRect();
+            if (touch.clientX >= rect.left && touch.clientX <= rect.right &&
+              touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
+              const rawId = item.dataset.id || item.dataset.productId;
+              const id = parseInt(rawId, 10);
+              if (id) addToCart(id, 1);
+            }
+          }
+          cleanupTouch();
+        });
+
+        item.addEventListener('touchcancel', cleanupTouch);
       });
       const zone = document.getElementById('cart-dropzone');
       if (zone && !zone.dataset.dropBound) {

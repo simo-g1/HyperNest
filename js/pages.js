@@ -51,14 +51,17 @@
 
   function refreshWishlistButtons() {
     const saved = new Set((typeof wishlist !== 'undefined' ? wishlist : []).map(Number));
-    $$('.hn-product-card[data-id]').forEach(card => {
-      const btn = card.querySelector('button[onclick^="toggleWishlist"]');
+    $$('.hn-product-card[data-id], .hn-product-card[data-product-id]').forEach(card => {
+      const btn = card.querySelector('button[onclick^="toggleWishlist"], .hn-page-wish');
       if (!btn) return;
-      const active = saved.has(Number(card.dataset.id));
+      const cardId = Number(card.dataset.id || card.dataset.productId);
+      const active = saved.has(cardId);
       btn.classList.toggle('text-rose-500', active);
       btn.classList.toggle('text-slate-400', !active);
       btn.classList.toggle('hover:text-rose-500', !active);
-      const name = card.querySelector('.hn-product-name')?.textContent || '';
+      btn.classList.toggle('is-wishlisted', active);
+      btn.setAttribute('aria-pressed', String(active));
+      const name = card.querySelector('.hn-product-name, h3')?.textContent || '';
       btn.setAttribute('aria-label', `${active ? 'إزالة من المفضلة' : 'إضافة للمفضلة'}: ${name}`);
     });
   }
@@ -228,11 +231,14 @@
       const duplicate = track.cloneNode(true);
       duplicate.querySelectorAll('.hn-product-card').forEach(card => {
         card.setAttribute('aria-hidden', 'true');
+        card.setAttribute('draggable', 'false');
+        card.style.pointerEvents = 'none';
         card.querySelectorAll('a,button,[tabindex]').forEach(el => el.setAttribute('tabindex', '-1'));
       });
       [...duplicate.children].forEach(card => track.append(card));
       track.parentElement.style.setProperty('--hn-marquee-duration', `${Math.max(34, selected.length * 3.2)}s`);
       if (selected.length < 2) track.parentElement.classList.add('is-static');
+      window.setupDragAndDrop?.();
     }
     window.refreshHnSmartSuggestions = renderSmartSuggestions;
 

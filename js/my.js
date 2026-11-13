@@ -397,16 +397,17 @@ function toggleShowAllProducts() {
 
 /* 5. CART & DRAG AND DROP */
 function setupDragAndDrop() {
-  const items = document.querySelectorAll('.shelf-product-item, .product-card, .vf-model');
+  const items = document.querySelectorAll('.shelf-product-item, .product-card, .hn-product-card, .vf-model');
   const dropzone = document.getElementById('cart-dropzone');
 
   items.forEach(item => {
     if (item.dataset.dragBound) return; // منع تكرار الـ listeners
     item.dataset.dragBound = '1';
     item.addEventListener('dragstart', (e) => {
-      e.dataTransfer.setData('text/plain', item.dataset.id);
+      const rawId = item.dataset.id || item.dataset.productId;
+      e.dataTransfer.setData('text/plain', rawId);
       e.dataTransfer.effectAllowed = 'copy';
-      const p = PRODUCTS_DATABASE.find(x => x.id === parseInt(item.dataset.id));
+      const p = PRODUCTS_DATABASE.find(x => x.id === parseInt(rawId, 10));
       if (p && e.dataTransfer.setDragImage) { // كأنك ماسك المنتج
         const ghost = document.createElement('div');
         ghost.className = 'drag-ghost';
@@ -663,7 +664,7 @@ function updateWishlistUI() {
 }
 
 function openProductModal(id) {
-  const p = PRODUCTS_DATABASE.find(item => item.id === id);
+  const p = PRODUCTS_DATABASE.find(item => Number(item.id) === Number(id));
   if (!p) return;
 
   trackRecentlyViewed(id);

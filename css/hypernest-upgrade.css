@@ -2145,3 +2145,10 @@ html.dark #store-map #map-zone-info {
   border-color: rgba(213, 141, 63, 0.35) !important;
   box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45) !important;
 }
+
+/* ===== Drag & Drop: cart dropzone active target indicator ===== */
+/* Applied from dragstart (not dragenter) — shows cart is a valid target */
+#cart-dropzone.hn-drag-active {
+  border-color: #0ea5e9;
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.25);
+}

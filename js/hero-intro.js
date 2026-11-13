@@ -67,12 +67,28 @@
   }
   window.addEventListener('scroll', updateHeader, { passive: true });
   window.addEventListener('resize', updateHeader, { passive: true });
+  window.updateHeader = updateHeader;
   updateHeader();
 
   function init() {
     const hero = document.getElementById('vf-hero');
     if (!track || !hero) return;
-    if (done) { hero.classList.remove('hn-intro-active'); updateHeader(); return; }
+    if (done) {
+      hero.classList.remove('hn-intro-active');
+      const dCard = track?.querySelector('.hn-intro-delivery-card');
+      const syncCompletedDeliveryCard = () => {
+        if (!dCard) return;
+        const y = window.scrollY;
+        const cardO = clamp(1 - y / 280, 0, 1);
+        dCard.style.opacity = cardO.toFixed(3);
+        dCard.style.visibility = cardO < 0.02 ? 'hidden' : 'visible';
+        dCard.style.pointerEvents = cardO < 0.02 ? 'none' : 'auto';
+      };
+      window.addEventListener('scroll', syncCompletedDeliveryCard, { passive: true });
+      syncCompletedDeliveryCard();
+      updateHeader();
+      return;
+    }
 
     if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
     window.scrollTo(0, 0);
@@ -369,14 +385,24 @@
           if (trailPoints.length > 28) trailPoints.shift();
         }
         if (trailPoints.length > 1) {
-          let d = `M ${trailPoints[0].x.toFixed(1)} ${trailPoints[0].y.toFixed(1)}`;
-          for (let i = 1; i < trailPoints.length - 1; i++) {
-            const a = trailPoints[i], b = trailPoints[i + 1];
-            const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
-            d += ` Q ${a.x.toFixed(1)} ${a.y.toFixed(1)} ${mx.toFixed(1)} ${my.toFixed(1)}`;
+          let d = '';
+          if (trailPoints.length === 2) {
+            const p0 = trailPoints[0], p1 = trailPoints[1];
+            const mx = (p0.x + p1.x) / 2, my = (p0.y + p1.y) / 2;
+            d = `M ${p0.x.toFixed(1)} ${p0.y.toFixed(1)} Q ${(p0.x * 0.7 + p1.x * 0.3).toFixed(1)} ${(p0.y * 0.7 + p1.y * 0.3).toFixed(1)} ${mx.toFixed(1)} ${my.toFixed(1)} L ${p1.x.toFixed(1)} ${p1.y.toFixed(1)}`;
+          } else {
+            // Natural, organic curved start for the golden trail
+            const p0 = trailPoints[0], p1 = trailPoints[1];
+            const initMx = (p0.x + p1.x) / 2, initMy = (p0.y + p1.y) / 2;
+            d = `M ${p0.x.toFixed(1)} ${p0.y.toFixed(1)} Q ${(p0.x * 0.65 + p1.x * 0.35).toFixed(1)} ${(p0.y * 0.65 + p1.y * 0.35).toFixed(1)} ${initMx.toFixed(1)} ${initMy.toFixed(1)}`;
+            for (let i = 1; i < trailPoints.length - 1; i++) {
+              const a = trailPoints[i], b = trailPoints[i + 1];
+              const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+              d += ` Q ${a.x.toFixed(1)} ${a.y.toFixed(1)} ${mx.toFixed(1)} ${my.toFixed(1)}`;
+            }
+            const last = trailPoints[trailPoints.length - 1];
+            d += ` L ${last.x.toFixed(1)} ${last.y.toFixed(1)}`;
           }
-          const last = trailPoints[trailPoints.length - 1];
-          d += ` L ${last.x.toFixed(1)} ${last.y.toFixed(1)}`;
           trailPath.setAttribute('d', d);
           if (trailGlow) trailGlow.setAttribute('d', d);
           const trailOpacity = clamp(cartVelocity / 1.8, 0.42, 0.96);
@@ -400,11 +426,11 @@
         hud.style.opacity = hudO.toFixed(3);
         hud.style.visibility = hudO < 0.02 ? 'hidden' : 'visible';
       }
-      if (deliveryCard && p > 0.005 && !deliveryCardDismissed) {
-        deliveryCardDismissed = true;
-        deliveryCard.style.opacity = '0';
-        deliveryCard.style.pointerEvents = 'none';
-        window.setTimeout(() => { deliveryCard.style.visibility = 'hidden'; }, 300);
+      if (deliveryCard) {
+        const cardO = clamp(1 - p / 0.10, 0, 1);
+        deliveryCard.style.opacity = cardO.toFixed(3);
+        deliveryCard.style.visibility = cardO < 0.02 ? 'hidden' : 'visible';
+        deliveryCard.style.pointerEvents = cardO < 0.02 ? 'none' : 'auto';
       }
       if (bar) bar.style.width = (p * 100).toFixed(1) + '%';
 
@@ -455,6 +481,22 @@
     request(); // يشغّل حركة دخول السلة
     onScroll();
   }
+
+  // BFCache restoration: restore delivery card and header state
+  window.addEventListener('pageshow', function (event) {
+    if (!event.persisted) return; // only handle bfcache restores
+    try {
+      const card = document.querySelector('.hn-intro-delivery-card');
+      if (card) {
+        const y = window.scrollY;
+        const cardO = clamp(1 - y / 280, 0, 1);
+        card.style.opacity = cardO.toFixed(3);
+        card.style.visibility = cardO < 0.02 ? 'hidden' : 'visible';
+        card.style.pointerEvents = cardO < 0.02 ? 'none' : 'auto';
+      }
+      if (typeof updateHeader === 'function') updateHeader();
+    } catch (e) { }
+  });
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
