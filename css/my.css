@@ -736,3 +736,18 @@ main details,
     animation: none !important;
   }
 }
+
+#how-it-works,
+#categories,
+#smart-baskets,
+#products-catalog,
+#flash-deals,
+#store-map,
+#order-track,
+#testimonials,
+#careers,
+#support,
+#faq {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 700px;
+}
