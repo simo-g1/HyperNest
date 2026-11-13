@@ -921,12 +921,18 @@
   function trackHeaderHeight() {
     const header = document.querySelector('header.sticky');
     if (!header) return;
-    const apply = () => {
-      document.documentElement.style.setProperty('--hn-header-h', `${header.offsetHeight}px`);
+    const apply = (h) => {
+      document.documentElement.style.setProperty('--hn-header-h', `${Math.round(h)}px`);
       if (typeof window.vfResize === 'function') window.vfResize();
     };
-    apply();
-    if ('ResizeObserver' in window) new ResizeObserver(apply).observe(header);
+    if ('ResizeObserver' in window) {
+      new ResizeObserver(([entry]) => {
+        const box = entry.borderBoxSize && entry.borderBoxSize[0];
+        apply(box ? box.blockSize : header.offsetHeight);
+      }).observe(header);
+    } else {
+      apply(header.offsetHeight);
+    }
   }
 
   function updateLoyaltyUI() {
