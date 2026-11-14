@@ -53,7 +53,7 @@ function initArc() {
   VF.items = PRODUCTS_DATABASE.filter(p => p.id <= 10); // الـ sort ما يأثرش عليهم
   arc.innerHTML = VF.items.map(p => `
     <div class="vf-card vf-glass" data-id="${p.id}">
-      <img class="vf-g" src="${p.image}" alt="" width="500" height="500" decoding="async" draggable="false">
+      <img class="vf-g" src="${p.image.replace('/food/', '/food-sm/')}" alt="" width="500" height="500" decoding="async" draggable="false">
       <span class="vf-n">${p.name}</span>
       <span class="vf-p">${p.price.toFixed(0)} ج.م</span>
       <i class="vf-sheen"></i>

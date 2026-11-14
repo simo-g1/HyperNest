@@ -11,7 +11,7 @@
   if (done) root.classList.add('hn-intro-completed');
 
   const P = (id, name, price, slot, off, launch, land, bX, bY, bRot, arcH) => ({
-    id, name, price, image: `imgs/food/product-${String(id).padStart(2, '0')}.webp`,
+    id, name, price, image: `imgs/food-sm/product-${String(id).padStart(2, '0')}.webp`,
     arcSlot: slot, slotOffset: off, launch, land, bX, bY, bRot, arcH
   });
   const HERO_PRODUCTS = [
