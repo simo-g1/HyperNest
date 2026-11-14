@@ -63,8 +63,7 @@ function initArc() {
   vfById('vf-chips').innerHTML = [1, 2, 3, 5].map(n =>
     `<button type="button" class="vf-chip" aria-pressed="${n === 1}" onclick="vfSetQty(${n}, this)">${n}</button>`).join('');
 
-  vfResize();
-  window.addEventListener('resize', vfResize);
+  new ResizeObserver(() => vfResize()).observe(hero);
   new IntersectionObserver(([e]) => {
     VF.visible = e.isIntersecting;
     if (VF.visible && !VF.frameId) VF.frameId = requestAnimationFrame(vfFrame);
