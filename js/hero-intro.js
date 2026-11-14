@@ -479,7 +479,7 @@
 
     render(0);
     request(); // يشغّل حركة دخول السلة
-    onScroll();
+    requestAnimationFrame(onScroll);
   }
 
   // BFCache restoration: restore delivery card and header state
