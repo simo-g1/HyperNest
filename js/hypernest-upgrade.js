@@ -865,7 +865,9 @@
     grid.dataset.ready = '1';
     const HOLD_MS = 3500; // مدة بقاء كل مجموعة قبل التبديل
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const perView = () => (window.innerWidth >= 1024 ? 3 : window.innerWidth >= 768 ? 2 : 1);
+    const mqLarge = window.matchMedia('(min-width: 1024px)');
+    const mqMedium = window.matchMedia('(min-width: 768px)');
+    const perView = () => (mqLarge.matches ? 3 : mqMedium.matches ? 2 : 1);
     let start = 0, timer = 0, paused = false, busy = false, onScreen = true;
 
     const cardHTML = ([name, meta, text, stars]) => `
