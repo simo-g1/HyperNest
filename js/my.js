@@ -773,7 +773,7 @@ function setupScrollProgressAndReveal() {
   };
   window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
   window.addEventListener('resize', update);
-  update();
+  requestAnimationFrame(update);
 
   const els = document.querySelectorAll('.reveal-on-scroll');
   if (!('IntersectionObserver' in window)) { els.forEach(e => e.classList.add('revealed')); return; }
