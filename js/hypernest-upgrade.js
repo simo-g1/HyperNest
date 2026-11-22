@@ -690,13 +690,19 @@
         if (hero && typeof VF !== 'undefined') {
           const mobile = VF.W < 768;
           const size = mobile
-            ? Math.min(VF.H * .34, VF.W * .49)
+            ? Math.min(VF.H * .36, VF.W * .56)
             : Math.min(VF.H * .40, VF.W * .29);
-          hero.style.setProperty('--vf-mh', `${Math.max(mobile ? 190 : 210, size)}px`);
-          const xs = VF.W < 420
-            ? [0, .27, .44, .57, .68, .78]
-            : [0, .30, .46, .58, .68, .78];
-          xs.forEach((value, index) => { VF_XS_M[index] = value; });
+          hero.style.setProperty('--vf-mh', `${Math.max(210, size)}px`);
+          // Keep the responsive positions in the shared Hero configuration.
+          // VF_XS_M was removed during the Hero refactor and replaced by
+          // VF_CONFIG.mobilePositions.
+          if (typeof VF_CONFIG !== 'undefined' && Array.isArray(VF_CONFIG.mobilePositions)) {
+            const mobilePositions = VF.W < 420
+              ? [0, .405, .53, .58, .615, .635]
+              : [0, .36, .5, .56, .6, .62];
+
+            VF_CONFIG.mobilePositions.splice(0, VF_CONFIG.mobilePositions.length, ...mobilePositions);
+          }
         }
         return result;
       };
