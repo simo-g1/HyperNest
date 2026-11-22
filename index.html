@@ -11,12 +11,6 @@
   <meta property="og:title" content="HyperNest Studio &amp; Code Audit | فاحص متجر هايبر نست">
   <meta property="og:description"
     content="فحص ومراجعة كود مشروع HyperNest وتشغيل المتجر التفاعلي الكامل مع تدقيق برمجي شامل لجميع الملفات والوظائف.">
-
-  <!-- Preload Font Awesome subset fonts -->
-  <link rel="preload" href="webfonts/fa-solid-900-subset.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="webfonts/fa-brands-400-subset.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="webfonts/fa-regular-400-subset.woff2" as="font" type="font/woff2" crossorigin>
-
   <!-- Normalize + FontAwesome (local files) -->
   <link rel="stylesheet" href="css/normalize.css">
   <link rel="stylesheet" href="css/all.min.css">
@@ -26,18 +20,21 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <!-- Google Font Cairo -->
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet"
-    media="print" onload="this.media='all'">
-  <noscript>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap"
-      rel="stylesheet">
-  </noscript>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap"
+    rel="stylesheet">
   <!-- Custom styles -->
   <link rel="stylesheet" href="css/my.css">
   <link rel="stylesheet" href="css/hypernest-upgrade.css">
   <link rel="stylesheet" href="css/pages.css">
   <link rel="stylesheet" href="css/hero-intro.css">
-  <script>try { if (sessionStorage.getItem('hn_hero_intro_completed') === 'true') document.documentElement.classList.add('hn-intro-completed') } catch (e) { }</script>
+  <script>
+    (() => {
+      const isMobile = window.matchMedia('(max-width: 767px)').matches;
+      let introCompleted = isMobile;
+      try { introCompleted ||= sessionStorage.getItem('hn_hero_intro_completed') === 'true'; } catch (e) { /* Storage may be unavailable. */ }
+      if (introCompleted) document.documentElement.classList.add('hn-intro-completed');
+    })();
+  </script>
   <link rel="preload" fetchpriority="high" as="image" href="imgs/supermarket-aisle.webp" type="image/webp">
 </head>
 
@@ -369,10 +366,10 @@
 
           <!-- Premium left-side brand message -->
           <div class="hn-intro-hud">
-            <h2 class="hn-intro-title">كل احتياجات بيتك<br>في مكان <span>واحد</span></h2>
+<h2 class="hn-intro-title">كل احتياجات بيتك<br>في مكان <span>واحد</span></h2>
             <p class="hn-intro-subtitle">من السوبر ماركت للأدوات المنزلية، نوفر لك جودة عالية، أسعار مناسبة، وتوصيل سريع
               لحد باب بيتك.</p>
-            <ul class="hn-intro-features">
+<ul class="hn-intro-features">
               <li><span class="hn-feature-icon"><i class="fa-solid fa-shield-halved"
                     aria-hidden="true"></i></span><b>جودة مضمونة</b><small>أفضل المنتجات لك</small></li>
               <li><span class="hn-feature-icon"><i class="fa-solid fa-tag" aria-hidden="true"></i></span><b>عروض
@@ -1342,7 +1339,16 @@
   <script src="js/storage.js" defer></script>
   <script src="js/my.js" defer></script>
   <script src="js/pages.js" defer></script>
-  <script src="js/hero-intro.js" defer></script>
+  <script>
+    // The scroll-driven cinematic intro is desktop-only. Mobile starts directly
+    // with the interactive product hero and does not download this script.
+    if (!window.matchMedia('(max-width: 767px)').matches) {
+      const introScript = document.createElement('script');
+      introScript.src = 'js/hero-intro.js';
+      introScript.defer = true;
+      document.head.appendChild(introScript);
+    }
+  </script>
   <script src="js/hypernest-upgrade.js" defer></script>
 </body>
 

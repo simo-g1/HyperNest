@@ -53,7 +53,7 @@ function initArc() {
   VF.items = PRODUCTS_DATABASE.filter(p => p.id <= 10); // الـ sort ما يأثرش عليهم
   arc.innerHTML = VF.items.map(p => `
     <div class="vf-card vf-glass" data-id="${p.id}">
-      <img class="vf-g" src="${p.image.replace('/food/', '/food-sm/')}" alt="" width="500" height="500" decoding="async" draggable="false">
+      <img class="vf-g" ${p.id === 1 ? `src="${p.image}" fetchpriority="high"` : `data-src="${p.image}"`} alt="" width="500" height="500" decoding="async" draggable="false">
       <span class="vf-n">${p.name}</span>
       <span class="vf-p">${p.price.toFixed(0)} ج.م</span>
       <i class="vf-sheen"></i>
@@ -63,7 +63,8 @@ function initArc() {
   vfById('vf-chips').innerHTML = [1, 2, 3, 5].map(n =>
     `<button type="button" class="vf-chip" aria-pressed="${n === 1}" onclick="vfSetQty(${n}, this)">${n}</button>`).join('');
 
-  new ResizeObserver(() => vfResize()).observe(hero);
+  vfResize();
+  window.addEventListener('resize', vfResize);
   new IntersectionObserver(([e]) => {
     VF.visible = e.isIntersecting;
     if (VF.visible && !VF.frameId) VF.frameId = requestAnimationFrame(vfFrame);
@@ -79,7 +80,7 @@ function vfResize() {
   VF.H = r.height;
   const m = VF.W < 768;
   hero.style.setProperty('--vf-mh', Math.min(VF.H * (m ? .4 : .46), VF.W * (m ? .62 : .34)) + 'px');
-  hero.style.setProperty('--vf-cw', (m ? Math.min(VF.W * .3, 150) : Math.min(VF.W * .148, VF.H * .36)) + 'px');
+  hero.style.setProperty('--vf-cw', (m ? Math.min(VF.W * .24, 112) : Math.min(VF.W * .148, VF.H * .36)) + 'px');
 }
 
 function vfFrame(t) {
@@ -103,6 +104,15 @@ function vfFrame(t) {
     const a = Math.abs(u), sg = Math.sign(u);
     let s, z, ry, blur = 0, op = 1;
 
+    // Only request images for the active card and its nearby neighbors.
+    // Cards farther around the carousel keep data-src until the user navigates.
+    const cardImage = el.querySelector('.vf-g');
+    const imageLoadRange = W > 750 ? 4.3 : 2.2;
+    if (cardImage && !cardImage.hasAttribute('src') && a < imageLoadRange) {
+      cardImage.src = cardImage.dataset.src;
+      cardImage.removeAttribute('data-src');
+    }
+
     if (a < 1) {
       s = .55 + .45 * a; z = -260 * (1 - a); op = a; ry = -sg * 16 * a;
     } else {
@@ -111,7 +121,8 @@ function vfFrame(t) {
       ry = -sg * (16 + 9 * Math.min(2, a - 1));
       blur = Math.max(0, a - 1.6) * 2.4;
     }
-    if (a > 3.4) op = Math.max(0, 1 - (a - 3.4) / .8);
+    const fadeStart = W > 750 ? 4.2 : 3.4;
+    if (a > fadeStart) op = Math.max(0, 1 - (a - fadeStart) / .8);
     op *= ie;
 
     const x = sg * xAt(a) * W * ie;
@@ -396,17 +407,16 @@ function toggleShowAllProducts() {
 
 /* 5. CART & DRAG AND DROP */
 function setupDragAndDrop() {
-  const items = document.querySelectorAll('.shelf-product-item, .product-card, .hn-product-card, .vf-model');
+  const items = document.querySelectorAll('.shelf-product-item, .product-card, .vf-model');
   const dropzone = document.getElementById('cart-dropzone');
 
   items.forEach(item => {
     if (item.dataset.dragBound) return; // منع تكرار الـ listeners
     item.dataset.dragBound = '1';
     item.addEventListener('dragstart', (e) => {
-      const rawId = item.dataset.id || item.dataset.productId;
-      e.dataTransfer.setData('text/plain', rawId);
+      e.dataTransfer.setData('text/plain', item.dataset.id);
       e.dataTransfer.effectAllowed = 'copy';
-      const p = PRODUCTS_DATABASE.find(x => x.id === parseInt(rawId, 10));
+      const p = PRODUCTS_DATABASE.find(x => x.id === parseInt(item.dataset.id));
       if (p && e.dataTransfer.setDragImage) { // كأنك ماسك المنتج
         const ghost = document.createElement('div');
         ghost.className = 'drag-ghost';
@@ -663,7 +673,7 @@ function updateWishlistUI() {
 }
 
 function openProductModal(id) {
-  const p = PRODUCTS_DATABASE.find(item => Number(item.id) === Number(id));
+  const p = PRODUCTS_DATABASE.find(item => item.id === id);
   if (!p) return;
 
   trackRecentlyViewed(id);
@@ -758,22 +768,18 @@ function setupScrollProgressAndReveal() {
   let ticking = false;
   const update = () => {
     ticking = false;
-    // 1) كل القراءات الأول
     const y = window.scrollY, vh = window.innerHeight;
     const max = document.documentElement.scrollHeight - vh;
-    const heroH = hero ? hero.offsetHeight : 0;
-    const tops = scrub.map(({ el }) => el.getBoundingClientRect().top);
-    // 2) بعدين كل الكتابات
     if (bar) bar.style.width = (max > 0 ? (y / max) * 100 : 0) + '%';
-    if (hero && !prefersReducedMotion) hero.style.setProperty('--hp', clamp01((y - heroH * .45) / (heroH * .55)).toFixed(3));
-    scrub.forEach(({ spans }, k) => {
-      const p = prefersReducedMotion ? 1 : clamp01((vh * .85 - tops[k]) / (vh * .4));
+    if (hero && !prefersReducedMotion) hero.style.setProperty('--hp', clamp01((y - hero.offsetHeight * .45) / (hero.offsetHeight * .55)).toFixed(3));
+    scrub.forEach(({ el, spans }) => {
+      const p = prefersReducedMotion ? 1 : clamp01((vh * .85 - el.getBoundingClientRect().top) / (vh * .4));
       spans.forEach((sp, i) => { sp.style.opacity = (.2 + .8 * clamp01(p * spans.length * 1.2 - i)).toFixed(2); });
     });
   };
   window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
   window.addEventListener('resize', update);
-  requestAnimationFrame(update);
+  update();
 
   const els = document.querySelectorAll('.reveal-on-scroll');
   if (!('IntersectionObserver' in window)) { els.forEach(e => e.classList.add('revealed')); return; }
