@@ -23,6 +23,7 @@ const CATEGORY_LABELS = {
 
 /* 2. INITIALIZATION */
 window.addEventListener('DOMContentLoaded', () => {
+  prepareHeroForDevice();
   initArc();
   renderCategoryPills();
   renderFloorSVG(1);
@@ -36,39 +37,91 @@ window.addEventListener('DOMContentLoaded', () => {
 
 /* 3. VIRTUALFIT ARC (replaces the 3D shelves) */
 const VF = {
-  items: [], cards: [], pos: 0, target: 0, intro: 0, shown: -1, drag: null,
+  items: [], cards: [], cardImages: [], pos: 0, target: 0, intro: 0, shown: -1, drag: null,
   sx: 0, sy: 0, tx: 0, ty: 0, qty: 1, W: 1, H: 1, anims: [], visible: true,
   wheelAcc: 0, lastWheel: 0, frameId: 0
 };
-const VF_XS = [0, .215, .345, .432, .49, .52];
-const VF_XS_M = [0, .36, .5, .56, .6, .62];
+const VF_CONFIG = {
+  mobileBreakpoint: 768,
+  desktopImageLoadRange: 4.3,
+  mobileImageLoadRange: 2.2,
+  desktopPositions: [0, .215, .345, .432, .49, .52],
+  mobilePositions: [0, .36, .5, .56, .6, .62]
+};
 const vfMod = (n, m) => ((n % m) + m) % m;
 const vfById = (id) => document.getElementById(id);
-const vfXS = () => (VF.W < 768 ? VF_XS_M : VF_XS);
+const vfXS = () => (VF.W < VF_CONFIG.mobileBreakpoint
+  ? VF_CONFIG.mobilePositions
+  : VF_CONFIG.desktopPositions);
+
+// The cinematic intro is desktop-only. On mobile, reveal the interactive hero
+// immediately so its products are never left behind the intro's hidden state.
+function prepareHeroForDevice() {
+  const isMobile = window.matchMedia('(max-width: 767px)').matches;
+  if (!isMobile) return;
+
+  const hero = vfById('vf-hero');
+  if (!hero) return;
+
+  hero.classList.remove('hn-intro-active');
+  VF.intro = 1;
+}
 
 function initArc() {
-  const stage = vfById('vf-stage'), arc = vfById('vf-arc'), hero = vfById('vf-hero');
-  if (!stage || !arc || !hero) return;
+  const stage = vfById('vf-stage');
+  const arc = vfById('vf-arc');
+  const hero = vfById('vf-hero');
 
-  VF.items = PRODUCTS_DATABASE.filter(p => p.id <= 10); // الـ sort ما يأثرش عليهم
-  arc.innerHTML = VF.items.map(p => `
-    <div class="vf-card vf-glass" data-id="${p.id}">
-      <img class="vf-g" ${p.id === 1 ? `src="${p.image}" fetchpriority="high"` : `data-src="${p.image}"`} alt="" width="500" height="500" decoding="async" draggable="false">
-      <span class="vf-n">${p.name}</span>
-      <span class="vf-p">${p.price.toFixed(0)} ج.م</span>
-      <i class="vf-sheen"></i>
-    </div>`).join('');
+  if (!stage || !arc || !hero || !Array.isArray(PRODUCTS_DATABASE)) return;
+
+  // Keep the hero's curated first ten products independent from catalog sorting.
+  VF.items = PRODUCTS_DATABASE.filter(product => product.id <= 10);
+
+  arc.innerHTML = VF.items.map(product => `
+    <article class="vf-card vf-glass" data-id="${product.id}">
+      <img
+        class="vf-g"
+        ${product.id === 1
+          ? `src="${product.image}" fetchpriority="high"`
+          : `data-src="${product.image}"`}
+        alt=""
+        width="500"
+        height="500"
+        decoding="async"
+        draggable="false"
+      >
+      <span class="vf-n">${product.name}</span>
+      <span class="vf-p">${product.price.toFixed(0)} ج.م</span>
+      <i class="vf-sheen" aria-hidden="true"></i>
+    </article>
+  `).join('');
+
   VF.cards = [...arc.children];
+  VF.cardImages = VF.cards.map(card => card.querySelector('.vf-g'));
 
-  vfById('vf-chips').innerHTML = [1, 2, 3, 5].map(n =>
-    `<button type="button" class="vf-chip" aria-pressed="${n === 1}" onclick="vfSetQty(${n}, this)">${n}</button>`).join('');
+  const quantityOptions = [1, 2, 3, 5];
+  const quantityMarkup = quantityOptions.map(quantity => `
+    <button
+      type="button"
+      class="vf-chip"
+      aria-pressed="${quantity === 1}"
+      onclick="vfSetQty(${quantity}, this)"
+    >${quantity}</button>
+  `).join('');
+  vfById('vf-chips').innerHTML = quantityMarkup;
 
   vfResize();
-  window.addEventListener('resize', vfResize);
-  new IntersectionObserver(([e]) => {
-    VF.visible = e.isIntersecting;
-    if (VF.visible && !VF.frameId) VF.frameId = requestAnimationFrame(vfFrame);
-  }).observe(hero);
+  window.addEventListener('resize', vfResize, { passive: true });
+
+  const heroVisibilityObserver = new IntersectionObserver(([entry]) => {
+    VF.visible = entry.isIntersecting;
+
+    if (VF.visible && !VF.frameId) {
+      VF.frameId = requestAnimationFrame(vfFrame);
+    }
+  });
+
+  heroVisibilityObserver.observe(hero);
   vfBindInput(stage, hero);
 }
 
@@ -78,9 +131,9 @@ function vfResize() {
   const r = hero.getBoundingClientRect();
   VF.W = r.width;
   VF.H = r.height;
-  const m = VF.W < 768;
-  hero.style.setProperty('--vf-mh', Math.min(VF.H * (m ? .4 : .46), VF.W * (m ? .62 : .34)) + 'px');
-  hero.style.setProperty('--vf-cw', (m ? Math.min(VF.W * .24, 112) : Math.min(VF.W * .148, VF.H * .36)) + 'px');
+  const isMobile = VF.W < VF_CONFIG.mobileBreakpoint;
+  hero.style.setProperty('--vf-mh', Math.min(VF.H * (isMobile ? .4 : .46), VF.W * (isMobile ? .62 : .34)) + 'px');
+  hero.style.setProperty('--vf-cw', (isMobile ? Math.min(VF.W * .24, 112) : Math.min(VF.W * .148, VF.H * .36)) + 'px');
 }
 
 function vfFrame(t) {
@@ -104,13 +157,15 @@ function vfFrame(t) {
     const a = Math.abs(u), sg = Math.sign(u);
     let s, z, ry, blur = 0, op = 1;
 
-    // Only request images for the active card and its nearby neighbors.
-    // Cards farther around the carousel keep data-src until the user navigates.
-    const cardImage = el.querySelector('.vf-g');
-    const imageLoadRange = W > 750 ? 4.3 : 2.2;
-    if (cardImage && !cardImage.hasAttribute('src') && a < imageLoadRange) {
+    // Load the active card and nearby neighbors; defer the rest until navigation.
+    const cardImage = VF.cardImages[i];
+    const imageLoadRange = W > 750
+      ? VF_CONFIG.desktopImageLoadRange
+      : VF_CONFIG.mobileImageLoadRange;
+
+    if (cardImage?.dataset.src && a < imageLoadRange) {
       cardImage.src = cardImage.dataset.src;
-      cardImage.removeAttribute('data-src');
+      delete cardImage.dataset.src;
     }
 
     if (a < 1) {
